@@ -1,109 +1,141 @@
+/* =====================================
+   後慈湖現場補位系統 style.css
+   共用樣式：index / admin / screen
+===================================== */
+
+/* Reset */
 *{
     margin:0;
     padding:0;
     box-sizing:border-box;
 }
 
-body{
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft JhengHei",sans-serif;
-    background:linear-gradient(135deg,#0b3d2e,#1d6b47);
-    color:#222;
-    min-height:100vh;
+html,body{
+    width:100%;
+    min-height:100%;
 }
 
+body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",
+    "PingFang TC","Microsoft JhengHei",sans-serif;
+    font-size:16px;
+    line-height:1.5;
+    color:#222;
+    background:#f3f6f4;
+}
+
+/* Layout */
 .container{
     width:100%;
-    max-width:1100px;
-    margin:auto;
-    padding:24px;
+    max-width:1180px;
+    margin:0 auto;
+    padding:22px;
 }
 
-.card{
-    background:#fff;
-    border-radius:22px;
-    padding:24px;
-    box-shadow:0 14px 30px rgba(0,0,0,.08);
-}
-
-.title{
-    font-size:34px;
+/* Typography */
+h1,h2,h3{
     font-weight:800;
-    color:#14532d;
-    margin-bottom:10px;
+    line-height:1.25;
 }
 
-.subtitle{
-    color:#666;
-    line-height:1.8;
-    margin-bottom:24px;
+p{
+    color:#555;
 }
 
+/* Badge */
 .badge{
     display:inline-block;
-    background:#e8f7ee;
-    color:#198754;
     padding:8px 16px;
-    border-radius:50px;
+    border-radius:999px;
+    background:#e8f5ec;
+    color:#166944;
     font-size:14px;
-    font-weight:700;
-    margin-bottom:14px;
-}
-
-.grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-    gap:16px;
-}
-
-.stat{
-    background:#fff;
-    border-radius:18px;
-    padding:20px;
-    box-shadow:0 10px 24px rgba(0,0,0,.06);
-}
-
-.stat-label{
-    font-size:14px;
-    color:#777;
-    margin-bottom:10px;
-}
-
-.stat-value{
-    font-size:34px;
     font-weight:800;
+    letter-spacing:.5px;
+    margin-bottom:12px;
+}
+
+/* Card */
+.card,
+.panel,
+.hero,
+.stat-card{
+    background:#fff;
+    border-radius:22px;
+    box-shadow:0 12px 28px rgba(0,0,0,.08);
+}
+
+/* Forms */
+form{
+    width:100%;
+}
+
+label{
+    display:block;
+    margin-bottom:8px;
+    font-weight:700;
     color:#14532d;
 }
 
-input,select,button{
+input,
+select,
+textarea{
     width:100%;
-    padding:14px;
+    padding:14px 16px;
+    border:1px solid #d7dfda;
     border-radius:14px;
+    background:#fff;
     font-size:16px;
     margin-bottom:14px;
+    transition:.2s ease;
+    appearance:none;
 }
 
-input,select{
-    border:1px solid #ddd;
-}
-
-input:focus,select:focus{
+input:focus,
+select:focus,
+textarea:focus{
     outline:none;
     border-color:#198754;
+    box-shadow:0 0 0 4px rgba(25,135,84,.12);
 }
 
-button{
+/* Buttons */
+button,
+.btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    min-height:48px;
+    padding:12px 18px;
     border:none;
+    border-radius:14px;
     background:#198754;
     color:#fff;
+    font-size:16px;
     font-weight:800;
     cursor:pointer;
-    transition:.2s;
+    text-decoration:none;
+    transition:.2s ease;
 }
 
-button:hover{
-    background:#157347;
+button:hover,
+.btn:hover{
+    transform:translateY(-1px);
+    filter:brightness(.96);
 }
 
+button:active,
+.btn:active{
+    transform:translateY(0);
+}
+
+button:disabled{
+    opacity:.55;
+    cursor:not-allowed;
+}
+
+/* Button variants */
 .btn-blue{
     background:#0d6efd;
 }
@@ -116,29 +148,90 @@ button:hover{
     background:#6c757d;
 }
 
+.btn-outline{
+    background:#fff;
+    color:#14532d;
+    border:1px solid #cfe3d6;
+}
+
+/* Grid */
+.grid{
+    display:grid;
+    gap:16px;
+}
+
+.grid-2{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+}
+
+.grid-3{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+}
+
+.grid-4{
+    grid-template-columns:repeat(4,minmax(0,1fr));
+}
+
+/* Stats */
+.stat-card{
+    padding:22px;
+}
+
+.stat-title{
+    font-size:14px;
+    color:#777;
+    margin-bottom:8px;
+}
+
+.stat-num{
+    font-size:38px;
+    font-weight:900;
+    color:#14532d;
+    line-height:1;
+}
+
+/* Table */
+.table-wrap{
+    width:100%;
+    overflow:auto;
+    border-radius:18px;
+}
+
 table{
     width:100%;
+    min-width:860px;
     border-collapse:collapse;
     background:#fff;
-    border-radius:18px;
-    overflow:hidden;
 }
 
 th,td{
-    padding:14px;
-    border-bottom:1px solid #eee;
+    padding:14px 12px;
     text-align:left;
+    border-bottom:1px solid #eef1ef;
+    vertical-align:middle;
 }
 
 th{
-    background:#f8faf9;
+    background:#f7faf8;
+    color:#14532d;
+    font-size:14px;
+    font-weight:800;
+    position:sticky;
+    top:0;
 }
 
-.status{
+tr:hover td{
+    background:#fcfdfc;
+}
+
+/* Status pill */
+.status-pill{
+    display:inline-block;
     padding:6px 10px;
-    border-radius:50px;
+    border-radius:999px;
     font-size:13px;
-    font-weight:700;
+    font-weight:800;
+    white-space:nowrap;
 }
 
 .waiting{
@@ -161,41 +254,152 @@ th{
     color:#721c24;
 }
 
-.screen-number{
-    font-size:120px;
-    font-weight:900;
-    color:#14532d;
-    text-align:center;
-    line-height:1;
+/* Slot cards */
+.slot-card{
+    background:#fff;
+    border-radius:18px;
+    padding:16px;
+    margin-bottom:12px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    box-shadow:0 8px 20px rgba(0,0,0,.06);
 }
 
+.slot-time{
+    font-size:24px;
+    font-weight:900;
+    color:#14532d;
+}
+
+.slot-status{
+    font-size:16px;
+    font-weight:800;
+}
+
+/* Utility colors */
+.green{ color:#198754; }
+.red{ color:#dc3545; }
+.orange{ color:#fd7e14; }
+.blue{ color:#0d6efd; }
+
+/* Helpers */
 .center{
     text-align:center;
 }
 
-.footer{
-    margin-top:24px;
-    text-align:center;
-    color:#eee;
-    font-size:14px;
+.right{
+    text-align:right;
 }
 
-@media(max-width:768px){
+.mt-8{ margin-top:8px; }
+.mt-12{ margin-top:12px; }
+.mt-16{ margin-top:16px; }
+.mt-20{ margin-top:20px; }
+.mt-24{ margin-top:24px; }
 
-    .title{
-        font-size:28px;
+.mb-8{ margin-bottom:8px; }
+.mb-12{ margin-bottom:12px; }
+.mb-16{ margin-bottom:16px; }
+.mb-20{ margin-bottom:20px; }
+.mb-24{ margin-bottom:24px; }
+
+.hidden{
+    display:none !important;
+}
+
+/* Screen display helpers */
+.screen-number{
+    font-size:140px;
+    font-weight:900;
+    line-height:1;
+    letter-spacing:4px;
+}
+
+.blink{
+    animation:blink 1.2s infinite;
+}
+
+@keyframes blink{
+    0%{opacity:1;}
+    50%{opacity:.35;}
+    100%{opacity:1;}
+}
+
+/* Footer */
+.footer{
+    text-align:center;
+    color:#e9f2ed;
+    font-size:14px;
+    margin-top:18px;
+}
+
+/* Mobile */
+@media (max-width: 992px){
+
+    .grid-4{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+    }
+
+    .screen-number{
+        font-size:96px;
+    }
+}
+
+@media (max-width: 768px){
+
+    .container{
+        padding:16px;
+    }
+
+    .grid-2,
+    .grid-3,
+    .grid-4{
+        grid-template-columns:1fr;
+    }
+
+    .stat-num{
+        font-size:30px;
+    }
+
+    th,td{
+        padding:10px;
+        font-size:14px;
+    }
+
+    input,
+    select,
+    textarea{
+        font-size:16px; /* 防 iPhone 自動放大 */
+    }
+
+    button,
+    .btn{
+        width:100%;
     }
 
     .screen-number{
         font-size:72px;
     }
 
-    .container{
-        padding:16px;
+    .slot-time{
+        font-size:20px;
     }
 
-    th,td{
-        font-size:14px;
-        padding:10px;
+    .slot-status{
+        font-size:15px;
+    }
+}
+
+@media (max-width: 480px){
+
+    .badge{
+        font-size:12px;
+        padding:7px 12px;
+    }
+
+    .screen-number{
+        font-size:58px;
     }
 }
