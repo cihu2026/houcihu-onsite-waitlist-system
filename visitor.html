@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Houcihu 現場候補登記</title>
+<title>Houcihu 客人名單管理後台</title>
 <link rel="stylesheet" href="style.css">
 
 <style>
 body{
-  margin:0;
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft JhengHei",sans-serif;
+  margin:0;
   background:#eef3ef;
   color:#1f2d1f;
 }
@@ -17,72 +17,73 @@ header{
   background:linear-gradient(135deg,#1f5f35,#3e8b55);
   color:#fff;
   text-align:center;
-  padding:24px;
+  padding:22px;
 }
 .wrap{
-  max-width:1100px;
+  max-width:1300px;
   margin:auto;
   padding:20px;
 }
 .card{
   background:#fff;
-  border-radius:20px;
+  border-radius:18px;
   padding:22px;
   margin-bottom:18px;
   box-shadow:0 12px 28px rgba(0,0,0,.08);
 }
-.small{
-  font-size:15px;
-  color:#555;
-  line-height:1.7;
-}
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-  gap:16px;
-}
-.slot{
-  background:#fff;
-  border-radius:18px;
-  padding:18px;
-  box-shadow:0 8px 20px rgba(0,0,0,.06);
-}
-.slot h3{
-  margin:0 0 10px;
-}
-.status{
-  font-size:18px;
-  font-weight:700;
+.big{
+  font-size:72px;
+  font-weight:800;
+  text-align:center;
   color:#1f7a3f;
-  margin-bottom:12px;
 }
 button{
-  width:100%;
-  padding:14px;
+  padding:10px 14px;
   border:none;
-  border-radius:12px;
+  border-radius:10px;
   background:#1f7a3f;
   color:#fff;
-  font-size:16px;
   font-weight:700;
+  cursor:pointer;
+  transition: opacity 0.2s;
 }
+button:active{ opacity: 0.7; }
+button.gray{background:#888;}
+button.red{background:#d43c3c;}
+button.orange{background:#d98b00;}
 input,select{
   width:100%;
-  padding:12px;
+  padding:10px;
   border:1px solid #d7dfd7;
   border-radius:10px;
-  margin-top:10px;
-  font-size:16px;
+  box-sizing: border-box;
 }
-.success{
-  color:#1f7a3f;
-  font-weight:700;
-  font-size:18px;
+table{
+  width:100%;
+  border-collapse:collapse;
 }
-.tip{
-  font-size:14px;
-  color:#777;
-  margin-top:8px;
+th,td{
+  padding:12px;
+  border-bottom:1px solid #eee;
+  text-align:center;
+}
+th{
+  background:#f7faf7;
+}
+.grid2{
+  display:grid;
+  grid-template-columns:1fr 220px 220px;
+  gap:12px;
+}
+.tag-wait{color:#1f7a3f;font-weight:700;}
+.tag-call{color:#d98b00;font-weight:700;}
+.tag-done{color:#3a6ea5;font-weight:700;}
+.tag-cancel{color:#d43c3c;font-weight:700;}
+
+@media (max-width: 768px) {
+  .grid2 { grid-template-columns: 1fr; }
+  table { font-size: 14px; }
+  th, td { padding: 8px 4px; }
 }
 </style>
 </head>
@@ -90,75 +91,61 @@ input,select{
 <body>
 
 <header>
-<h1>現場候補登記</h1>
-<div>請先查看可遞補梯次</div>
+<h1>Houcihu 客人名單管理後台</h1>
+<div>客人名單｜叫號｜搜尋｜狀態管理</div>
 </header>
 
 <div class="wrap">
 
-<!-- 說明 -->
-<div class="card small">
-本系統為現場候補登記，依當日名額與現場狀況安排。<br>
-完成登記不代表保證入場，將依現場順序遞補。
-</div>
-
-<!-- 即時資訊 -->
 <div class="card">
-<div><strong>目前叫號：</strong><span class="current">A015</span></div>
-<div class="tip">請留意現場看板與工作人員引導</div>
+<h2>目前叫號</h2>
+<div class="big current" id="currentDisplay">A000</div>
+<div style="text-align:center;">
+    <button onclick="nextNo()" style="padding: 15px 40px; font-size: 20px;">下一號</button>
+</div>
 </div>
 
-<!-- 梯次區 -->
-<div class="grid" id="grid">
-
-<div class="slot">
-<h3>第3梯</h3>
-<div>09:45 入場</div>
-<div class="status">剩餘 6 位</div>
-<button onclick="pickSession('第3梯 09:45')">加入候補</button>
-</div>
-
-<div class="slot">
-<h3>第5梯</h3>
-<div>10:45 入場</div>
-<div class="status">剩餘 18 位</div>
-<button onclick="pickSession('第5梯 10:45')">加入候補</button>
-</div>
-
-<div class="slot">
-<h3>第7梯</h3>
-<div>12:45 入場</div>
-<div class="status">剩餘 8 位</div>
-<button onclick="pickSession('第7梯 12:45')">加入候補</button>
-</div>
-
-</div>
-
-<!-- 表單 -->
-<div class="card" id="form" style="display:none">
-<h2 id="pick"></h2>
-
-<input id="name" placeholder="姓名">
-<input id="phone" placeholder="電話">
-
-<select id="count">
-<option value="1">1 人</option>
-<option value="2">2 人</option>
-<option value="3">3 人</option>
-<option value="4">4 人</option>
-<option value="5">5 人</option>
+<div class="card">
+<h2>搜尋與篩選</h2>
+<div class="grid2">
+<input id="searchInput" placeholder="輸入姓名 / 電話 / 號碼" oninput="renderQueue()">
+<select id="filterSession" onchange="renderQueue()">
+<option value="">全部梯次</option>
+<option value="1">第1梯</option>
+<option value="3">第3梯</option>
+<option value="5">第5梯</option>
+<option value="7">第7梯</option>
 </select>
-
-<button onclick="reg()">確認加入候補</button>
-
-<div class="tip">
-送出後將取得候補號碼，請留意叫號。
+<select id="filterStatus" onchange="renderQueue()">
+<option value="">全部狀態</option>
+<option value="等待中">等待中</option>
+<option value="已叫號">已叫號</option>
+<option value="已到場">已到場</option>
+<option value="取消">取消</option>
+</select>
 </div>
+<br>
+<button onclick="renderQueue()" class="orange" style="width:100%">手動強制更新名單</button>
 </div>
 
-<!-- 結果 -->
-<div class="card" id="msg">
-<div class="success">尚未登記</div>
+<div class="card">
+<h2>客人預約 / 候補名單</h2>
+<div style="overflow-x: auto;">
+<table>
+<thead>
+<tr>
+<th>號碼</th>
+<th>姓名</th>
+<th>電話</th>
+<th>人數</th>
+<th>梯次</th>
+<th>狀態</th>
+<th>操作</th>
+</tr>
+</thead>
+<tbody id="queueBody"></tbody>
+</table>
+</div>
 </div>
 
 </div>
@@ -167,24 +154,107 @@ input,select{
 <script src="script.js"></script>
 
 <script>
-function pickSession(text){
-  document.getElementById("form").style.display="block";
-  document.getElementById("pick").innerText=text;
+// 初始化檢查
+if (typeof db === 'undefined') {
+    var db = { queue: [] };
 }
 
-function reg(){
-  const name=document.getElementById("name").value;
-  if(!name){
-    alert("請填寫姓名");
-    return;
-  }
+function renderQueue(){
+    let body = document.getElementById("queueBody");
+    if(!db || !db.queue){
+      body.innerHTML = "<tr><td colspan='7'>資料載入中...</td></tr>";
+      return;
+    }
 
-  document.getElementById("msg").innerHTML=
-  "<div class='success'>登記成功！</div>" +
-  "<div>您的候補號碼：A023</div>" +
-  "<div>目前叫號：A015</div>" +
-  "<div class='tip'>完成登記不代表保證入場，請留意現場叫號。</div>";
+    let keyword = document.getElementById("searchInput").value.trim().toLowerCase();
+    let session = document.getElementById("filterSession").value;
+    let status = document.getElementById("filterStatus").value;
+
+    // 重要修正：先 map 原始索引 originalIndex，防止 filter 後操作到錯誤對象
+    let filtered = db.queue.map((item, index) => ({...item, originalIndex: index}))
+    .filter(item => {
+        let ok = true;
+        if(keyword){
+            ok = (item.no || "").toLowerCase().includes(keyword) ||
+                 (item.name || "").toLowerCase().includes(keyword) ||
+                 (item.phone || "").includes(keyword);
+        }
+        if(session) ok = ok && item.session == session;
+        if(status) ok = ok && (item.status || "等待中") == status;
+        return ok;
+    });
+
+    let rows = filtered.map(item => `
+    <tr>
+        <td><strong>${item.no}</strong></td>
+        <td>${item.name||""}</td>
+        <td>${item.phone||""}</td>
+        <td>${item.count||1}</td>
+        <td>第${item.session}梯</td>
+        <td class="${getStatusClass(item.status)}">${item.status||"等待中"}</td>
+        <td>
+            <button onclick="setStatus(${item.originalIndex},'已叫號')">叫號</button>
+            <button class="gray" onclick="setStatus(${item.originalIndex},'已到場')">到場</button>
+            <button class="red" onclick="setStatus(${item.originalIndex},'取消')">取消</button>
+        </td>
+    </tr>
+    `).join("");
+
+    body.innerHTML = rows || "<tr><td colspan='7'>找不到符合條件的客人</td></tr>";
 }
+
+function getStatusClass(s){
+    if(s=="已叫號") return "tag-call";
+    if(s=="已到場") return "tag-done";
+    if(s=="取消") return "tag-cancel";
+    return "tag-wait";
+}
+
+// 實作下一號邏輯：尋找第一個狀態為「等待中」的客人
+async function nextNo() {
+    let nextGuest = db.queue.find(item => !item.status || item.status === "等待中");
+    if (nextGuest) {
+        let realIndex = db.queue.indexOf(nextGuest);
+        await setStatus(realIndex, '已叫號');
+    } else {
+        alert("目前已無等待中的客人");
+    }
+}
+
+async function setStatus(i, status){
+    if(!db.queue[i]) return;
+    
+    db.queue[i].status = status;
+    
+    // 如果是叫號，更新上方大標題
+    if(status === '已叫號') {
+        document.getElementById("currentDisplay").innerText = db.queue[i].no;
+    }
+
+    // 呼叫 sheets.js 的儲存功能
+    if (typeof save === "function") {
+        try {
+            await save();
+        } catch (e) {
+            console.error("儲存失敗", e);
+            alert("儲存至雲端失敗，請檢查網路連線");
+        }
+    }
+    renderQueue();
+}
+
+// 確保頁面載入後，若資料尚未從 Sheets 抓到，則稍後重試
+window.addEventListener("load",()=>{
+    let retryCount = 0;
+    let checkData = setInterval(() => {
+        if (db && db.queue && db.queue.length > 0) {
+            renderQueue();
+            clearInterval(checkData);
+        }
+        if (retryCount > 10) clearInterval(checkData); // 最多等 5 秒
+        retryCount++;
+    }, 500);
+});
 </script>
 
 </body>
