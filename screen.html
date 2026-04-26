@@ -1,43 +1,38 @@
-<!-- screen.html -->
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>後慈湖候補系統 v2</title>
+<title>後慈湖叫號看板</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body class="screen">
 
 <header class="topbar">
-  <h1>後慈湖 現場候補系統</h1>
-  <div class="sub">Houcihu Waitlist v2</div>
+<h1>後慈湖現場候補</h1>
 </header>
 
-<section class="now-box">
-  <div class="label">目前叫號</div>
-  <div id="currentNo" class="big-no">A000</div>
-</section>
+<div class="now-box">
+<div class="label">目前叫號</div>
+<div class="big-no" id="currentNo">A000</div>
+</div>
 
-<section class="next-box">
-  <div class="label">下一組</div>
-  <div id="nextNo" class="mid-no">A001</div>
-</section>
+<div class="next-box">
+<div class="label">下一組</div>
+<div class="mid-no" id="nextNo">---</div>
+</div>
 
-<section class="queue-box">
-  <div class="label">等待組數</div>
-  <div id="waitingCount" class="count">0</div>
-</section>
+<div class="queue-box">
+<div class="label">等待組數</div>
+<div class="count" id="waitingCount">0</div>
+</div>
 
-<section class="miss-box">
-  <div class="label">過號名單</div>
-  <div id="missedList">無</div>
-</section>
-
-<footer class="footer">
-  後慈湖遊客服務中心
-</footer>
+<div class="miss-box">
+<div class="label">過號名單</div>
+<div id="missedList">無</div>
+</div>
 
 <script src="script.js"></script>
+<script src="sheets.js"></script>
 </body>
 </html>
