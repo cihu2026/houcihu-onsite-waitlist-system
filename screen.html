@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>後慈湖現場補位系統｜叫號畫面</title>
+<title>後慈湖現場補位系統｜電視叫號畫面</title>
+
+<link rel="stylesheet" href="style.css">
 
 <style>
 *{
@@ -14,97 +16,68 @@
 
 body{
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft JhengHei",sans-serif;
-    background:linear-gradient(135deg,#0b3d2e,#146c43);
+    background:linear-gradient(135deg,#083b2d,#166944);
     min-height:100vh;
     color:#fff;
+    overflow:hidden;
+}
+
+.wrap{
+    width:100%;
+    height:100vh;
     display:flex;
+    flex-direction:column;
     justify-content:center;
     align-items:center;
-    padding:20px;
+    padding:30px;
 }
 
-.container{
-    width:100%;
-    max-width:900px;
-    text-align:center;
-}
-
-.badge{
-    display:inline-block;
-    background:rgba(255,255,255,.15);
-    padding:10px 18px;
+.top-badge{
+    background:rgba(255,255,255,.14);
+    padding:12px 24px;
     border-radius:50px;
-    font-size:18px;
-    margin-bottom:24px;
-}
-
-h1{
-    font-size:52px;
-    margin-bottom:14px;
-    letter-spacing:2px;
-}
-
-.sub{
     font-size:22px;
-    opacity:.9;
-    margin-bottom:40px;
-}
-
-.main-box{
-    background:#fff;
-    color:#14532d;
-    border-radius:28px;
-    padding:42px 20px;
-    box-shadow:0 20px 45px rgba(0,0,0,.18);
+    font-weight:700;
     margin-bottom:28px;
 }
 
-.label{
-    font-size:26px;
+.title{
+    font-size:64px;
+    font-weight:900;
+    letter-spacing:2px;
     margin-bottom:18px;
+    text-align:center;
 }
 
-.number{
-    font-size:130px;
+.sub{
+    font-size:28px;
+    opacity:.92;
+    margin-bottom:34px;
+    text-align:center;
+}
+
+.main-card{
+    width:100%;
+    max-width:1050px;
+    background:#fff;
+    color:#14532d;
+    border-radius:34px;
+    padding:48px 30px;
+    box-shadow:0 28px 60px rgba(0,0,0,.18);
+    text-align:center;
+}
+
+.main-label{
+    font-size:34px;
+    margin-bottom:18px;
+    font-weight:700;
+}
+
+.main-number{
+    font-size:180px;
     font-weight:900;
     line-height:1;
-}
-
-.info-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-    gap:18px;
-    margin-top:18px;
-}
-
-.card{
-    background:rgba(255,255,255,.12);
-    border-radius:22px;
-    padding:24px;
-}
-
-.card-title{
-    font-size:18px;
-    margin-bottom:10px;
-    opacity:.9;
-}
-
-.card-value{
-    font-size:42px;
-    font-weight:800;
-}
-
-.notice{
-    margin-top:30px;
-    font-size:22px;
-    line-height:1.8;
-    opacity:.95;
-}
-
-.footer{
-    margin-top:24px;
-    font-size:16px;
-    opacity:.75;
+    letter-spacing:4px;
 }
 
 .blink{
@@ -117,30 +90,87 @@ h1{
     100%{opacity:1;}
 }
 
+.grid{
+    width:100%;
+    max-width:1050px;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:20px;
+    margin-top:26px;
+}
+
+.info-card{
+    background:rgba(255,255,255,.12);
+    border-radius:26px;
+    padding:28px;
+    text-align:center;
+}
+
+.info-title{
+    font-size:24px;
+    margin-bottom:12px;
+    opacity:.95;
+}
+
+.info-value{
+    font-size:58px;
+    font-weight:900;
+}
+
+.notice{
+    margin-top:30px;
+    font-size:30px;
+    line-height:1.8;
+    text-align:center;
+    opacity:.96;
+}
+
+.footer{
+    position:fixed;
+    bottom:14px;
+    font-size:16px;
+    opacity:.7;
+}
+
+@media(max-width:1200px){
+
+    .title{
+        font-size:48px;
+    }
+
+    .main-number{
+        font-size:120px;
+    }
+
+    .info-value{
+        font-size:40px;
+    }
+
+    .notice{
+        font-size:22px;
+    }
+}
+
 @media(max-width:768px){
 
-    h1{
+    .grid{
+        grid-template-columns:1fr;
+    }
+
+    .title{
         font-size:34px;
     }
 
     .sub{
-        font-size:18px;
+        font-size:20px;
     }
 
-    .number{
-        font-size:82px;
+    .main-number{
+        font-size:84px;
     }
 
-    .label{
-        font-size:22px;
-    }
-
-    .card-value{
-        font-size:34px;
-    }
-
-    .notice{
-        font-size:18px;
+    .main-label{
+        font-size:24px;
     }
 }
 </style>
@@ -148,57 +178,112 @@ h1{
 
 <body>
 
-<div class="container">
+<div class="wrap">
 
-<div class="badge">現場補位叫號畫面</div>
+<div class="top-badge">
+現場補位叫號系統
+</div>
 
-<h1>後慈湖［現場］補位系統</h1>
+<div class="title">
+後慈湖［現場］補位系統
+</div>
 
-<p class="sub">
-請留意目前叫號資訊，依序至服務台辦理
-</p>
+<div class="sub">
+請依序至服務台辦理候補遞補
+</div>
 
-<div class="main-box">
+<!-- 主叫號 -->
+<div class="main-card">
 
-<div class="label">目前叫號</div>
+<div class="main-label">
+目前叫號
+</div>
 
-<div class="number blink" id="calledNumber">
+<div class="main-number blink" id="calledNumber">
 A001
 </div>
 
 </div>
 
-<div class="info-grid">
+<!-- 下方資訊 -->
+<div class="grid">
 
-<div class="card">
-<div class="card-title">下一位</div>
-<div class="card-value" id="nextNumber">A002</div>
+<div class="info-card">
+<div class="info-title">下一位</div>
+<div class="info-value" id="nextNumber">
+A002
+</div>
 </div>
 
-<div class="card">
-<div class="card-title">等待組數</div>
-<div class="card-value" id="waitingCount">08</div>
+<div class="info-card">
+<div class="info-title">等待組數</div>
+<div class="info-value" id="waitingCount">
+08
+</div>
 </div>
 
-<div class="card">
-<div class="card-title">剩餘名額</div>
-<div class="card-value" id="remainSeat">02</div>
+<div class="info-card">
+<div class="info-title">今日總登記</div>
+<div class="info-value" id="totalCount">
+12
+</div>
 </div>
 
 </div>
 
 <div class="notice">
-📢 請聽從現場工作人員指示<br>
+📢 請留意現場廣播與叫號資訊<br>
 過號將依現場規則重新安排
 </div>
 
 <div class="footer">
-Houcihu Onsite Waitlist System
+Houcihu Onsite Waitlist System Display
 </div>
 
 </div>
 
 <script src="script.js"></script>
+
+<script>
+// -----------------------------------
+// 更新總數
+// -----------------------------------
+function renderTotal(){
+
+    const list =
+    JSON.parse(
+        localStorage.getItem(
+            "houcihu_waitlist_data"
+        )
+    ) || [];
+
+    const box =
+    document.getElementById("totalCount");
+
+    if(box){
+        box.innerText = list.length;
+    }
+}
+
+// -----------------------------------
+// 自動刷新
+// -----------------------------------
+function autoRefresh(){
+
+    if(typeof renderScreen === "function"){
+        renderScreen();
+    }
+
+    renderTotal();
+}
+
+// 每3秒更新
+setInterval(autoRefresh,3000);
+
+// 首次載入
+setTimeout(autoRefresh,300);
+
+</script>
 
 </body>
 </html>
