@@ -1,154 +1,85 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>後慈湖現場補位系統</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>後慈湖［現場］補位系統</title>
+
+<link rel="stylesheet" href="style.css">
 
 <style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
 body{
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft JhengHei",sans-serif;
-    background:linear-gradient(135deg,#0f5132,#198754);
-    min-height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    padding:20px;
+    background:linear-gradient(135deg,#0b3d2e,#1f6d49);
 }
 
-.container{
-    width:100%;
-    max-width:520px;
+.hero{
     background:#fff;
-    border-radius:22px;
-    padding:32px;
-    box-shadow:0 18px 45px rgba(0,0,0,.18);
+    border-radius:26px;
+    padding:28px;
+    box-shadow:0 18px 40px rgba(0,0,0,.12);
 }
 
-.badge{
-    display:inline-block;
-    background:#e9f8ef;
-    color:#198754;
-    padding:6px 14px;
-    border-radius:50px;
-    font-size:14px;
-    font-weight:700;
-    margin-bottom:14px;
+.hero h1{
+    font-size:34px;
+    color:#14532d;
+    margin-bottom:10px;
 }
 
-h1{
-    font-size:32px;
-    color:#16351f;
-    margin-bottom:8px;
-}
-
-.sub{
+.hero p{
     color:#666;
-    line-height:1.7;
-    margin-bottom:24px;
+    line-height:1.8;
+    margin-bottom:18px;
 }
 
-.notice{
+.tip{
     background:#fff8e6;
-    color:#8a6200;
     border:1px solid #ffe08a;
+    color:#8a6200;
     padding:14px;
-    border-radius:14px;
-    margin-bottom:24px;
-    line-height:1.6;
-    font-size:15px;
+    border-radius:16px;
+    margin-bottom:18px;
+    line-height:1.7;
 }
+
+.slot-box{
+    margin-top:20px;
+}
+
+.slot-card{
+    background:#ffffff;
+    border-radius:18px;
+    padding:16px;
+    margin-bottom:12px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    box-shadow:0 8px 20px rgba(0,0,0,.06);
+}
+
+.slot-time{
+    font-size:24px;
+    font-weight:800;
+    color:#14532d;
+}
+
+.slot-status{
+    font-size:16px;
+    font-weight:800;
+}
+
+.green{color:#198754;}
+.red{color:#dc3545;}
+.orange{color:#fd7e14;}
 
 form{
-    display:flex;
-    flex-direction:column;
-    gap:16px;
-}
-
-label{
-    font-size:15px;
-    font-weight:700;
-    color:#333;
-    margin-bottom:6px;
-    display:block;
-}
-
-input,select{
-    width:100%;
-    padding:14px;
-    border:1px solid #d8d8d8;
-    border-radius:12px;
-    font-size:16px;
-}
-
-input:focus,select:focus{
-    outline:none;
-    border-color:#198754;
-}
-
-button{
-    margin-top:8px;
-    padding:16px;
-    border:none;
-    border-radius:14px;
-    background:#198754;
-    color:#fff;
-    font-size:18px;
-    font-weight:700;
-    cursor:pointer;
-    transition:.2s;
-}
-
-button:hover{
-    background:#157347;
-}
-
-.footer{
     margin-top:22px;
+}
+
+.footer-note{
     text-align:center;
-    color:#777;
+    color:#eee;
+    margin-top:22px;
     font-size:14px;
-    line-height:1.7;
-}
-
-.status{
-    margin-top:20px;
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:12px;
-}
-
-.card{
-    background:#f8f9fa;
-    padding:16px;
-    border-radius:14px;
-    text-align:center;
-}
-
-.card .num{
-    font-size:28px;
-    font-weight:800;
-    color:#198754;
-}
-
-.card .txt{
-    color:#666;
-    font-size:14px;
-}
-
-@media(max-width:600px){
-    .container{
-        padding:24px;
-    }
-    h1{
-        font-size:28px;
-    }
 }
 </style>
 </head>
@@ -157,73 +88,180 @@ button:hover{
 
 <div class="container">
 
+<div class="hero">
+
 <div class="badge">現場候補入口</div>
 
 <h1>後慈湖［現場］補位系統</h1>
 
-<p class="sub">
-熱門梯次額滿時，可於現場登記候補。<br>
-系統將依登記順序遞補，並即時叫號。
+<p>
+若官方預約額滿，可於現場登記候補。<br>
+系統將依登記順序遞補並即時叫號。
 </p>
 
-<div class="notice">
-📢 請於現場等候叫號，過號將視情況重新安排。
+<div class="tip">
+📢 請先查看官方梯次狀況，再選擇候補梯次。
 </div>
 
-<form>
-
-<div>
-<label>姓名</label>
-<input type="text" placeholder="請輸入姓名">
+<!-- 官方梯次資料 -->
+<div id="slotArea" class="slot-box">
+讀取官方梯次資訊中...
 </div>
 
-<div>
-<label>手機號碼</label>
-<input type="tel" placeholder="請輸入手機號碼">
-</div>
+<!-- 報名表單 -->
+<form id="queueForm">
 
-<div>
-<label>人數</label>
-<select>
-<option>1 人</option>
-<option>2 人</option>
-<option>3 人</option>
-<option>4 人</option>
+<input
+type="text"
+id="name"
+placeholder="請輸入姓名"
+required>
+
+<input
+type="tel"
+id="phone"
+placeholder="請輸入手機號碼"
+required>
+
+<select id="people">
+<option value="1">1 人</option>
+<option value="2">2 人</option>
+<option value="3">3 人</option>
+<option value="4">4 人</option>
 </select>
-</div>
 
-<div>
-<label>候補梯次</label>
-<select>
-<option>09:30</option>
-<option>10:00</option>
-<option>10:30</option>
-<option>11:00</option>
+<select id="slot">
+<option value="09:30">09:30 梯次</option>
+<option value="10:00">10:00 梯次</option>
+<option value="10:30">10:30 梯次</option>
+<option value="11:00">11:00 梯次</option>
 </select>
-</div>
 
-<button type="submit">立即候補登記</button>
+<button type="submit">
+立即候補登記
+</button>
 
 </form>
 
-<div class="status">
-<div class="card">
-<div class="num">08</div>
-<div class="txt">目前候補組數</div>
 </div>
 
-<div class="card">
-<div class="num">2</div>
-<div class="txt">本梯次剩餘名額</div>
-</div>
-</div>
-
-<div class="footer">
-後慈湖現場補位系統<br>
-請依現場人員指示辦理
+<div class="footer-note">
+Houcihu Onsite Waitlist System
 </div>
 
 </div>
+
+<script src="script.js"></script>
+
+<script>
+// ============================
+// 官方梯次資料抓取
+// ============================
+
+const officialUrl =
+"https://backcihu.tycg.gov.tw/select-day.aspx?d=DA08FE4346271B109515C1431C448B2874BF30BBC3BD489450D0806F1AF9C9D31B4A88E59D76FB4E";
+
+async function loadOfficialSlots(){
+
+    const area = document.getElementById("slotArea");
+
+    try{
+
+        const res = await fetch(officialUrl);
+        const html = await res.text();
+
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html,"text/html");
+
+        const text = doc.body.innerText;
+
+        const slots = parseSlots(text);
+
+        if(slots.length === 0){
+            area.innerHTML = "目前無法取得官方資料";
+            return;
+        }
+
+        renderSlots(slots);
+
+    }catch(e){
+
+        area.innerHTML =
+        "⚠ 無法直接抓取官方網站（可能跨站限制）";
+
+    }
+}
+
+// ============================
+// 解析文字
+// ============================
+function parseSlots(text){
+
+    const lines =
+    text.split("\n")
+    .map(v => v.trim())
+    .filter(v => v);
+
+    const result = [];
+
+    lines.forEach(line => {
+
+        const m =
+        line.match(/(\d{2}:\d{2}).*(尚餘\s*\d+\s*名|額滿|尚可報名|可報名)/);
+
+        if(m){
+
+            result.push({
+                time:m[1],
+                status:m[2]
+            });
+
+        }
+
+    });
+
+    return result;
+}
+
+// ============================
+// 顯示卡片
+// ============================
+function renderSlots(slots){
+
+    const area =
+    document.getElementById("slotArea");
+
+    let html = "";
+
+    slots.forEach(item => {
+
+        let cls = "green";
+
+        if(item.status.includes("額滿")) cls = "red";
+        if(item.status.includes("尚餘")) cls = "orange";
+
+        html += `
+        <div class="slot-card">
+
+            <div class="slot-time">
+                ${item.time}
+            </div>
+
+            <div class="slot-status ${cls}">
+                ${item.status}
+            </div>
+
+        </div>
+        `;
+    });
+
+    area.innerHTML = html;
+}
+
+// 啟動
+loadOfficialSlots();
+
+</script>
 
 </body>
 </html>
