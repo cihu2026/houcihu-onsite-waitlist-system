@@ -1,1 +1,1 @@
-# Houcihu Official v5 Pro\n客人登記、管理後台、手機版、看板、公務團模式、報表。
+# Houcihu Smart Operation v7\n智慧模式、儀表板、後台、手機版、看板。
