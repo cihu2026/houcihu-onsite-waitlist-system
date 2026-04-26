@@ -1,17 +1,6 @@
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft JhengHei",sans-serif;margin:0;background:#eef3ef;color:#1f2d1f}
-header{padding:28px 18px;text-align:center;background:linear-gradient(135deg,#1f5f35,#3e8b55);color:#fff}
-header h1{margin:0;font-size:30px;font-weight:700}
-header p{opacity:.9;margin:8px 0 0}
-.wrap{max-width:980px;margin:auto;padding:20px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
-.card{background:#fff;border-radius:22px;padding:22px;box-shadow:0 12px 30px rgba(0,0,0,.08)}
-.slot{padding:18px;border-radius:20px;border:1px solid #e8ece8}
-.slot h3{margin:0 0 8px;font-size:24px}
-.time{color:#666;margin-bottom:12px}
-.status{font-size:18px;font-weight:700;margin-bottom:12px}
-.open .status{color:#1f7a3f}.full .status{color:#999}.wait .status{color:#3a6ea5}
-button{width:100%;padding:14px;border:none;border-radius:14px;background:#1f7a3f;color:#fff;font-size:16px;font-weight:700}
-button.gray{background:#cfd6cf;color:#666}
-input,select{width:100%;padding:14px;border:1px solid #d9e1d9;border-radius:14px;margin:8px 0;font-size:16px}
-.hidden{display:none}.msg{font-size:18px;font-weight:700;color:#1f7a3f;text-align:center}.big{font-size:78px;text-align:center;font-weight:800;color:#1f7a3f}
-@media(max-width:768px){header h1{font-size:24px}.big{font-size:56px}}
+header{padding:24px;text-align:center;background:linear-gradient(135deg,#1f5f35,#3e8b55);color:#fff}
+.wrap{max-width:1100px;margin:auto;padding:20px}.card{background:#fff;border-radius:20px;padding:22px;margin:18px 0;box-shadow:0 12px 30px rgba(0,0,0,.08)}
+table{width:100%;border-collapse:collapse}td,th{padding:12px;border-bottom:1px solid #eee;text-align:center}
+input,button{padding:12px;border-radius:12px;border:1px solid #d7dfd7;font-size:16px}
+button{background:#1f7a3f;color:#fff;border:none}.big{font-size:64px;font-weight:800;color:#1f7a3f}

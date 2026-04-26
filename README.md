@@ -1,1 +1,1 @@
-# Premium UI\n高級版 UI，美化 visitor 與看板。
+# 打字版 ZIP\n後台可直接輸入數字修改每梯次名額，按 Enter 儲存。
