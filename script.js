@@ -1,143 +1,453 @@
-// ===============================
-// 後慈湖官方頁抓梯次名額完整版
-// 可直接貼到 script.js
-// GitHub Pages / 純前端版
-// ===============================
+// ======================================
+// 後慈湖現場補位系統 完整版 script.js
+// 適用：index.html / admin.html / screen.html
+// 純前端 GitHub Pages 版
+// localStorage 儲存
+// ======================================
 
-// 官方頁網址（請自行替換最新網址）
+// ------------------------------
+// 基本設定
+// ------------------------------
+const STORAGE_KEY = "houcihu_waitlist_data";
+const CALLED_KEY = "houcihu_called_data";
+
+// 官方網址（如失效可自行更換）
 const officialUrl =
 "https://backcihu.tycg.gov.tw/select-day.aspx?d=DA08FE4346271B109515C1431C448B2874BF30BBC3BD489450D0806F1AF9C9D31B4A88E59D76FB4E";
 
-// 畫面顯示區（index.html 需有 <div id="slotArea"></div>）
-const slotArea = document.getElementById("slotArea");
+// ------------------------------
+// 讀取 / 儲存
+// ------------------------------
+function getList(){
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+}
 
-// ----------------------------
-// 主程式
-// ----------------------------
+function saveList(list){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+}
+
+function getCalled(){
+    return JSON.parse(localStorage.getItem(CALLED_KEY)) || null;
+}
+
+function saveCalled(data){
+    localStorage.setItem(CALLED_KEY, JSON.stringify(data));
+}
+
+// ------------------------------
+// 產生號碼
+// ------------------------------
+function generateNumber(){
+
+    let list = getList();
+    let next = list.length + 1;
+
+    return "A" + String(next).padStart(3,"0");
+}
+
+// ------------------------------
+// 報名功能（index.html）
+// ------------------------------
+function initForm(){
+
+    const form = document.getElementById("queueForm");
+
+    if(!form) return;
+
+    form.addEventListener("submit", function(e){
+
+        e.preventDefault();
+
+        const name =
+        document.getElementById("name").value.trim();
+
+        const phone =
+        document.getElementById("phone").value.trim();
+
+        const people =
+        document.getElementById("people").value;
+
+        const slot =
+        document.getElementById("slot").value;
+
+        if(name === ""){
+            alert("請輸入姓名");
+            return;
+        }
+
+        let list = getList();
+
+        const item = {
+            id: Date.now(),
+            number: generateNumber(),
+            name: name,
+            phone: phone,
+            people: people,
+            slot: slot,
+            status: "waiting",
+            time: nowTime()
+        };
+
+        list.push(item);
+
+        saveList(list);
+
+        alert(
+            "候補成功！\n" +
+            "您的號碼：" + item.number
+        );
+
+        form.reset();
+
+    });
+}
+
+// ------------------------------
+// 現在時間
+// ------------------------------
+function nowTime(){
+
+    const d = new Date();
+
+    return d.getHours().toString().padStart(2,"0")
+    + ":" +
+    d.getMinutes().toString().padStart(2,"0");
+}
+
+// ------------------------------
+// 管理後台（admin.html）
+// ------------------------------
+function renderAdmin(){
+
+    const tbody =
+    document.getElementById("queueTable");
+
+    if(!tbody) return;
+
+    let list = getList();
+
+    tbody.innerHTML = "";
+
+    if(list.length === 0){
+
+        tbody.innerHTML =
+        `<tr><td colspan="8">目前無候補資料</td></tr>`;
+
+        return;
+    }
+
+    list.forEach((item,index)=>{
+
+        tbody.innerHTML += `
+        <tr>
+            <td>${item.number}</td>
+            <td>${item.name}</td>
+            <td>${maskPhone(item.phone)}</td>
+            <td>${item.people}</td>
+            <td>${item.slot}</td>
+            <td>${item.time}</td>
+            <td>${statusText(item.status)}</td>
+            <td>
+                <button onclick="callQueue(${index})">叫號</button>
+                <button onclick="doneQueue(${index})">完成</button>
+                <button onclick="removeQueue(${index})">取消</button>
+            </td>
+        </tr>
+        `;
+    });
+
+    renderStats();
+}
+
+// ------------------------------
+// 電話遮罩
+// ------------------------------
+function maskPhone(phone){
+
+    if(phone.length < 4) return phone;
+
+    return phone.substring(0,4) + "****";
+}
+
+// ------------------------------
+// 狀態文字
+// ------------------------------
+function statusText(status){
+
+    if(status === "waiting") return "等待中";
+    if(status === "called") return "已叫號";
+    if(status === "done") return "已完成";
+    if(status === "cancel") return "已取消";
+
+    return status;
+}
+
+// ------------------------------
+// 叫號
+// ------------------------------
+function callQueue(index){
+
+    let list = getList();
+
+    list[index].status = "called";
+
+    saveList(list);
+    saveCalled(list[index]);
+
+    renderAdmin();
+    renderScreen();
+}
+
+// ------------------------------
+// 完成
+// ------------------------------
+function doneQueue(index){
+
+    let list = getList();
+
+    list[index].status = "done";
+
+    saveList(list);
+
+    renderAdmin();
+}
+
+// ------------------------------
+// 取消
+// ------------------------------
+function removeQueue(index){
+
+    let list = getList();
+
+    list[index].status = "cancel";
+
+    saveList(list);
+
+    renderAdmin();
+}
+
+// ------------------------------
+// 自動叫下一位
+// ------------------------------
+function callNext(){
+
+    let list = getList();
+
+    const index =
+    list.findIndex(item =>
+        item.status === "waiting"
+    );
+
+    if(index === -1){
+        alert("沒有等待名單");
+        return;
+    }
+
+    callQueue(index);
+}
+
+// ------------------------------
+// 統計資料
+// ------------------------------
+function renderStats(){
+
+    const list = getList();
+
+    const waiting =
+    list.filter(v=>v.status==="waiting").length;
+
+    const done =
+    list.filter(v=>v.status==="done").length;
+
+    const total = list.length;
+
+    setText("waitingCount", waiting);
+    setText("doneCount", done);
+    setText("totalCount", total);
+}
+
+// ------------------------------
+// 叫號畫面（screen.html）
+// ------------------------------
+function renderScreen(){
+
+    const calledBox =
+    document.getElementById("calledNumber");
+
+    if(!calledBox) return;
+
+    const data = getCalled();
+
+    if(data){
+        calledBox.innerText = data.number;
+    }else{
+        calledBox.innerText = "--";
+    }
+
+    const list = getList();
+
+    const next =
+    list.find(v=>v.status==="waiting");
+
+    setText("nextNumber",
+        next ? next.number : "--"
+    );
+
+    const waiting =
+    list.filter(v=>v.status==="waiting").length;
+
+    setText("waitingCount", waiting);
+}
+
+// ------------------------------
+// 共用文字更新
+// ------------------------------
+function setText(id,value){
+
+    const el = document.getElementById(id);
+
+    if(el){
+        el.innerText = value;
+    }
+}
+
+// ------------------------------
+// 清空資料
+// ------------------------------
+function clearAll(){
+
+    if(!confirm("確定清空全部資料？")) return;
+
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(CALLED_KEY);
+
+    renderAdmin();
+    renderScreen();
+}
+
+// ------------------------------
+// 官方梯次資料抓取
+// ------------------------------
 async function loadOfficialSlots(){
 
-    if(!slotArea) return;
+    const area =
+    document.getElementById("slotArea");
 
-    slotArea.innerHTML = "讀取官方梯次資料中...";
+    if(!area) return;
+
+    area.innerHTML = "讀取官方梯次資料中...";
 
     try{
 
-        const res = await fetch(officialUrl);
-        const html = await res.text();
+        const res =
+        await fetch(officialUrl);
 
-        // 解析 HTML
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html,"text/html");
+        const html =
+        await res.text();
 
-        // 取整頁文字
-        const text = doc.body.innerText;
+        const parser =
+        new DOMParser();
 
-        // 找出梯次資料
-        const slots = parseSlots(text);
+        const doc =
+        parser.parseFromString(
+            html,"text/html"
+        );
+
+        const text =
+        doc.body.innerText;
+
+        const slots =
+        parseSlots(text);
 
         if(slots.length === 0){
-            slotArea.innerHTML = "目前無法取得梯次資料";
+
+            area.innerHTML =
+            "目前無法取得官方資料";
+
             return;
         }
 
         renderSlots(slots);
 
-    }catch(err){
+    }catch(e){
 
-        console.log(err);
-
-        slotArea.innerHTML =
-        "無法直接抓取官方網站（可能被 CORS 限制）";
-
+        area.innerHTML =
+        "⚠ 無法直接抓取官方網站（可能跨站限制）";
     }
-
 }
 
-// ----------------------------
-// 解析文字中的梯次資訊
-// 範例：09:30 尚餘3名
-//       10:00 額滿
-// ----------------------------
+// ------------------------------
+// 梯次解析
+// ------------------------------
 function parseSlots(text){
 
-    const lines = text.split("\n").map(v => v.trim()).filter(v => v);
+    const lines =
+    text.split("\n")
+    .map(v=>v.trim())
+    .filter(v=>v);
 
-    const result = [];
+    let result = [];
 
-    lines.forEach(line => {
+    lines.forEach(line=>{
 
-        const match = line.match(/(\d{2}:\d{2}).*(尚餘\s*\d+\s*名|額滿|尚可報名|可報名)/);
+        const m =
+        line.match(/(\d{2}:\d{2}).*(尚餘\s*\d+\s*名|額滿|可報名|尚可報名)/);
 
-        if(match){
+        if(m){
 
             result.push({
-                time: match[1],
-                status: match[2]
+                time:m[1],
+                status:m[2]
             });
-
         }
-
     });
 
     return result;
 }
 
-// ----------------------------
-// 顯示卡片
-// ----------------------------
+// ------------------------------
+// 梯次畫面
+// ------------------------------
 function renderSlots(slots){
 
-    let html = `
-    <div style="
-        font-size:28px;
-        font-weight:800;
-        color:#14532d;
-        margin-bottom:16px;">
-        官方梯次資訊
-    </div>
-    `;
+    const area =
+    document.getElementById("slotArea");
 
-    slots.forEach(item => {
+    let html = "";
+
+    slots.forEach(item=>{
 
         let color = "#198754";
 
-        if(item.status.includes("額滿")) color = "#dc3545";
-        if(item.status.includes("尚餘")) color = "#fd7e14";
+        if(item.status.includes("額滿"))
+            color = "#dc3545";
+
+        if(item.status.includes("尚餘"))
+            color = "#fd7e14";
 
         html += `
-        <div style="
-            background:#fff;
-            border-radius:18px;
-            padding:18px;
-            margin-bottom:14px;
-            box-shadow:0 8px 20px rgba(0,0,0,.08);
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-        ">
-
-            <div style="
-                font-size:24px;
-                font-weight:800;
-                color:#14532d;">
+        <div class="slot-card">
+            <div class="slot-time">
                 ${item.time}
             </div>
-
-            <div style="
-                font-size:18px;
-                font-weight:700;
-                color:${color};">
+            <div class="slot-status"
+            style="color:${color}">
                 ${item.status}
             </div>
-
         </div>
         `;
     });
 
-    slotArea.innerHTML = html;
+    area.innerHTML = html;
 }
 
-// ----------------------------
+// ------------------------------
 // 啟動
-// ----------------------------
+// ------------------------------
+initForm();
+renderAdmin();
+renderScreen();
 loadOfficialSlots();
+
+// screen 每5秒更新
+setInterval(renderScreen,5000);
