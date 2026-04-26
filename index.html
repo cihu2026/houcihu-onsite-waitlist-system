@@ -4,12 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>後慈湖［現場］補位系統</title>
-
 <link rel="stylesheet" href="style.css">
 
 <style>
 body{
-    background:linear-gradient(135deg,#0b3d2e,#1f6d49);
+    background:linear-gradient(135deg,#0b3d2e,#1e6a47);
 }
 
 .hero{
@@ -41,12 +40,18 @@ body{
     line-height:1.7;
 }
 
-.slot-box{
-    margin-top:20px;
+.info{
+    background:#eef8f1;
+    border:1px solid #d7efdf;
+    color:#14532d;
+    padding:14px;
+    border-radius:16px;
+    margin-bottom:18px;
+    line-height:1.7;
 }
 
 .slot-card{
-    background:#ffffff;
+    background:#fff;
     border-radius:18px;
     padding:16px;
     margin-bottom:12px;
@@ -67,18 +72,10 @@ body{
     font-weight:800;
 }
 
-.green{color:#198754;}
-.red{color:#dc3545;}
-.orange{color:#fd7e14;}
-
-form{
-    margin-top:22px;
-}
-
 .footer-note{
     text-align:center;
     color:#eee;
-    margin-top:22px;
+    margin-top:20px;
     font-size:14px;
 }
 </style>
@@ -95,16 +92,20 @@ form{
 <h1>後慈湖［現場］補位系統</h1>
 
 <p>
-若官方預約額滿，可於現場登記候補。<br>
+官方網路預約額滿時，可於現場登記候補。<br>
 系統將依登記順序遞補並即時叫號。
 </p>
 
-<div class="tip">
-📢 請先查看官方梯次狀況，再選擇候補梯次。
+<div class="tip" id="tipBox">
+請先查看梯次資訊，再進行候補登記。
 </div>
 
-<!-- 官方梯次資料 -->
-<div id="slotArea" class="slot-box">
+<div class="info" id="queryInfo">
+讀取網址參數中...
+</div>
+
+<!-- 官方梯次 -->
+<div id="slotArea">
 讀取官方梯次資訊中...
 </div>
 
@@ -154,112 +155,116 @@ Houcihu Onsite Waitlist System
 <script src="script.js"></script>
 
 <script>
-// ============================
-// 官方梯次資料抓取
-// ============================
+// ==================================
+// 讀網址參數
+// ==================================
+const params =
+new URLSearchParams(window.location.search);
 
-const officialUrl =
-"https://backcihu.tycg.gov.tw/select-day.aspx?d=DA08FE4346271B109515C1431C448B2874BF30BBC3BD489450D0806F1AF9C9D31B4A88E59D76FB4E";
+const slot =
+params.get("slot");
 
-async function loadOfficialSlots(){
+const status =
+params.get("status");
 
-    const area = document.getElementById("slotArea");
+const remain =
+params.get("remain");
 
-    try{
+// ==================================
+// 顯示網址資訊
+// ==================================
+function showQueryInfo(){
 
-        const res = await fetch(officialUrl);
-        const html = await res.text();
+    const box =
+    document.getElementById("queryInfo");
 
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html,"text/html");
+    const tip =
+    document.getElementById("tipBox");
 
-        const text = doc.body.innerText;
+    let html = "";
 
-        const slots = parseSlots(text);
+    if(slot){
 
-        if(slots.length === 0){
-            area.innerHTML = "目前無法取得官方資料";
-            return;
+        html += "指定梯次：" + slot + "<br>";
+
+        const select =
+        document.getElementById("slot");
+
+        if(select){
+            select.value = slot;
         }
-
-        renderSlots(slots);
-
-    }catch(e){
-
-        area.innerHTML =
-        "⚠ 無法直接抓取官方網站（可能跨站限制）";
-
     }
-}
 
-// ============================
-// 解析文字
-// ============================
-function parseSlots(text){
+    if(status){
 
-    const lines =
-    text.split("\n")
-    .map(v => v.trim())
-    .filter(v => v);
+        html += "狀態：" + status + "<br>";
 
-    const result = [];
+        if(status === "full"){
 
-    lines.forEach(line => {
-
-        const m =
-        line.match(/(\d{2}:\d{2}).*(尚餘\s*\d+\s*名|額滿|尚可報名|可報名)/);
-
-        if(m){
-
-            result.push({
-                time:m[1],
-                status:m[2]
-            });
-
+            tip.innerHTML =
+            "📢 " + slot +
+            " 梯次已額滿，可登記現場候補。";
         }
+    }
 
-    });
+    if(remain){
 
-    return result;
+        html += "剩餘名額：" + remain + "<br>";
+
+        tip.innerHTML =
+        "📢 " + slot +
+        " 梯次官方剩餘 " +
+        remain +
+        " 名。";
+    }
+
+    if(html === ""){
+        html = "目前未指定梯次參數";
+    }
+
+    box.innerHTML = html;
 }
 
-// ============================
-// 顯示卡片
-// ============================
-function renderSlots(slots){
+// ==================================
+// 官方梯次資料（假資料版）
+// 若 script.js 有抓官方資料會覆蓋
+// ==================================
+function fallbackSlots(){
 
     const area =
     document.getElementById("slotArea");
 
-    let html = "";
+    if(area.innerHTML.includes("slot-card")) return;
 
-    slots.forEach(item => {
-
-        let cls = "green";
-
-        if(item.status.includes("額滿")) cls = "red";
-        if(item.status.includes("尚餘")) cls = "orange";
-
-        html += `
-        <div class="slot-card">
-
-            <div class="slot-time">
-                ${item.time}
-            </div>
-
-            <div class="slot-status ${cls}">
-                ${item.status}
-            </div>
-
+    area.innerHTML = `
+    <div class="slot-card">
+        <div class="slot-time">09:30</div>
+        <div class="slot-status" style="color:#fd7e14">
+        尚餘 3 名
         </div>
-        `;
-    });
+    </div>
 
-    area.innerHTML = html;
+    <div class="slot-card">
+        <div class="slot-time">10:00</div>
+        <div class="slot-status" style="color:#dc3545">
+        額滿
+        </div>
+    </div>
+
+    <div class="slot-card">
+        <div class="slot-time">10:30</div>
+        <div class="slot-status" style="color:#198754">
+        可報名
+        </div>
+    </div>
+    `;
 }
 
 // 啟動
-loadOfficialSlots();
+showQueryInfo();
+
+// 2秒後若官方沒抓到資料則顯示備援
+setTimeout(fallbackSlots,2000);
 
 </script>
 
