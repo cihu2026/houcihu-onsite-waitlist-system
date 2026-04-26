@@ -1,23 +1,21 @@
-// ======================================
-// 後慈湖現場補位系統 完整版 script.js
+// =====================================================
+// 後慈湖現場補位系統 script.js v2 完整版
 // 適用：index.html / admin.html / screen.html
-// 純前端 GitHub Pages 版
-// localStorage 儲存
-// ======================================
+// GitHub Pages 純前端版
+// =====================================================
 
-// ------------------------------
+// -------------------------
 // 基本設定
-// ------------------------------
-const STORAGE_KEY = "houcihu_waitlist_data";
-const CALLED_KEY = "houcihu_called_data";
+// -------------------------
+const STORAGE_KEY = "houcihu_waitlist_data_v2";
+const CALLED_KEY  = "houcihu_called_data_v2";
 
-// 官方網址（如失效可自行更換）
 const officialUrl =
 "https://backcihu.tycg.gov.tw/select-day.aspx?d=DA08FE4346271B109515C1431C448B2874BF30BBC3BD489450D0806F1AF9C9D31B4A88E59D76FB4E";
 
-// ------------------------------
-// 讀取 / 儲存
-// ------------------------------
+// -------------------------
+// 共用資料
+// -------------------------
 function getList(){
     return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
 }
@@ -30,31 +28,57 @@ function getCalled(){
     return JSON.parse(localStorage.getItem(CALLED_KEY)) || null;
 }
 
-function saveCalled(data){
-    localStorage.setItem(CALLED_KEY, JSON.stringify(data));
+function saveCalled(item){
+    localStorage.setItem(CALLED_KEY, JSON.stringify(item));
 }
 
-// ------------------------------
-// 產生號碼
-// ------------------------------
-function generateNumber(){
+// -------------------------
+// 工具
+// -------------------------
+function nowTime(){
+    const d = new Date();
 
-    let list = getList();
-    let next = list.length + 1;
-
-    return "A" + String(next).padStart(3,"0");
+    return d.getHours().toString().padStart(2,"0")
+    + ":" +
+    d.getMinutes().toString().padStart(2,"0");
 }
 
-// ------------------------------
-// 報名功能（index.html）
-// ------------------------------
+function nextNumber(){
+
+    const list = getList();
+
+    const max = list.length + 1;
+
+    return "A" + String(max).padStart(3,"0");
+}
+
+function setText(id,val){
+
+    const el = document.getElementById(id);
+
+    if(el) el.innerText = val;
+}
+
+function maskPhone(phone){
+
+    if(!phone) return "";
+
+    if(phone.length <= 4) return phone;
+
+    return phone.substring(0,4) + "****";
+}
+
+// -------------------------
+// 報名功能（index）
+// -------------------------
 function initForm(){
 
-    const form = document.getElementById("queueForm");
+    const form =
+    document.getElementById("queueForm");
 
     if(!form) return;
 
-    form.addEventListener("submit", function(e){
+    form.addEventListener("submit",function(e){
 
         e.preventDefault();
 
@@ -79,13 +103,13 @@ function initForm(){
 
         const item = {
             id: Date.now(),
-            number: generateNumber(),
-            name: name,
-            phone: phone,
-            people: people,
-            slot: slot,
-            status: "waiting",
-            time: nowTime()
+            number: nextNumber(),
+            name,
+            phone,
+            people,
+            slot,
+            time: nowTime(),
+            status: "waiting"
         };
 
         list.push(item);
@@ -94,29 +118,16 @@ function initForm(){
 
         alert(
             "候補成功！\n" +
-            "您的號碼：" + item.number
+            "號碼：" + item.number
         );
 
         form.reset();
-
     });
 }
 
-// ------------------------------
-// 現在時間
-// ------------------------------
-function nowTime(){
-
-    const d = new Date();
-
-    return d.getHours().toString().padStart(2,"0")
-    + ":" +
-    d.getMinutes().toString().padStart(2,"0");
-}
-
-// ------------------------------
-// 管理後台（admin.html）
-// ------------------------------
+// -------------------------
+// Admin 後台
+// -------------------------
 function renderAdmin(){
 
     const tbody =
@@ -124,19 +135,42 @@ function renderAdmin(){
 
     if(!tbody) return;
 
+    const filterSlot =
+    document.getElementById("filterSlot")?.value || "";
+
+    const keyword =
+    document.getElementById("searchInput")?.value.trim() || "";
+
     let list = getList();
+
+    // 篩梯次
+    if(filterSlot){
+        list = list.filter(v=>v.slot===filterSlot);
+    }
+
+    // 搜尋
+    if(keyword){
+        list = list.filter(v =>
+            v.name.includes(keyword) ||
+            v.number.includes(keyword)
+        );
+    }
 
     tbody.innerHTML = "";
 
     if(list.length === 0){
 
         tbody.innerHTML =
-        `<tr><td colspan="8">目前無候補資料</td></tr>`;
+        `<tr><td colspan="8">查無資料</td></tr>`;
 
+        renderStats();
         return;
     }
 
-    list.forEach((item,index)=>{
+    list.forEach(item=>{
+
+        const realIndex =
+        getList().findIndex(v=>v.id===item.id);
 
         tbody.innerHTML += `
         <tr>
@@ -146,11 +180,22 @@ function renderAdmin(){
             <td>${item.people}</td>
             <td>${item.slot}</td>
             <td>${item.time}</td>
-            <td>${statusText(item.status)}</td>
+            <td>${statusBadge(item.status)}</td>
             <td>
-                <button onclick="callQueue(${index})">叫號</button>
-                <button onclick="doneQueue(${index})">完成</button>
-                <button onclick="removeQueue(${index})">取消</button>
+                <button class="mini-btn"
+                onclick="callQueue(${realIndex})">
+                叫號
+                </button>
+
+                <button class="mini-btn btn-blue"
+                onclick="doneQueue(${realIndex})">
+                完成
+                </button>
+
+                <button class="mini-btn btn-red"
+                onclick="cancelQueue(${realIndex})">
+                取消
+                </button>
             </td>
         </tr>
         `;
@@ -159,32 +204,27 @@ function renderAdmin(){
     renderStats();
 }
 
-// ------------------------------
-// 電話遮罩
-// ------------------------------
-function maskPhone(phone){
+function statusBadge(status){
 
-    if(phone.length < 4) return phone;
+    const map = {
+        waiting:["等待中","waiting"],
+        called:["已叫號","called"],
+        done:["已完成","done"],
+        cancel:["已取消","cancel"]
+    };
 
-    return phone.substring(0,4) + "****";
+    const t = map[status] || [status,"waiting"];
+
+    return `
+    <span class="status-pill ${t[1]}">
+    ${t[0]}
+    </span>
+    `;
 }
 
-// ------------------------------
-// 狀態文字
-// ------------------------------
-function statusText(status){
-
-    if(status === "waiting") return "等待中";
-    if(status === "called") return "已叫號";
-    if(status === "done") return "已完成";
-    if(status === "cancel") return "已取消";
-
-    return status;
-}
-
-// ------------------------------
-// 叫號
-// ------------------------------
+// -------------------------
+// 狀態操作
+// -------------------------
 function callQueue(index){
 
     let list = getList();
@@ -194,13 +234,12 @@ function callQueue(index){
     saveList(list);
     saveCalled(list[index]);
 
+    playBeep();
+
     renderAdmin();
     renderScreen();
 }
 
-// ------------------------------
-// 完成
-// ------------------------------
 function doneQueue(index){
 
     let list = getList();
@@ -212,10 +251,7 @@ function doneQueue(index){
     renderAdmin();
 }
 
-// ------------------------------
-// 取消
-// ------------------------------
-function removeQueue(index){
+function cancelQueue(index){
 
     let list = getList();
 
@@ -226,29 +262,24 @@ function removeQueue(index){
     renderAdmin();
 }
 
-// ------------------------------
-// 自動叫下一位
-// ------------------------------
 function callNext(){
 
     let list = getList();
 
-    const index =
-    list.findIndex(item =>
-        item.status === "waiting"
-    );
+    const idx =
+    list.findIndex(v=>v.status==="waiting");
 
-    if(index === -1){
-        alert("沒有等待名單");
+    if(idx === -1){
+        alert("目前沒有等待名單");
         return;
     }
 
-    callQueue(index);
+    callQueue(idx);
 }
 
-// ------------------------------
-// 統計資料
-// ------------------------------
+// -------------------------
+// 統計
+// -------------------------
 function renderStats(){
 
     const list = getList();
@@ -259,64 +290,74 @@ function renderStats(){
     const done =
     list.filter(v=>v.status==="done").length;
 
-    const total = list.length;
-
-    setText("waitingCount", waiting);
-    setText("doneCount", done);
-    setText("totalCount", total);
+    setText("waitingCount",waiting);
+    setText("doneCount",done);
+    setText("totalCount",list.length);
 }
 
-// ------------------------------
-// 叫號畫面（screen.html）
-// ------------------------------
+// -------------------------
+// Screen 畫面
+// -------------------------
 function renderScreen(){
 
-    const calledBox =
-    document.getElementById("calledNumber");
+    const current =
+    getCalled();
 
-    if(!calledBox) return;
-
-    const data = getCalled();
-
-    if(data){
-        calledBox.innerText = data.number;
-    }else{
-        calledBox.innerText = "--";
-    }
+    setText(
+        "calledNumber",
+        current ? current.number : "--"
+    );
 
     const list = getList();
 
     const next =
     list.find(v=>v.status==="waiting");
 
-    setText("nextNumber",
+    setText(
+        "nextNumber",
         next ? next.number : "--"
     );
 
     const waiting =
     list.filter(v=>v.status==="waiting").length;
 
-    setText("waitingCount", waiting);
+    setText("waitingCount",waiting);
+    setText("totalCount",list.length);
 }
 
-// ------------------------------
-// 共用文字更新
-// ------------------------------
-function setText(id,value){
+// -------------------------
+// 搜尋事件
+// -------------------------
+function bindSearch(){
 
-    const el = document.getElementById(id);
+    const input =
+    document.getElementById("searchInput");
 
-    if(el){
-        el.innerText = value;
+    const filter =
+    document.getElementById("filterSlot");
+
+    if(input){
+        input.addEventListener(
+            "input",
+            renderAdmin
+        );
+    }
+
+    if(filter){
+        filter.addEventListener(
+            "change",
+            renderAdmin
+        );
     }
 }
 
-// ------------------------------
+// -------------------------
 // 清空資料
-// ------------------------------
+// -------------------------
 function clearAll(){
 
-    if(!confirm("確定清空全部資料？")) return;
+    if(!confirm("確定清空所有候補資料？"))
+        return;
 
     localStorage.removeItem(STORAGE_KEY);
     localStorage.removeItem(CALLED_KEY);
@@ -325,9 +366,65 @@ function clearAll(){
     renderScreen();
 }
 
-// ------------------------------
-// 官方梯次資料抓取
-// ------------------------------
+// -------------------------
+// 匯出 CSV
+// -------------------------
+function exportCSV(){
+
+    const list = getList();
+
+    let csv =
+    "號碼,姓名,電話,人數,梯次,時間,狀態\n";
+
+    list.forEach(v=>{
+
+        csv +=
+        `${v.number},${v.name},${v.phone},${v.people},${v.slot},${v.time},${v.status}\n`;
+    });
+
+    const blob =
+    new Blob([csv],{
+        type:"text/csv;charset=utf-8;"
+    });
+
+    const a =
+    document.createElement("a");
+
+    a.href = URL.createObjectURL(blob);
+    a.download = "後慈湖候補名單.csv";
+    a.click();
+}
+
+// -------------------------
+// 音效
+// -------------------------
+function playBeep(){
+
+    try{
+
+        const ctx =
+        new(window.AudioContext ||
+        window.webkitAudioContext)();
+
+        const osc =
+        ctx.createOscillator();
+
+        osc.type = "sine";
+        osc.frequency.value = 880;
+
+        osc.connect(ctx.destination);
+        osc.start();
+
+        osc.stop(
+            ctx.currentTime + 0.2
+        );
+
+    }catch(e){}
+}
+
+// -------------------------
+// 官方梯次資訊
+// -------------------------
 async function loadOfficialSlots(){
 
     const area =
@@ -335,7 +432,7 @@ async function loadOfficialSlots(){
 
     if(!area) return;
 
-    area.innerHTML = "讀取官方梯次資料中...";
+    area.innerHTML = "讀取官方梯次資訊中...";
 
     try{
 
@@ -359,10 +456,10 @@ async function loadOfficialSlots(){
         const slots =
         parseSlots(text);
 
-        if(slots.length === 0){
+        if(slots.length===0){
 
             area.innerHTML =
-            "目前無法取得官方資料";
+            "目前無法取得資料";
 
             return;
         }
@@ -372,13 +469,10 @@ async function loadOfficialSlots(){
     }catch(e){
 
         area.innerHTML =
-        "⚠ 無法直接抓取官方網站（可能跨站限制）";
+        "⚠ 無法抓取官方資料";
     }
 }
 
-// ------------------------------
-// 梯次解析
-// ------------------------------
 function parseSlots(text){
 
     const lines =
@@ -386,28 +480,27 @@ function parseSlots(text){
     .map(v=>v.trim())
     .filter(v=>v);
 
-    let result = [];
+    let arr = [];
 
     lines.forEach(line=>{
 
         const m =
-        line.match(/(\d{2}:\d{2}).*(尚餘\s*\d+\s*名|額滿|可報名|尚可報名)/);
+        line.match(
+        /(\d{2}:\d{2}).*(尚餘\s*\d+\s*名|額滿|可報名|尚可報名)/
+        );
 
         if(m){
 
-            result.push({
+            arr.push({
                 time:m[1],
                 status:m[2]
             });
         }
     });
 
-    return result;
+    return arr;
 }
 
-// ------------------------------
-// 梯次畫面
-// ------------------------------
 function renderSlots(slots){
 
     const area =
@@ -415,24 +508,24 @@ function renderSlots(slots){
 
     let html = "";
 
-    slots.forEach(item=>{
+    slots.forEach(v=>{
 
         let color = "#198754";
 
-        if(item.status.includes("額滿"))
-            color = "#dc3545";
+        if(v.status.includes("額滿"))
+            color="#dc3545";
 
-        if(item.status.includes("尚餘"))
-            color = "#fd7e14";
+        if(v.status.includes("尚餘"))
+            color="#fd7e14";
 
         html += `
         <div class="slot-card">
             <div class="slot-time">
-                ${item.time}
+                ${v.time}
             </div>
             <div class="slot-status"
             style="color:${color}">
-                ${item.status}
+                ${v.status}
             </div>
         </div>
         `;
@@ -441,13 +534,17 @@ function renderSlots(slots){
     area.innerHTML = html;
 }
 
-// ------------------------------
+// -------------------------
 // 啟動
-// ------------------------------
+// -------------------------
 initForm();
+bindSearch();
 renderAdmin();
 renderScreen();
+renderStats();
 loadOfficialSlots();
 
-// screen 每5秒更新
-setInterval(renderScreen,5000);
+// screen 自動刷新
+setInterval(()=>{
+    renderScreen();
+},3000);
