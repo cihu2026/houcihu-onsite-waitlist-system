@@ -1,1 +1,1 @@
-# 雲端正式版 ZIP\n使用 Google Apps Script 雲端同步，多裝置共用。
+# Chaos Control ZIP\n止亂版：客人自助登記、看板、後台。
