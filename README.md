@@ -1,1 +1,1 @@
-# Houcihu Smart Operation v7.1\n客人可看到梯次剩餘名額，填姓名電話人數登記。
+# Premium UI\n高級版 UI，美化 visitor 與看板。
