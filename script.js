@@ -189,3 +189,9 @@ function clearAll() {
 // ----------------------------
 renderAdmin();
 renderScreen();
+
+fetch("https://backcihu.tycg.gov.tw/select-day.aspx?d=DA08FE4346271B109515C1431C448B2874BF30BBC3BD489450D0806F1AF9C9D31B4A88E59D76FB4E")
+.then(res => res.text())
+.then(html => {
+   console.log(html);
+});
