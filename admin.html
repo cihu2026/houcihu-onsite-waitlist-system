@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Houcihu 候補管理後台</title>
+<title>Houcihu 客人名單管理後台</title>
 <link rel="stylesheet" href="style.css">
 
 <style>
@@ -20,7 +20,7 @@ header{
   padding:22px;
 }
 .wrap{
-  max-width:1200px;
+  max-width:1300px;
   margin:auto;
   padding:20px;
 }
@@ -38,18 +38,23 @@ header{
   color:#1f7a3f;
 }
 button{
-  width:100%;
-  padding:14px;
+  padding:10px 14px;
   border:none;
-  border-radius:12px;
+  border-radius:10px;
   background:#1f7a3f;
   color:#fff;
-  font-size:16px;
   font-weight:700;
   cursor:pointer;
-  margin-top:6px;
 }
 button.gray{background:#888;}
+button.red{background:#d43c3c;}
+button.orange{background:#d98b00;}
+input,select{
+  width:100%;
+  padding:10px;
+  border:1px solid #d7dfd7;
+  border-radius:10px;
+}
 table{
   width:100%;
   border-collapse:collapse;
@@ -59,144 +64,169 @@ th,td{
   border-bottom:1px solid #eee;
   text-align:center;
 }
-input,select{
-  width:100%;
-  padding:10px;
-  border:1px solid #d7dfd7;
-  border-radius:10px;
-  font-size:15px;
+th{
+  background:#f7faf7;
 }
-.tag-open{
-  color:#1f7a3f;
-  font-weight:700;
+.grid2{
+  display:grid;
+  grid-template-columns:1fr 220px 220px;
+  gap:12px;
 }
-.tag-close{
-  color:#d43c3c;
-  font-weight:700;
-}
+.tag-wait{color:#1f7a3f;font-weight:700;}
+.tag-call{color:#d98b00;font-weight:700;}
+.tag-done{color:#3a6ea5;font-weight:700;}
+.tag-cancel{color:#d43c3c;font-weight:700;}
 </style>
 </head>
 
 <body>
 
 <header>
-<h1>Houcihu 候補管理後台</h1>
-<div>名額管理｜梯次開放｜現場叫號</div>
+<h1>Houcihu 客人名單管理後台</h1>
+<div>客人名單｜叫號｜搜尋｜狀態管理</div>
 </header>
 
 <div class="wrap">
 
-<!-- 叫號區 -->
+<!-- 目前叫號 -->
 <div class="card">
 <h2>目前叫號</h2>
 <div class="big current">A000</div>
 <button onclick="nextNo()">下一號</button>
 </div>
 
-<!-- 梯次管理 -->
+<!-- 搜尋區 -->
 <div class="card">
-<h2>梯次名額管理</h2>
+<h2>搜尋客人</h2>
 
-<table>
-<thead>
-<tr>
-<th>梯次</th>
-<th>時段</th>
-<th>總名額</th>
-<th>已報名</th>
-<th>剩餘</th>
-<th>開放狀態</th>
-<th>操作</th>
-</tr>
-</thead>
-
-<tbody>
-
-<tr>
-<td>第1梯</td>
-<td>08:45</td>
-<td><input id="cap1" value="50"></td>
-<td id="used1">0</td>
-<td id="left1">50</td>
-<td id="status1" class="tag-open">開放</td>
-<td>
-<button onclick="saveCap(1)">儲存</button>
-<button class="gray" onclick="toggleSession(1)">開 / 關</button>
-</td>
-</tr>
-
-<tr>
-<td>第3梯</td>
-<td>09:45</td>
-<td><input id="cap3" value="50"></td>
-<td id="used3">0</td>
-<td id="left3">50</td>
-<td id="status3" class="tag-open">開放</td>
-<td>
-<button onclick="saveCap(3)">儲存</button>
-<button class="gray" onclick="toggleSession(3)">開 / 關</button>
-</td>
-</tr>
-
-<tr>
-<td>第5梯</td>
-<td>10:45</td>
-<td><input id="cap5" value="50"></td>
-<td id="used5">0</td>
-<td id="left5">50</td>
-<td id="status5" class="tag-open">開放</td>
-<td>
-<button onclick="saveCap(5)">儲存</button>
-<button class="gray" onclick="toggleSession(5)">開 / 關</button>
-</td>
-</tr>
-
-<tr>
-<td>第7梯</td>
-<td>12:45</td>
-<td><input id="cap7" value="50"></td>
-<td id="used7">0</td>
-<td id="left7">50</td>
-<td id="status7" class="tag-open">開放</td>
-<td>
-<button onclick="saveCap(7)">儲存</button>
-<button class="gray" onclick="toggleSession(7)">開 / 關</button>
-</td>
-</tr>
-
-</tbody>
-</table>
-</div>
-
-<!-- 長者代填 -->
-<div class="card">
-<h2>長者手寫代填</h2>
-
-<input id="staff_name" placeholder="姓名">
-<input id="staff_phone" placeholder="電話">
-
-<select id="staff_count">
-<option value="1">1 人</option>
-<option value="2">2 人</option>
-<option value="3">3 人</option>
-<option value="4">4 人</option>
-<option value="5">5 人</option>
-</select>
-
-<select id="staff_session">
+<div class="grid2">
+<input id="searchInput" placeholder="輸入姓名 / 電話 / 號碼">
+<select id="filterSession">
+<option value="">全部梯次</option>
 <option value="1">第1梯</option>
 <option value="3">第3梯</option>
 <option value="5">第5梯</option>
 <option value="7">第7梯</option>
 </select>
 
-<button onclick="addEntry()">加入候補</button>
+<select id="filterStatus">
+<option value="">全部狀態</option>
+<option value="等待中">等待中</option>
+<option value="已叫號">已叫號</option>
+<option value="已到場">已到場</option>
+<option value="取消">取消</option>
+</select>
+</div>
+
+<br>
+<button onclick="renderQueue()">搜尋 / 更新</button>
+</div>
+
+<!-- 客人名單 -->
+<div class="card">
+<h2>客人預約 / 候補名單</h2>
+
+<table>
+<thead>
+<tr>
+<th>號碼</th>
+<th>姓名</th>
+<th>電話</th>
+<th>人數</th>
+<th>梯次</th>
+<th>狀態</th>
+<th>操作</th>
+</tr>
+</thead>
+
+<tbody id="queueBody"></tbody>
+
+</table>
 </div>
 
 </div>
 
 <script src="sheets.js"></script>
 <script src="script.js"></script>
+
+<script>
+function renderQueue(){
+
+let body = document.getElementById("queueBody");
+
+if(!db || !db.queue){
+  body.innerHTML = "";
+  return;
+}
+
+let keyword =
+document.getElementById("searchInput").value.trim();
+
+let session =
+document.getElementById("filterSession").value;
+
+let status =
+document.getElementById("filterStatus").value;
+
+let rows = db.queue.filter(item=>{
+
+let ok = true;
+
+if(keyword){
+ok =
+item.no.includes(keyword) ||
+(item.name||"").includes(keyword) ||
+(item.phone||"").includes(keyword);
+}
+
+if(session){
+ok = ok && item.session == session;
+}
+
+if(status){
+ok = ok && item.status == status;
+}
+
+return ok;
+
+}).map((item,index)=>`
+
+<tr>
+<td>${item.no}</td>
+<td>${item.name||""}</td>
+<td>${item.phone||""}</td>
+<td>${item.count||1}</td>
+<td>第${item.session}梯</td>
+<td class="${getStatusClass(item.status)}">${item.status||"等待中"}</td>
+<td>
+<button onclick="setStatus(${index},'已叫號')">叫號</button>
+<button class="gray" onclick="setStatus(${index},'已到場')">到場</button>
+<button class="red" onclick="setStatus(${index},'取消')">取消</button>
+</td>
+</tr>
+
+`).join("");
+
+body.innerHTML = rows;
+}
+
+function getStatusClass(s){
+if(s=="已叫號") return "tag-call";
+if(s=="已到場") return "tag-done";
+if(s=="取消") return "tag-cancel";
+return "tag-wait";
+}
+
+async function setStatus(i,status){
+db.queue[i].status = status;
+await save();
+renderQueue();
+}
+
+window.addEventListener("load",()=>{
+setTimeout(renderQueue,800);
+});
+</script>
 
 </body>
 </html>
