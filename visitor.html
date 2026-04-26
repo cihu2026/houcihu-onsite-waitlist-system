@@ -1,1 +1,5 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>客人登記</title><link rel="stylesheet" href="style.css"></head><body><header><h1>現場登記</h1></header><div class="wrap"><div class="card"><input id="guestName" placeholder="姓名"><button onclick="addGuest()">送出</button></div></div><script src="script.js"></script><script src="sheets.js"></script></body></html>
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>現場遞補登記</title><link rel="stylesheet" href="style.css"></head><body><header><h1>現場遞補登記</h1></header><div class="wrap">
+<div class="card"><h2>可登記梯次</h2><table><thead><tr><th>梯次</th><th>時段</th><th>狀態</th><th></th></tr></thead><tbody id="slotTable"></tbody></table></div>
+<div class="card hidden" id="formCard"><h2 id="sessionText"></h2><input id="guestName" placeholder="姓名"><input id="guestPhone" placeholder="電話"><select id="guestCount"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select><button onclick="submitForm()">確認登記</button></div>
+<div class="card" id="msg"></div>
+</div><script src="script.js"></script><script src="sheets.js"></script></body></html>

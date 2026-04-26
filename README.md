@@ -1,1 +1,1 @@
-# Houcihu Smart Operation v7\n智慧模式、儀表板、後台、手機版、看板。
+# Houcihu Smart Operation v7.1\n客人可看到梯次剩餘名額，填姓名電話人數登記。

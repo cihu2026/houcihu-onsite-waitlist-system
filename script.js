@@ -1,9 +1,14 @@
-const STORAGE_KEY="houcihu_v7";let state=JSON.parse(localStorage.getItem(STORAGE_KEY)||'{"current":"A000","queue":[],"counter":1,"mode":"","caps":{"1":50,"3":50,"5":50,"7":50}}');
-function detectMode(){let d=new Date(),day=d.getDay(); if(day===6)return "週六高峰"; if(day===0)return "週日家庭客"; return "平日模式";}
-function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state));render(); if(window.syncToSheets)syncToSheets(state);}
-function render(){state.mode=detectMode(); let m=document.querySelectorAll(".mode");m.forEach(x=>x.textContent=state.mode); let c=document.querySelectorAll(".currentNo");c.forEach(x=>x.textContent=state.current); let w=document.querySelectorAll(".waitingCount");w.forEach(x=>x.textContent=state.queue.length); let s=document.getElementById("suggest"); if(s)s.innerHTML=suggestText(); let t=document.getElementById("queueTable"); if(t)t.innerHTML=state.queue.map(q=>`<tr><td>${q.no}</td><td>${q.name}</td></tr>`).join("");}
-function suggestText(){if(state.mode==="週六高峰")return "建議名額 65 / 梯，志工 3 人"; if(state.mode==="週日家庭客")return "建議家庭動線與2~4人快速通關"; return "建議名額 50 / 梯，保留公務團空間";}
-function addGuest(){let n=document.getElementById("guestName"); let name=n?n.value.trim():"現場旅客"; let no="A"+String(state.counter).padStart(3,"0"); state.queue.push({no:no,name:name||"現場旅客"}); state.counter++; if(n)n.value=""; save();}
-function callNext(){if(state.queue.length){state.current=state.queue.shift().no; save();}}
-function addVIP(){for(let i=0;i<20;i++){state.queue.unshift({no:"V"+String(state.counter).padStart(3,"0"),name:"公務團"});state.counter++;}save();}
+const STORAGE_KEY="houcihu_v71";
+const sessions={"1":{time:"08:45~09:00",cap:0},"3":{time:"09:45~10:00",cap:6},"5":{time:"10:45~11:00",cap:18},"7":{time:"12:45~13:00",cap:-1}};
+let state=JSON.parse(localStorage.getItem(STORAGE_KEY)||'{"counter":1,"queue":[],"current":"A000"}');
+let chosen="";
+function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state));render(); if(window.syncToSheets)syncToSheets({state:state,sessions:sessions});}
+function render(){
+let tb=document.getElementById("slotTable");
+if(tb){tb.innerHTML=Object.keys(sessions).map(id=>row(id)).join('')}
+let c=document.getElementById("currentNo"); if(c)c.textContent=state.current;
+}
+function row(id){let s=sessions[id]; if(s.cap===0)return `<tr><td>${id}</td><td>${s.time}</td><td>已額滿</td><td>-</td></tr>`; if(s.cap<0)return `<tr><td>${id}</td><td>${s.time}</td><td>尚未開放</td><td>-</td></tr>`; return `<tr><td>${id}</td><td>${s.time}</td><td>剩 ${s.cap} 位</td><td><button onclick="pick('${id}')">登記</button></td></tr>`}
+function pick(id){chosen=id;document.getElementById("sessionText").innerHTML="第"+id+"梯 "+sessions[id].time;document.getElementById("formCard").classList.remove("hidden")}
+function submitForm(){let n=document.getElementById("guestName").value.trim();let p=document.getElementById("guestPhone").value.trim();let c=parseInt(document.getElementById("guestCount").value||1);if(!n||!p){alert("請填姓名電話");return;}if(sessions[chosen].cap<c){alert("剩餘名額不足");return;}let no="A"+String(state.counter).padStart(3,"0");state.queue.push({no:no,session:chosen,name:n,phone:p,count:c});state.counter++;sessions[chosen].cap-=c;save();document.getElementById("msg").innerHTML="登記成功｜號碼 "+no;document.getElementById("formCard").classList.add("hidden");}
 window.addEventListener("load",render);
