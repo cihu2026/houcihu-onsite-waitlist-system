@@ -1,1 +1,132 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>看板</title><link rel="stylesheet" href="style.css"></head><body><header><h1>請留意叫號</h1></header><div class="wrap"><div class="card"><div class="big current">A015</div></div></div><script src="script.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Houcihu 現場看板</title>
+<link rel="stylesheet" href="style.css">
+
+<style>
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft JhengHei",sans-serif;
+  background:#eef3ef;
+  color:#1f2d1f;
+}
+header{
+  background:linear-gradient(135deg,#1f5f35,#3e8b55);
+  color:#fff;
+  text-align:center;
+  padding:24px;
+}
+.wrap{
+  max-width:1200px;
+  margin:auto;
+  padding:20px;
+}
+.card{
+  background:#fff;
+  border-radius:20px;
+  padding:24px;
+  margin-bottom:20px;
+  box-shadow:0 12px 28px rgba(0,0,0,.08);
+}
+.big{
+  font-size:92px;
+  font-weight:800;
+  text-align:center;
+  color:#1f7a3f;
+}
+.sub{
+  text-align:center;
+  font-size:28px;
+  margin-top:10px;
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:16px;
+}
+.box{
+  background:#fff;
+  border-radius:18px;
+  padding:18px;
+  box-shadow:0 8px 20px rgba(0,0,0,.06);
+}
+.box h3{
+  margin:0 0 10px;
+  font-size:24px;
+}
+.num{
+  font-size:42px;
+  font-weight:800;
+  color:#1f7a3f;
+}
+.small{
+  font-size:18px;
+  color:#666;
+}
+footer{
+  text-align:center;
+  font-size:18px;
+  padding:20px;
+  color:#666;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>請留意叫號</h1>
+<div>依現場順序安排入場</div>
+</header>
+
+<div class="wrap">
+
+<!-- 目前叫號 -->
+<div class="card">
+<div class="big current">A015</div>
+<div class="sub">目前叫號</div>
+</div>
+
+<!-- 等待資訊 -->
+<div class="grid">
+
+<div class="box">
+<h3>預估等待時間</h3>
+<div class="num" id="waitTime">15 分鐘</div>
+<div class="small">依現場流動更新</div>
+</div>
+
+<div class="box">
+<h3>目前開放梯次</h3>
+<div class="num" id="currentSession">第3梯</div>
+<div class="small">09:45 入場</div>
+</div>
+
+<div class="box">
+<h3>第3梯剩餘名額</h3>
+<div class="num" id="left3">6 位</div>
+<div class="small">可現場候補</div>
+</div>
+
+<div class="box">
+<h3>第5梯剩餘名額</h3>
+<div class="num" id="left5">18 位</div>
+<div class="small">建議報名梯次</div>
+</div>
+
+</div>
+
+</div>
+
+<footer>
+感謝您的耐心等候，請依現場引導入場
+</footer>
+
+<script src="sheets.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>
