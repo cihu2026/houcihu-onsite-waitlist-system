@@ -1,405 +1,219 @@
-/* =====================================
-   後慈湖現場補位系統 style.css
-   共用樣式：index / admin / screen
-===================================== */
+/* style.css */
+/* 後慈湖候補系統 v2 */
 
-/* Reset */
 *{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
-html,body{
-    width:100%;
-    min-height:100%;
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
 }
 
 body{
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",
-    "PingFang TC","Microsoft JhengHei",sans-serif;
-    font-size:16px;
-    line-height:1.5;
-    color:#222;
-    background:#f3f6f4;
+  font-family:"Microsoft JhengHei", Arial, sans-serif;
+  background:#f4f7f3;
+  color:#1f2d1f;
 }
 
-/* Layout */
-.container{
-    width:100%;
-    max-width:1180px;
-    margin:0 auto;
-    padding:22px;
+/* 共用 */
+.topbar{
+  background:#2f6b3b;
+  color:#fff;
+  text-align:center;
+  padding:20px 12px;
+  box-shadow:0 2px 8px rgba(0,0,0,.12);
 }
 
-/* Typography */
-h1,h2,h3{
-    font-weight:800;
-    line-height:1.25;
+.topbar h1{
+  font-size:32px;
+  margin-bottom:6px;
 }
 
-p{
-    color:#555;
+.topbar .sub{
+  font-size:14px;
+  opacity:.9;
 }
 
-/* Badge */
-.badge{
-    display:inline-block;
-    padding:8px 16px;
-    border-radius:999px;
-    background:#e8f5ec;
-    color:#166944;
-    font-size:14px;
-    font-weight:800;
-    letter-spacing:.5px;
-    margin-bottom:12px;
+.wrap{
+  max-width:1100px;
+  margin:auto;
+  padding:20px;
 }
 
-/* Card */
-.card,
-.panel,
-.hero,
-.stat-card{
-    background:#fff;
-    border-radius:22px;
-    box-shadow:0 12px 28px rgba(0,0,0,.08);
+.card{
+  background:#fff;
+  border-radius:16px;
+  padding:22px;
+  margin-bottom:18px;
+  box-shadow:0 8px 20px rgba(0,0,0,.06);
 }
 
-/* Forms */
-form{
-    width:100%;
+.card h2{
+  font-size:24px;
+  margin-bottom:16px;
+  color:#2f6b3b;
 }
 
-label{
-    display:block;
-    margin-bottom:8px;
-    font-weight:700;
-    color:#14532d;
-}
-
-input,
-select,
-textarea{
-    width:100%;
-    padding:14px 16px;
-    border:1px solid #d7dfda;
-    border-radius:14px;
-    background:#fff;
-    font-size:16px;
-    margin-bottom:14px;
-    transition:.2s ease;
-    appearance:none;
-}
-
-input:focus,
-select:focus,
-textarea:focus{
-    outline:none;
-    border-color:#198754;
-    box-shadow:0 0 0 4px rgba(25,135,84,.12);
-}
-
-/* Buttons */
-button,
+/* 按鈕 */
 .btn{
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    gap:8px;
-    min-height:48px;
-    padding:12px 18px;
-    border:none;
-    border-radius:14px;
-    background:#198754;
-    color:#fff;
-    font-size:16px;
-    font-weight:800;
-    cursor:pointer;
-    text-decoration:none;
-    transition:.2s ease;
+  border:none;
+  padding:14px 20px;
+  border-radius:12px;
+  font-size:18px;
+  cursor:pointer;
+  background:#d9e7da;
+  transition:.2s;
 }
 
-button:hover,
 .btn:hover{
-    transform:translateY(-1px);
-    filter:brightness(.96);
+  transform:translateY(-1px);
 }
 
-button:active,
-.btn:active{
-    transform:translateY(0);
+.primary{ background:#2f6b3b; color:#fff; }
+.success{ background:#2e8b57; color:#fff; }
+.warning{ background:#e6a700; color:#fff; }
+.done{ background:#3a86ff; color:#fff; }
+.danger{ background:#d64045; color:#fff; }
+
+.btn-row{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
 }
 
-button:disabled{
-    opacity:.55;
-    cursor:not-allowed;
+/* 表單 */
+.form-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:12px;
+  margin-bottom:14px;
 }
 
-/* Button variants */
-.btn-blue{
-    background:#0d6efd;
+input{
+  padding:14px;
+  border:1px solid #cdd7cd;
+  border-radius:10px;
+  font-size:18px;
 }
 
-.btn-red{
-    background:#dc3545;
+/* 統計 */
+.stats{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
 }
 
-.btn-gray{
-    background:#6c757d;
+.stats div{
+  background:#eef5ee;
+  border-radius:14px;
+  padding:18px;
+  text-align:center;
 }
 
-.btn-outline{
-    background:#fff;
-    color:#14532d;
-    border:1px solid #cfe3d6;
+.stats strong{
+  display:block;
+  font-size:34px;
+  margin-top:6px;
+  color:#2f6b3b;
 }
 
-/* Grid */
-.grid{
-    display:grid;
-    gap:16px;
+.small{
+  font-size:14px;
+  color:#666;
 }
 
-.grid-2{
-    grid-template-columns:repeat(2,minmax(0,1fr));
+/* 表格 */
+.table{
+  width:100%;
+  border-collapse:collapse;
 }
 
-.grid-3{
-    grid-template-columns:repeat(3,minmax(0,1fr));
+.table th,
+.table td{
+  padding:14px;
+  border-bottom:1px solid #eee;
+  text-align:center;
 }
 
-.grid-4{
-    grid-template-columns:repeat(4,minmax(0,1fr));
+.table th{
+  background:#f2f7f2;
 }
 
-/* Stats */
-.stat-card{
-    padding:22px;
+/* screen.html 專用 */
+.screen{
+  text-align:center;
 }
 
-.stat-title{
-    font-size:14px;
-    color:#777;
-    margin-bottom:8px;
+.now-box,
+.next-box,
+.queue-box,
+.miss-box{
+  background:#fff;
+  margin:20px auto;
+  max-width:800px;
+  border-radius:18px;
+  padding:24px;
+  box-shadow:0 8px 20px rgba(0,0,0,.06);
 }
 
-.stat-num{
-    font-size:38px;
-    font-weight:900;
-    color:#14532d;
-    line-height:1;
+.label{
+  font-size:24px;
+  color:#666;
+  margin-bottom:10px;
 }
 
-/* Table */
-.table-wrap{
-    width:100%;
-    overflow:auto;
-    border-radius:18px;
+.big-no{
+  font-size:90px;
+  font-weight:bold;
+  color:#2f6b3b;
 }
 
-table{
-    width:100%;
-    min-width:860px;
-    border-collapse:collapse;
-    background:#fff;
+.mid-no{
+  font-size:58px;
+  font-weight:bold;
 }
 
-th,td{
-    padding:14px 12px;
-    text-align:left;
-    border-bottom:1px solid #eef1ef;
-    vertical-align:middle;
+.count{
+  font-size:54px;
+  font-weight:bold;
 }
 
-th{
-    background:#f7faf8;
-    color:#14532d;
-    font-size:14px;
-    font-weight:800;
-    position:sticky;
-    top:0;
+#missedList{
+  font-size:30px;
+  line-height:1.6;
 }
 
-tr:hover td{
-    background:#fcfdfc;
-}
-
-/* Status pill */
-.status-pill{
-    display:inline-block;
-    padding:6px 10px;
-    border-radius:999px;
-    font-size:13px;
-    font-weight:800;
-    white-space:nowrap;
-}
-
-.waiting{
-    background:#fff4cc;
-    color:#8a6d00;
-}
-
-.called{
-    background:#d1ecf1;
-    color:#0c5460;
-}
-
-.done{
-    background:#d4edda;
-    color:#155724;
-}
-
-.cancel{
-    background:#f8d7da;
-    color:#721c24;
-}
-
-/* Slot cards */
-.slot-card{
-    background:#fff;
-    border-radius:18px;
-    padding:16px;
-    margin-bottom:12px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:12px;
-    box-shadow:0 8px 20px rgba(0,0,0,.06);
-}
-
-.slot-time{
-    font-size:24px;
-    font-weight:900;
-    color:#14532d;
-}
-
-.slot-status{
-    font-size:16px;
-    font-weight:800;
-}
-
-/* Utility colors */
-.green{ color:#198754; }
-.red{ color:#dc3545; }
-.orange{ color:#fd7e14; }
-.blue{ color:#0d6efd; }
-
-/* Helpers */
-.center{
-    text-align:center;
-}
-
-.right{
-    text-align:right;
-}
-
-.mt-8{ margin-top:8px; }
-.mt-12{ margin-top:12px; }
-.mt-16{ margin-top:16px; }
-.mt-20{ margin-top:20px; }
-.mt-24{ margin-top:24px; }
-
-.mb-8{ margin-bottom:8px; }
-.mb-12{ margin-bottom:12px; }
-.mb-16{ margin-bottom:16px; }
-.mb-20{ margin-bottom:20px; }
-.mb-24{ margin-bottom:24px; }
-
-.hidden{
-    display:none !important;
-}
-
-/* Screen display helpers */
-.screen-number{
-    font-size:140px;
-    font-weight:900;
-    line-height:1;
-    letter-spacing:4px;
-}
-
-.blink{
-    animation:blink 1.2s infinite;
-}
-
-@keyframes blink{
-    0%{opacity:1;}
-    50%{opacity:.35;}
-    100%{opacity:1;}
-}
-
-/* Footer */
 .footer{
-    text-align:center;
-    color:#e9f2ed;
-    font-size:14px;
-    margin-top:18px;
+  padding:20px;
+  color:#666;
 }
 
-/* Mobile */
-@media (max-width: 992px){
+/* 手機版 */
+@media (max-width:768px){
 
-    .grid-4{
-        grid-template-columns:repeat(2,minmax(0,1fr));
-    }
+  .topbar h1{
+    font-size:24px;
+  }
 
-    .screen-number{
-        font-size:96px;
-    }
-}
+  .big-no{
+    font-size:62px;
+  }
 
-@media (max-width: 768px){
+  .mid-no{
+    font-size:42px;
+  }
 
-    .container{
-        padding:16px;
-    }
+  .count{
+    font-size:40px;
+  }
 
-    .grid-2,
-    .grid-3,
-    .grid-4{
-        grid-template-columns:1fr;
-    }
+  .btn{
+    width:100%;
+  }
 
-    .stat-num{
-        font-size:30px;
-    }
+  .btn-row{
+    flex-direction:column;
+  }
 
-    th,td{
-        padding:10px;
-        font-size:14px;
-    }
-
-    input,
-    select,
-    textarea{
-        font-size:16px; /* 防 iPhone 自動放大 */
-    }
-
-    button,
-    .btn{
-        width:100%;
-    }
-
-    .screen-number{
-        font-size:72px;
-    }
-
-    .slot-time{
-        font-size:20px;
-    }
-
-    .slot-status{
-        font-size:15px;
-    }
-}
-
-@media (max-width: 480px){
-
-    .badge{
-        font-size:12px;
-        padding:7px 12px;
-    }
-
-    .screen-number{
-        font-size:58px;
-    }
+  .stats{
+    grid-template-columns:1fr;
+  }
 }
