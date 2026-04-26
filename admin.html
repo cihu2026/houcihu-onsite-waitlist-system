@@ -1,344 +1,81 @@
+<!-- admin.html -->
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>後慈湖現場補位系統｜管理後台</title>
-
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>後慈湖候補系統 v2｜管理後台</title>
 <link rel="stylesheet" href="style.css">
-
-<style>
-body{
-    background:linear-gradient(135deg,#0b3d2e,#1e6a47);
-}
-
-.header{
-    background:#ffffff;
-    border-radius:24px;
-    padding:24px;
-    box-shadow:0 16px 36px rgba(0,0,0,.12);
-    margin-bottom:20px;
-}
-
-.header h1{
-    font-size:34px;
-    color:#14532d;
-    margin-bottom:8px;
-}
-
-.header p{
-    color:#666;
-    line-height:1.8;
-}
-
-.grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-    gap:16px;
-    margin-bottom:20px;
-}
-
-.stat-card{
-    background:#fff;
-    border-radius:20px;
-    padding:22px;
-    box-shadow:0 10px 26px rgba(0,0,0,.08);
-}
-
-.stat-title{
-    color:#777;
-    font-size:14px;
-    margin-bottom:8px;
-}
-
-.stat-num{
-    font-size:38px;
-    font-weight:900;
-    color:#14532d;
-}
-
-.panel{
-    background:#fff;
-    border-radius:24px;
-    padding:22px;
-    box-shadow:0 12px 28px rgba(0,0,0,.08);
-    margin-bottom:20px;
-}
-
-.panel h2{
-    color:#14532d;
-    margin-bottom:14px;
-    font-size:24px;
-}
-
-.toolbar{
-    display:flex;
-    gap:12px;
-    flex-wrap:wrap;
-    margin-bottom:18px;
-}
-
-.toolbar button{
-    width:auto;
-    padding:12px 18px;
-}
-
-.table-wrap{
-    overflow:auto;
-}
-
-table{
-    min-width:980px;
-}
-
-.status-pill{
-    padding:6px 10px;
-    border-radius:50px;
-    font-size:13px;
-    font-weight:800;
-    display:inline-block;
-}
-
-.waiting{
-    background:#fff4cc;
-    color:#8a6d00;
-}
-
-.called{
-    background:#d1ecf1;
-    color:#0c5460;
-}
-
-.done{
-    background:#d4edda;
-    color:#155724;
-}
-
-.cancel{
-    background:#f8d7da;
-    color:#721c24;
-}
-
-.mini-btn{
-    width:auto;
-    padding:8px 10px;
-    font-size:13px;
-    margin:2px;
-}
-
-.footer{
-    text-align:center;
-    color:#eee;
-    margin-top:18px;
-    font-size:14px;
-}
-
-@media(max-width:768px){
-
-    .header h1{
-        font-size:28px;
-    }
-
-    .stat-num{
-        font-size:30px;
-    }
-
-    .panel h2{
-        font-size:20px;
-    }
-}
-</style>
 </head>
+<body class="admin">
 
-<body>
+<header class="topbar">
+  <h1>後慈湖候補系統</h1>
+  <div class="sub">管理後台 Admin Panel</div>
+</header>
 
-<div class="container">
+<main class="wrap">
 
-<!-- Header -->
-<div class="header">
+<section class="card">
+  <h2>現場新增候補</h2>
 
-<div class="badge">工作人員後台</div>
+  <div class="form-grid">
+    <input type="text" id="guestName" placeholder="姓名">
+    <input type="number" id="guestCount" placeholder="人數" min="1" value="1">
+    <input type="text" id="guestPhone" placeholder="手機末3碼">
+  </div>
 
-<h1>後慈湖現場補位系統</h1>
+  <button class="btn primary" onclick="addGuest()">＋ 新增候補</button>
+</section>
 
-<p>
-管理候補名單、即時叫號、完成補位與現場名額控管。<br>
-建議由櫃台或服務人員操作。
-</p>
+<section class="card stats">
+  <div>
+    <span class="small">目前叫號</span>
+    <strong id="currentNo">A000</strong>
+  </div>
+  <div>
+    <span class="small">等待組數</span>
+    <strong id="waitingCount">0</strong>
+  </div>
+</section>
 
-</div>
+<section class="card actions">
+  <h2>叫號控制</h2>
 
-<!-- 統計區 -->
-<div class="grid">
+  <div class="btn-row">
+    <button class="btn success" onclick="callNext()">▶ 下一號</button>
+    <button class="btn warning" onclick="markMissed()">⏰ 過號</button>
+    <button class="btn done" onclick="markDone()">✔ 已入園</button>
+  </div>
+</section>
 
-<div class="stat-card">
-<div class="stat-title">等待中</div>
-<div class="stat-num" id="waitingCount">0</div>
-</div>
+<section class="card">
+  <h2>等待名單</h2>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>號碼</th>
+        <th>姓名</th>
+        <th>人數</th>
+        <th>狀態</th>
+      </tr>
+    </thead>
+    <tbody id="queueTable">
+      <tr><td colspan="4">尚無資料</td></tr>
+    </tbody>
+  </table>
+</section>
 
-<div class="stat-card">
-<div class="stat-title">已完成</div>
-<div class="stat-num" id="doneCount">0</div>
-</div>
+<section class="card">
+  <h2>系統工具</h2>
+  <div class="btn-row">
+    <button class="btn danger" onclick="resetToday()">🗑 清空今日資料</button>
+    <button class="btn" onclick="exportData()">⬇ 匯出名單</button>
+  </div>
+</section>
 
-<div class="stat-card">
-<div class="stat-title">總登記</div>
-<div class="stat-num" id="totalCount">0</div>
-</div>
-
-<div class="stat-card">
-<div class="stat-title">目前叫號</div>
-<div class="stat-num" id="currentCall">--</div>
-</div>
-
-</div>
-
-<!-- 快速操作 -->
-<div class="panel">
-
-<h2>快速操作</h2>
-
-<div class="toolbar">
-
-<button onclick="callNext()">
-叫下一位
-</button>
-
-<button class="btn-blue"
-onclick="location.href='screen.html'">
-開啟叫號畫面
-</button>
-
-<button class="btn-gray"
-onclick="location.reload()">
-重新整理
-</button>
-
-<button class="btn-red"
-onclick="clearAll()">
-清空資料
-</button>
-
-</div>
-
-</div>
-
-<!-- 候補名單 -->
-<div class="panel">
-
-<h2>候補名單</h2>
-
-<div class="table-wrap">
-
-<table>
-
-<thead>
-<tr>
-<th>號碼</th>
-<th>姓名</th>
-<th>電話</th>
-<th>人數</th>
-<th>梯次</th>
-<th>時間</th>
-<th>狀態</th>
-<th>操作</th>
-</tr>
-</thead>
-
-<tbody id="queueTable">
-<tr>
-<td colspan="8">載入中...</td>
-</tr>
-</tbody>
-
-</table>
-
-</div>
-
-</div>
-
-<div class="footer">
-Houcihu Onsite Waitlist System Admin Panel
-</div>
-
-</div>
+</main>
 
 <script src="script.js"></script>
-
-<script>
-// -----------------------------
-// 顯示目前叫號
-// -----------------------------
-function showCurrentCall(){
-
-    const data =
-    JSON.parse(localStorage.getItem("houcihu_called_data"));
-
-    const box =
-    document.getElementById("currentCall");
-
-    if(data && box){
-        box.innerText = data.number;
-    }
-}
-
-// -----------------------------
-// 狀態樣式補強
-// -----------------------------
-function beautifyStatus(){
-
-    const tbody =
-    document.getElementById("queueTable");
-
-    if(!tbody) return;
-
-    const rows =
-    tbody.querySelectorAll("tr");
-
-    rows.forEach(row=>{
-
-        const td = row.children[6];
-
-        if(!td) return;
-
-        const txt = td.innerText;
-
-        let cls = "waiting";
-
-        if(txt.includes("已叫號")) cls = "called";
-        if(txt.includes("已完成")) cls = "done";
-        if(txt.includes("已取消")) cls = "cancel";
-
-        td.innerHTML =
-        `<span class="status-pill ${cls}">
-        ${txt}
-        </span>`;
-    });
-}
-
-// -----------------------------
-// 自動刷新畫面
-// -----------------------------
-setInterval(function(){
-
-    if(typeof renderAdmin === "function"){
-        renderAdmin();
-    }
-
-    showCurrentCall();
-    beautifyStatus();
-
-},3000);
-
-// 啟動
-setTimeout(function(){
-
-    showCurrentCall();
-    beautifyStatus();
-
-},500);
-
-</script>
-
 </body>
 </html>
