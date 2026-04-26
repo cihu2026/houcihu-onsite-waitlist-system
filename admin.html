@@ -1,1 +1,349 @@
-1
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>後慈湖現場補位系統｜管理後台</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft JhengHei",sans-serif;
+    background:#f4f6f8;
+    color:#222;
+}
+
+.header{
+    background:#14532d;
+    color:#fff;
+    padding:22px 28px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:10px;
+}
+
+.header h1{
+    font-size:28px;
+}
+
+.header small{
+    opacity:.9;
+    font-size:14px;
+}
+
+.wrap{
+    padding:24px;
+    max-width:1400px;
+    margin:auto;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:16px;
+    margin-bottom:24px;
+}
+
+.card{
+    background:#fff;
+    border-radius:18px;
+    padding:20px;
+    box-shadow:0 8px 20px rgba(0,0,0,.06);
+}
+
+.card .label{
+    color:#666;
+    font-size:14px;
+    margin-bottom:10px;
+}
+
+.card .num{
+    font-size:34px;
+    font-weight:800;
+    color:#14532d;
+}
+
+.panel{
+    background:#fff;
+    border-radius:18px;
+    padding:22px;
+    box-shadow:0 8px 20px rgba(0,0,0,.06);
+    margin-bottom:22px;
+}
+
+.panel h2{
+    font-size:22px;
+    margin-bottom:16px;
+    color:#14532d;
+}
+
+.toolbar{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-bottom:18px;
+}
+
+input,select{
+    padding:12px 14px;
+    border:1px solid #ddd;
+    border-radius:12px;
+    font-size:15px;
+}
+
+button{
+    border:none;
+    border-radius:12px;
+    padding:12px 16px;
+    font-size:15px;
+    font-weight:700;
+    cursor:pointer;
+}
+
+.btn-green{
+    background:#198754;
+    color:#fff;
+}
+
+.btn-blue{
+    background:#0d6efd;
+    color:#fff;
+}
+
+.btn-red{
+    background:#dc3545;
+    color:#fff;
+}
+
+.btn-gray{
+    background:#6c757d;
+    color:#fff;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:900px;
+}
+
+th,td{
+    padding:14px 12px;
+    border-bottom:1px solid #eee;
+    text-align:left;
+    font-size:15px;
+}
+
+th{
+    background:#f8faf9;
+    color:#444;
+}
+
+.status{
+    padding:6px 10px;
+    border-radius:50px;
+    font-size:13px;
+    font-weight:700;
+    display:inline-block;
+}
+
+.waiting{
+    background:#fff4cc;
+    color:#8a6d00;
+}
+
+.called{
+    background:#d1ecf1;
+    color:#0c5460;
+}
+
+.done{
+    background:#d4edda;
+    color:#155724;
+}
+
+.cancel{
+    background:#f8d7da;
+    color:#721c24;
+}
+
+.table-wrap{
+    overflow:auto;
+}
+
+.footer{
+    text-align:center;
+    color:#777;
+    padding:18px;
+    font-size:14px;
+}
+
+@media(max-width:768px){
+    .header h1{
+        font-size:22px;
+    }
+
+    .wrap{
+        padding:16px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+<div>
+<h1>後慈湖現場補位系統</h1>
+<small>管理後台 Admin Panel</small>
+</div>
+<div>
+<small>登入者：admin ｜ 今日日期：2026/04/26</small>
+</div>
+</div>
+
+<div class="wrap">
+
+<!-- 統計卡片 -->
+<div class="grid">
+
+<div class="card">
+<div class="label">目前候補組數</div>
+<div class="num">08</div>
+</div>
+
+<div class="card">
+<div class="label">本梯次剩餘名額</div>
+<div class="num">02</div>
+</div>
+
+<div class="card">
+<div class="label">今日已補位</div>
+<div class="num">15</div>
+</div>
+
+<div class="card">
+<div class="label">今日總登記</div>
+<div class="num">27</div>
+</div>
+
+</div>
+
+<!-- 快速操作 -->
+<div class="panel">
+<h2>快速操作</h2>
+
+<div class="toolbar">
+<select>
+<option>選擇梯次</option>
+<option>09:30</option>
+<option>10:00</option>
+<option>10:30</option>
+<option>11:00</option>
+</select>
+
+<input type="number" placeholder="新增名額">
+
+<button class="btn-green">更新名額</button>
+<button class="btn-blue">叫下一位</button>
+<button class="btn-gray">重新整理</button>
+</div>
+</div>
+
+<!-- 候補名單 -->
+<div class="panel">
+<h2>候補名單</h2>
+
+<div class="table-wrap">
+<table>
+
+<thead>
+<tr>
+<th>號碼</th>
+<th>姓名</th>
+<th>電話</th>
+<th>人數</th>
+<th>梯次</th>
+<th>登記時間</th>
+<th>狀態</th>
+<th>操作</th>
+</tr>
+</thead>
+
+<tbody>
+
+<tr>
+<td>A001</td>
+<td>王小明</td>
+<td>0912****88</td>
+<td>2</td>
+<td>09:30</td>
+<td>09:05</td>
+<td><span class="status waiting">等待中</span></td>
+<td>
+<button class="btn-blue">叫號</button>
+<button class="btn-red">取消</button>
+</td>
+</tr>
+
+<tr>
+<td>A002</td>
+<td>李小姐</td>
+<td>0933****22</td>
+<td>1</td>
+<td>09:30</td>
+<td>09:07</td>
+<td><span class="status called">已叫號</span></td>
+<td>
+<button class="btn-green">完成</button>
+<button class="btn-red">過號</button>
+</td>
+</tr>
+
+<tr>
+<td>A003</td>
+<td>陳先生</td>
+<td>0977****66</td>
+<td>3</td>
+<td>10:00</td>
+<td>09:12</td>
+<td><span class="status done">已補位</span></td>
+<td>
+<button class="btn-gray">查看</button>
+</td>
+</tr>
+
+<tr>
+<td>A004</td>
+<td>林小姐</td>
+<td>0955****11</td>
+<td>1</td>
+<td>10:30</td>
+<td>09:20</td>
+<td><span class="status cancel">已取消</span></td>
+<td>
+<button class="btn-gray">查看</button>
+</td>
+</tr>
+
+</tbody>
+
+</table>
+</div>
+
+</div>
+
+</div>
+
+<div class="footer">
+後慈湖現場補位系統｜管理後台示意版
+</div>
+
+</body>
+</html>
