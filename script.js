@@ -1,22 +1,14 @@
-let db={"counter":1,"current":"A000","queue":[]};
-async function init(){let c=await cloudGet();if(c&&c.counter)db=c;render();setInterval(refreshData,4000);}
-async function refreshData(){let c=await cloudGet();if(c&&c.counter){db=c;render();}}
-async function save(){await cloudSave(db);render();}
+const K="houcihu_transparent";
+let db=JSON.parse(localStorage.getItem(K)||'{"counter":23,"current":15,"caps":{"3":4,"5":12,"7":8},"times":{"3":"09:45~10:00","5":"10:45~11:00","7":"12:45~13:00"},"queue":[]}');
+let chosen="";
+function save(){localStorage.setItem(K,JSON.stringify(db));render();}
 function render(){
-let q=document.getElementById("queue");
-if(q){q.innerHTML=db.queue.map(x=>`<tr><td>${x.no}</td><td>${x.name}</td><td>${x.source}</td><td>${x.count}</td></tr>`).join('')}
-document.querySelectorAll(".current").forEach(x=>x.textContent=db.current);
+let g=document.getElementById("grid");
+if(g){g.innerHTML=Object.keys(db.caps).map(id=>card(id)).join('')}
+document.querySelectorAll(".current").forEach(x=>x.textContent="A"+String(db.current).padStart(3,"0"));
 }
-async function addEntry(source){
-let n=document.getElementById(source+"_name").value.trim();
-let p=document.getElementById(source+"_phone").value.trim();
-let c=parseInt(document.getElementById(source+"_count").value||1);
-if(!n)return alert("請填姓名");
-let no="A"+String(db.counter).padStart(3,"0");
-db.counter++;
-db.queue.push({no:no,name:n,phone:p,count:c,source:source==="self"?"QR自助":"手寫登錄"});
-await save();
-document.getElementById("msg").innerHTML="完成登記："+no;
-}
-async function nextNo(){if(db.queue.length){db.current=db.queue.shift().no;await save();}}
-window.addEventListener("load",init);
+function card(id){let n=db.caps[id],t=db.times[id];return `<div class="slot"><h3>第${id}梯</h3><div>${t}</div><div class="ok">可候補 ${n} 位</div><button onclick="pick('${id}')">加入候補</button></div>`}
+function pick(id){chosen=id;document.getElementById("form").style.display="block";document.getElementById("pick").innerText="第"+id+"梯 "+db.times[id];}
+function reg(){let name=document.getElementById("name").value.trim();if(!name)return alert("請填姓名");let count=parseInt(document.getElementById("count").value||1);let no=db.counter;db.counter++;db.queue.push(no);save();let ahead=no-db.current-1; if(ahead<0)ahead=0;document.getElementById("msg").innerHTML=`您已加入候補名單<br>號碼 A${String(no).padStart(3,"0")}<br>目前叫號 A${String(db.current).padStart(3,"0")}<br>前方尚有 ${ahead} 組<br><span class='warn'>完成登記不代表保證入場，將依現場名額安排。</span>`;}
+function nextNo(){db.current++;save();}
+window.onload=render;

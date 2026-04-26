@@ -1,1 +1,5 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>雲端自助登記</title><link rel="stylesheet" href="style.css"></head><body><header><h1>現場自助登記</h1><div class="small">長者可至服務台手寫報名</div></header><div class="wrap"><div class="card"><input id="self_name" placeholder="姓名"><input id="self_phone" placeholder="電話"><select id="self_count"><option>1</option><option>2</option><option>3</option><option>4</option></select><button onclick="addEntry('self')">確認登記</button></div><div class="card" id="msg"></div></div><script src="sheets.js"></script><script src="script.js"></script></body></html>
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>現場候補登記</title><link rel="stylesheet" href="style.css"></head><body><header><h1>現場候補登記</h1></header><div class="wrap">
+<div class="card small">本系統為現場候補登記，依當日名額與現場狀況安排。完成登記不代表保證入場。</div>
+<div class="grid" id="grid"></div>
+<div class="card" id="form" style="display:none"><h2 id="pick"></h2><input id="name" placeholder="姓名"><input placeholder="電話"><select id="count"><option>1</option><option>2</option><option>3</option><option>4</option></select><button onclick="reg()">確認加入候補</button></div>
+<div class="card" id="msg"></div></div><script src="script.js"></script></body></html>
