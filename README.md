@@ -1,2 +1,1 @@
-# Houcihu BugFix v7.2 Fresh
-修正 admin 路徑，提供 admin.html 與 visitor.html
+# 雲端正式版 ZIP\n使用 Google Apps Script 雲端同步，多裝置共用。
