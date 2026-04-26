@@ -1,1 +1,2 @@
-# 打字版 ZIP\n後台可直接輸入數字修改每梯次名額，按 Enter 儲存。
+# Houcihu BugFix v7.2 Fresh
+修正 admin 路徑，提供 admin.html 與 visitor.html
