@@ -1,1 +1,1 @@
-console.log("waitlist system loaded");
+console.log("正式版已載入");

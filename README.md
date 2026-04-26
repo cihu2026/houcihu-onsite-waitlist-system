@@ -1,2 +1,2 @@
-# 後慈湖候補系統
-上傳到 GitHub 後啟用 Pages。
+# 後慈湖候補系統 正式版
+上傳到 GitHub Repo 後啟用 GitHub Pages。
