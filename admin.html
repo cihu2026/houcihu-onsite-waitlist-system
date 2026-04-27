@@ -13,20 +13,17 @@ font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft JhengHei",san
 background:#eef3ef;
 color:#1f2d1f;
 }
-
 header{
 background:linear-gradient(135deg,#1f5f35,#3e8b55);
 color:#fff;
 text-align:center;
 padding:24px;
 }
-
 .wrap{
 max-width:1200px;
 margin:auto;
 padding:20px;
 }
-
 .card{
 background:#fff;
 border-radius:20px;
@@ -34,26 +31,22 @@ padding:22px;
 margin-bottom:18px;
 box-shadow:0 12px 28px rgba(0,0,0,.08);
 }
-
 .big{
 font-size:72px;
 font-weight:900;
 text-align:center;
 color:#1f7a3f;
 }
-
 .sub{
 text-align:center;
 color:#666;
 margin-top:8px;
 }
-
 .grid{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
 gap:14px;
 }
-
 button{
 width:100%;
 padding:14px;
@@ -64,9 +57,7 @@ color:#fff;
 font-size:18px;
 font-weight:800;
 cursor:pointer;
-cursor:pointer;
 }
-
 .red{background:#d33;}
 .gray{background:#888;}
 .blue{background:#2c69c9;}
@@ -75,14 +66,12 @@ table{
 width:100%;
 border-collapse:collapse;
 }
-
 th,td{
 padding:12px;
 border-bottom:1px solid #eee;
 text-align:center;
 font-size:15px;
 }
-
 th{
 background:#f7faf7;
 }
@@ -95,11 +84,6 @@ margin:2px;
 width:auto;
 }
 
-.wait{color:#1f7a3f;font-weight:700;}
-.called{color:#c88600;font-weight:700;}
-.done{color:#2c69c9;font-weight:700;}
-.cancel{color:#d33;font-weight:700;}
-
 .notice{
 background:#fff3cd;
 padding:12px;
@@ -110,19 +94,14 @@ border-radius:12px;
 margin-bottom:18px;
 }
 
-.inputnum{
-width:80px;
-padding:8px;
-border:1px solid #ddd;
-border-radius:10px;
-text-align:center;
-}
+.wait{color:#1f7a3f;font-weight:700;}
+.called{color:#c88600;font-weight:700;}
+.done{color:#2c69c9;font-weight:700;}
+.cancel{color:#d33;font-weight:700;}
 
 @media(max-width:768px){
-
 .big{font-size:56px;}
 th,td{font-size:13px;padding:8px;}
-
 }
 </style>
 </head>
@@ -168,7 +147,7 @@ A000
 下一號叫號
 </button>
 
-<button class="blue" onclick="loadData()">
+<button class="blue" onclick="loadAdmin()">
 立即刷新
 </button>
 
@@ -206,13 +185,17 @@ onclick="logout()">
 </tr>
 </thead>
 
-<tbody id="sessionBody"></tbody>
+<tbody id="sessionBody">
+<tr>
+<td colspan="4">載入中...</td>
+</tr>
+</tbody>
 
 </table>
 
 </div>
 
-<!-- 名單 -->
+<!-- 候補名單 -->
 <div class="card">
 
 <h2>候補名單</h2>
@@ -248,12 +231,10 @@ onclick="logout()">
 
 </div>
 
-<script src="sheets.js?v=6"></script>
+<script src="sheets.js?v=3"></script>
+<script src="script.js?v=3"></script>
 
 <script>
-// =========================
-// 登出
-// =========================
 function logout(){
 
 localStorage.removeItem(
@@ -263,199 +244,6 @@ localStorage.removeItem(
 location.href="admin-login.html";
 
 }
-
-// =========================
-// 日期規則
-// =========================
-function getOpenSessions(){
-
-const now = new Date();
-const limit = new Date("2026-06-21");
-
-if(now < limit){
-return [1,3,5,7];
-}
-
-return [1,2,3,4,5,6,7,8];
-}
-
-// =========================
-// 梯次表
-// =========================
-function renderSessions(){
-
-const body =
-document.getElementById("sessionBody");
-
-body.innerHTML="";
-
-const opens =
-getOpenSessions();
-
-for(let i=1;i<=8;i++){
-
-const open =
-opens.includes(i);
-
-body.innerHTML += `
-<tr>
-<td>第${i}梯</td>
-<td>${open ? "✅" : "❌"}</td>
-<td>
-<input class="inputnum"
-id="cap${i}"
-type="number"
-value="${open?5:0}">
-</td>
-<td>
-<button class="smallbtn"
-onclick="saveCap(${i})">
-儲存
-</button>
-</td>
-</tr>
-`;
-}
-
-}
-
-function saveCap(no){
-
-const val =
-document.getElementById("cap"+no).value;
-
-localStorage.setItem(
-"session_cap_"+no,val
-);
-
-alert("第"+no+"梯已儲存");
-
-}
-
-// =========================
-// 載入資料
-// =========================
-async function loadData(){
-
-const rows = await cloudGet();
-
-const tbody =
-document.getElementById("tbody");
-
-if(!rows || rows.length<=1){
-
-tbody.innerHTML =
-"<tr><td colspan='8'>目前無資料</td></tr>";
-
-return;
-}
-
-let current = "A000";
-
-for(let i=1;i<rows.length;i++){
-
-if(rows[i][5]==="called"){
-current = rows[i][0];
-}
-
-}
-
-document.getElementById("currentNo")
-.innerText=current;
-
-tbody.innerHTML="";
-
-for(let i=1;i<rows.length;i++){
-
-const rowNo=i+1;
-
-const no=rows[i][0];
-const name=rows[i][1];
-const phone=rows[i][2];
-const people=rows[i][3];
-const slot=rows[i][4];
-const status=rows[i][5];
-
-let cls="wait";
-let txt="等待中";
-
-if(status==="called"){
-cls="called";
-txt="已叫號";
-}
-
-if(status==="done"){
-cls="done";
-txt="已到場";
-}
-
-if(status==="cancel"){
-cls="cancel";
-txt="取消";
-}
-
-tbody.innerHTML += `
-<tr>
-<td>${rowNo}</td>
-<td>${no}</td>
-<td>${name}</td>
-<td>${phone}</td>
-<td>${people}</td>
-<td>${slot}</td>
-<td class="${cls}">${txt}</td>
-<td>
-
-<button class="smallbtn"
-onclick="doneGuest(${rowNo})">
-到場
-</button>
-
-<button class="smallbtn red"
-onclick="cancelGuest(${rowNo})">
-取消
-</button>
-
-</td>
-</tr>
-`;
-
-}
-
-}
-
-// =========================
-// 操作
-// =========================
-async function doneGuest(row){
-await doneNumber(row);
-loadData();
-}
-
-async function cancelGuest(row){
-await cancelNumber(row);
-loadData();
-}
-
-async function callNextAndReload(){
-await callNext();
-loadData();
-}
-
-async function clearToday(){
-
-if(confirm("確定清空今日名單？")){
-await clearQueue();
-loadData();
-}
-
-}
-
-// =========================
-// 啟動
-// =========================
-renderSessions();
-loadData();
-autoSync(loadData,3000);
 </script>
 
 </body>
