@@ -1,5 +1,9 @@
-// script.js v3 最終穩定版
+// script.js v6 Final
+// 後慈湖 候補叫號系統 最終版
 
+// ========================
+// 後台名單載入
+// ========================
 async function loadAdmin(){
 
 const rows = await cloudGet();
@@ -22,12 +26,11 @@ current.innerText="A000";
 }
 
 return;
-
 }
 
 tbody.innerHTML="";
 
-let now = "A000";
+let now="A000";
 
 for(let i=1;i<rows.length;i++){
 
@@ -40,48 +43,71 @@ const people = rows[i][3];
 const slot   = rows[i][4];
 const status = rows[i][5];
 
-let txt = "等待中";
+let txt="等待中";
+let cls="wait";
 
 if(status==="called"){
 txt="已叫號";
+cls="called";
 now=no;
 }
 
 if(status==="done"){
 txt="已到場";
+cls="done";
 }
 
 if(status==="cancel"){
 txt="取消";
+cls="cancel";
 }
+
+// 意願顯示
+let slotShow =
+String(slot).replace("｜","<br>");
 
 tbody.innerHTML += `
 <tr>
+
 <td>${rowNo}</td>
+
 <td>${no}</td>
+
 <td>${name}</td>
+
 <td>${phone}</td>
+
 <td>${people}</td>
-<td>${slot}</td>
-<td>${txt}</td>
+
+<td style="line-height:1.6;">
+${slotShow}
+</td>
+
+<td class="${cls}">
+${txt}
+</td>
+
 <td>
 
-<button onclick="doneGuest(${rowNo})">
+<button class="smallbtn"
+onclick="doneGuest(${rowNo})">
 到場
 </button>
 
-<button onclick="cancelGuest(${rowNo})">
+<button class="smallbtn red"
+onclick="cancelGuest(${rowNo})">
 取消
 </button>
 
 </td>
+
 </tr>
 `;
 
 }
 
 if(current){
-current.innerText = now;
+current.innerText=now;
 }
 
 }
@@ -120,11 +146,12 @@ ${open ? "開放":"未開放"}
 type="number"
 id="cap${no}"
 value="${cap}"
-style="width:80px">
+class="inputnum">
 </td>
 
 <td>
-<button onclick="saveCap(${no},${open})">
+<button class="smallbtn"
+onclick="saveCap(${no},${open})">
 儲存
 </button>
 </td>
@@ -217,12 +244,46 @@ loadAdmin();
 }
 
 // ========================
+// 狀態頁叫號
+// ========================
+async function loadCurrentOnly(){
+
+const rows =
+await cloudGet();
+
+const current =
+document.getElementById(
+"currentNo"
+);
+
+if(!current) return;
+
+let now="A000";
+
+if(rows && rows.length>1){
+
+for(let i=1;i<rows.length;i++){
+
+if(rows[i][5]==="called"){
+now = rows[i][0];
+}
+
+}
+
+}
+
+current.innerText = now;
+
+}
+
+// ========================
 // 啟動
 // ========================
 document.addEventListener(
 "DOMContentLoaded",
 function(){
 
+// admin
 if(document.getElementById("tbody")){
 
 loadAdmin();
@@ -230,6 +291,19 @@ loadSessions();
 
 autoSync(
 loadAdmin,
+3000
+);
+
+}
+
+// screen/status
+if(document.getElementById("currentNo")
+&& !document.getElementById("tbody")){
+
+loadCurrentOnly();
+
+autoSync(
+loadCurrentOnly,
 3000
 );
 
