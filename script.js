@@ -1,9 +1,38 @@
-// script.js v6 Final
-// 後慈湖 候補叫號系統 最終版
+// script.js v7 補位版
+// 後慈湖 自動補位邏輯版
 
-// ========================
+// ===============================
+// 工具：解析梯次與意願
+// ===============================
+function parseSlot(raw){
+
+raw = String(raw || "");
+
+const parts = raw.split("｜");
+
+const slotText = parts[0] || "";
+const flexText = parts[1] || "";
+
+const match =
+slotText.match(/\d+/);
+
+const slotNo =
+match ? Number(match[0]) : 0;
+
+const flexible =
+flexText.includes("接受其他梯次");
+
+return {
+slotNo,
+slotText,
+flexible
+};
+
+}
+
+// ===============================
 // 後台名單載入
-// ========================
+// ===============================
 async function loadAdmin(){
 
 const rows = await cloudGet();
@@ -21,9 +50,7 @@ if(!rows || rows.length<=1){
 tbody.innerHTML =
 "<tr><td colspan='8'>目前無資料</td></tr>";
 
-if(current){
-current.innerText="A000";
-}
+if(current) current.innerText="A000";
 
 return;
 }
@@ -34,7 +61,7 @@ let now="A000";
 
 for(let i=1;i<rows.length;i++){
 
-const rowNo = i+1;
+const rowNo=i+1;
 
 const no     = rows[i][0];
 const name   = rows[i][1];
@@ -62,33 +89,20 @@ txt="取消";
 cls="cancel";
 }
 
-// 意願顯示
-let slotShow =
-String(slot).replace("｜","<br>");
-
 tbody.innerHTML += `
 <tr>
-
 <td>${rowNo}</td>
-
 <td>${no}</td>
-
 <td>${name}</td>
-
 <td>${phone}</td>
-
 <td>${people}</td>
-
 <td style="line-height:1.6;">
-${slotShow}
+${String(slot).replace("｜","<br>")}
 </td>
-
 <td class="${cls}">
 ${txt}
 </td>
-
 <td>
-
 <button class="smallbtn"
 onclick="doneGuest(${rowNo})">
 到場
@@ -98,115 +112,113 @@ onclick="doneGuest(${rowNo})">
 onclick="cancelGuest(${rowNo})">
 取消
 </button>
-
 </td>
-
 </tr>
 `;
 
 }
 
-if(current){
-current.innerText=now;
+if(current) current.innerText=now;
+
+renderAutoFillButtons();
+
+}
+
+// ===============================
+// 自動補位按鈕
+// ===============================
+function renderAutoFillButtons(){
+
+const area =
+document.getElementById("autofillArea");
+
+if(!area) return;
+
+area.innerHTML="";
+
+for(let i=1;i<=8;i++){
+
+area.innerHTML += `
+<button class="smallbtn"
+onclick="autoFill(${i})">
+第${i}梯補位
+</button>
+`;
+
 }
 
 }
 
-// ========================
-// 梯次管理
-// ========================
-async function loadSessions(){
+// ===============================
+// 自動補位邏輯
+// ===============================
+async function autoFill(targetSlot){
 
-const rows = await getSessions();
+const rows = await cloudGet();
 
-const body =
-document.getElementById("sessionBody");
+let bestRow = 0;
 
-if(!body) return;
+// 第一層：同梯次 waiting
+for(let i=1;i<rows.length;i++){
 
-body.innerHTML="";
+if(rows[i][5]!=="waiting")
+continue;
+
+const info =
+parseSlot(rows[i][4]);
+
+if(info.slotNo===targetSlot){
+
+bestRow=i+1;
+break;
+
+}
+
+}
+
+// 第二層：接受其他梯次
+if(bestRow===0){
 
 for(let i=1;i<rows.length;i++){
 
-const no   = rows[i][0];
-const open = rows[i][1];
-const cap  = rows[i][2];
+if(rows[i][5]!=="waiting")
+continue;
 
-body.innerHTML += `
-<tr>
+const info =
+parseSlot(rows[i][4]);
 
-<td>第${no}梯</td>
+if(info.flexible){
 
-<td>
-${open ? "開放":"未開放"}
-</td>
-
-<td>
-<input
-type="number"
-id="cap${no}"
-value="${cap}"
-class="inputnum">
-</td>
-
-<td>
-<button class="smallbtn"
-onclick="saveCap(${no},${open})">
-儲存
-</button>
-</td>
-
-</tr>
-`;
+bestRow=i+1;
+break;
 
 }
 
 }
 
-async function saveCap(no,open){
-
-const cap =
-document.getElementById(
-"cap"+no
-).value;
-
-await saveSession(
-no,
-open,
-cap
-);
-
-alert("第"+no+"梯已儲存");
-
-loadSessions();
-
 }
 
-// ========================
-// 狀態操作
-// ========================
-async function doneGuest(row){
+if(bestRow===0){
+
+alert("目前無可補位名單");
+return;
+
+}
 
 await updateStatus(
-row,
-"done"
+bestRow,
+"called"
 );
+
+alert("第"+targetSlot+"梯 已自動叫號");
 
 loadAdmin();
 
 }
 
-async function cancelGuest(row){
-
-await updateStatus(
-row,
-"cancel"
-);
-
-loadAdmin();
-
-}
-
+// ===============================
+// 一般叫號
+// ===============================
 async function callNextAndReload(){
 
 const rows =
@@ -231,63 +243,50 @@ loadAdmin();
 
 }
 
+// ===============================
+async function doneGuest(row){
+
+await updateStatus(
+row,
+"done"
+);
+
+loadAdmin();
+
+}
+
+async function cancelGuest(row){
+
+await updateStatus(
+row,
+"cancel"
+);
+
+loadAdmin();
+
+}
+
 async function clearToday(){
 
 if(confirm("確定清空今日名單？")){
 
 await clearQueue();
-
 loadAdmin();
 
 }
 
 }
 
-// ========================
-// 狀態頁叫號
-// ========================
-async function loadCurrentOnly(){
-
-const rows =
-await cloudGet();
-
-const current =
-document.getElementById(
-"currentNo"
-);
-
-if(!current) return;
-
-let now="A000";
-
-if(rows && rows.length>1){
-
-for(let i=1;i<rows.length;i++){
-
-if(rows[i][5]==="called"){
-now = rows[i][0];
-}
-
-}
-
-}
-
-current.innerText = now;
-
-}
-
-// ========================
+// ===============================
 // 啟動
-// ========================
+// ===============================
 document.addEventListener(
 "DOMContentLoaded",
 function(){
 
-// admin
 if(document.getElementById("tbody")){
 
 loadAdmin();
-loadSessions();
 
 autoSync(
 loadAdmin,
@@ -296,18 +295,4 @@ loadAdmin,
 
 }
 
-// screen/status
-if(document.getElementById("currentNo")
-&& !document.getElementById("tbody")){
-
-loadCurrentOnly();
-
-autoSync(
-loadCurrentOnly,
-3000
-);
-
-}
-
-}
-);
+});
