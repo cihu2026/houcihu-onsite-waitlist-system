@@ -1,4 +1,3 @@
-<!-- admin.html -->
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -6,7 +5,142 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>後慈湖｜管理後台</title>
 <link rel="stylesheet" href="style.css">
+
+<style>
+body{
+margin:0;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft JhengHei",sans-serif;
+background:#eef3ef;
+color:#1f2d1f;
+}
+
+header{
+background:linear-gradient(135deg,#1f5f35,#3e8b55);
+color:#fff;
+text-align:center;
+padding:24px;
+}
+
+header h1{
+margin:0;
+font-size:34px;
+font-weight:900;
+}
+
+header p{
+margin:10px 0 0;
+opacity:.95;
+}
+
+.wrap{
+max-width:1200px;
+margin:auto;
+padding:20px;
+}
+
+.card{
+background:#fff;
+border-radius:24px;
+padding:24px;
+margin-bottom:18px;
+box-shadow:0 12px 28px rgba(0,0,0,.08);
+}
+
+.notice{
+background:#fff3cd;
+border-left:6px solid #d6a400;
+font-weight:800;
+color:#8a6d3b;
+line-height:1.8;
+}
+
+.big{
+font-size:72px;
+font-weight:900;
+text-align:center;
+color:#1f7a3f;
+line-height:1;
+}
+
+.sub{
+text-align:center;
+color:#666;
+margin-top:8px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:14px;
+}
+
+button{
+width:100%;
+padding:14px;
+border:none;
+border-radius:14px;
+background:#1f7a3f;
+color:#fff;
+font-size:18px;
+font-weight:900;
+cursor:pointer;
+}
+
+.red{background:#d33;}
+.gray{background:#666;}
+.blue{background:#2c69c9;}
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+th,td{
+padding:12px;
+border-bottom:1px solid #eee;
+text-align:center;
+font-size:15px;
+}
+
+th{
+background:#f7faf7;
+}
+
+.smallbtn{
+padding:8px 10px;
+font-size:13px;
+border-radius:10px;
+width:auto;
+display:inline-block;
+margin:2px;
+}
+
+.inputnum{
+width:80px;
+padding:8px;
+border:1px solid #ddd;
+border-radius:10px;
+text-align:center;
+}
+
+.wait{color:#1f7a3f;font-weight:700;}
+.called{color:#d98b00;font-weight:700;}
+.done{color:#2c69c9;font-weight:700;}
+.cancel{color:#d33;font-weight:700;}
+
+@media(max-width:768px){
+
+.big{font-size:52px;}
+
+th,td{
+font-size:13px;
+padding:8px;
+}
+
+}
+</style>
 </head>
+
 <body>
 
 <script>
@@ -15,9 +149,9 @@ location.href="admin-login.html";
 }
 </script>
 
-<header class="hero">
-<h1>管理後台</h1>
-<p>候補叫號｜梯次管理</p>
+<header>
+<h1>後慈湖 管理後台</h1>
+<p>候補叫號｜名單管理｜梯次設定</p>
 </header>
 
 <div class="wrap">
@@ -26,34 +160,127 @@ location.href="admin-login.html";
 現場遞補不代表一定有名額
 </div>
 
+<!-- 目前叫號 -->
 <div class="card">
-<h2>目前叫號</h2>
-<div id="currentNo">A000</div>
+
+<div class="big" id="currentNo">
+A000
 </div>
 
-<div class="card">
-<button onclick="callNextAndReload()">下一號叫號</button>
-<button onclick="clearToday()">清空今日名單</button>
+<div class="sub">
+目前叫號
 </div>
 
+</div>
+
+<!-- 快速操作 -->
 <div class="card">
+
+<div class="grid">
+
+<button onclick="callNextAndReload()">
+下一號叫號
+</button>
+
+<button class="blue"
+onclick="loadAdmin()">
+立即刷新
+</button>
+
+<button class="gray"
+onclick="location.href='screen.html'">
+開啟看板
+</button>
+
+<button class="red"
+onclick="clearToday()">
+清空今日名單
+</button>
+
+<button class="gray"
+onclick="logout()">
+登出系統
+</button>
+
+</div>
+
+</div>
+
+<!-- 梯次管理 -->
+<div class="card">
+
 <h2>梯次管理</h2>
+
 <table>
-<tbody id="sessionBody"></tbody>
+<thead>
+<tr>
+<th>梯次</th>
+<th>開放</th>
+<th>可遞補</th>
+<th>操作</th>
+</tr>
+</thead>
+
+<tbody id="sessionBody">
+<tr>
+<td colspan="4">載入中...</td>
+</tr>
+</tbody>
+
 </table>
+
 </div>
 
+<!-- 候補名單 -->
 <div class="card">
+
 <h2>候補名單</h2>
+
+<div style="overflow:auto;">
+
 <table>
-<tbody id="tbody"></tbody>
+
+<thead>
+<tr>
+<th>列</th>
+<th>號碼</th>
+<th>姓名</th>
+<th>電話</th>
+<th>人數</th>
+<th>梯次</th>
+<th>狀態</th>
+<th>操作</th>
+</tr>
+</thead>
+
+<tbody id="tbody">
+<tr>
+<td colspan="8">載入中...</td>
+</tr>
+</tbody>
+
 </table>
+
+</div>
+
 </div>
 
 </div>
 
 <script src="sheets.js?v=3"></script>
 <script src="script.js?v=3"></script>
+
+<script>
+function logout(){
+
+localStorage.removeItem(
+"houcihu_admin_login"
+);
+
+location.href="admin-login.html";
+
+}
+</script>
 
 </body>
 </html>
