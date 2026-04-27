@@ -1,136 +1,171 @@
-// =======================
-// 共用後台邏輯
-// =======================
+// ===============================
+// Google Sheets 雲端同步版
+// 請改成你的 Apps Script 網址
+// ===============================
+const WEB_APP_URL =
+"https://script.google.com/macros/s/你的網址/exec";
 
-async function renderAdmin(){
+// ===============================
+const DEFAULT_DATA = {
+counter:1,
+current:"A000",
+queue:[]
+};
+
+// ===============================
+async function cloudGet(){
+
+try{
+
+const res =
+await fetch(WEB_APP_URL + "?t=" + Date.now());
+
+return await res.json();
+
+}catch(e){
+
+console.log(e);
+return null;
+
+}
+
+}
+
+// ===============================
+async function cloudSave(data){
+
+try{
+
+await fetch(WEB_APP_URL,{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify(data)
+});
+
+return true;
+
+}catch(e){
+
+console.log(e);
+return false;
+
+}
+
+}
+
+// ===============================
+async function initCloud(){
+
+let data = await cloudGet();
+
+if(!data){
+
+await cloudSave(DEFAULT_DATA);
+data = DEFAULT_DATA;
+
+}
+
+return data;
+}
+
+// ===============================
+function autoSync(callback,sec=3000){
+
+setInterval(async()=>{
 
 const data = await cloudGet();
 
-if(!data) return;
+if(data) callback(data);
 
-document.querySelectorAll("#currentNo")
-.forEach(el=>{
-el.innerText = data.current || "A000";
+},sec);
+
+}
+
+// ===============================
+async function cloudPatch(fn){
+
+const data = await cloudGet();
+
+if(!data) return false;
+
+fn(data);
+
+return await cloudSave(data);
+
+}
+
+// ===============================
+async function addQueue(name,people,slot){
+
+return await cloudPatch(data=>{
+
+const no =
+"A" +
+String(data.counter)
+.padStart(3,"0");
+
+data.queue.push({
+number:no,
+name:name,
+people:people,
+slot:slot,
+status:"waiting",
+time:new Date().toLocaleTimeString()
 });
 
-renderTable(data.queue || []);
-renderMobile(data.queue || []);
-
-}
-
-// =======================
-// admin table
-// =======================
-function renderTable(queue){
-
-const tbody =
-document.getElementById("tbody");
-
-if(!tbody) return;
-
-if(queue.length===0){
-
-tbody.innerHTML =
-'<tr><td colspan="5">目前無資料</td></tr>';
-
-return;
-}
-
-tbody.innerHTML = "";
-
-queue.forEach(item=>{
-
-tbody.innerHTML += `
-<tr>
-<td>${item.number}</td>
-<td>${item.name}</td>
-<td>${item.people}</td>
-<td>${statusText(item.status)}</td>
-<td>
-
-<button onclick="doneGuest('${item.number}')">
-到場
-</button>
-
-<button onclick="cancelGuest('${item.number}')">
-取消
-</button>
-
-</td>
-</tr>
-`;
+data.counter++;
 
 });
 
 }
 
-// =======================
-// mobile list
-// =======================
-function renderMobile(queue){
+// ===============================
+async function callNext(){
 
-const box =
-document.getElementById("mobileList");
+return await cloudPatch(data=>{
 
-if(!box) return;
+const row =
+data.queue.find(
+v=>v.status==="waiting"
+);
 
-if(queue.length===0){
+if(row){
 
-box.innerHTML = "目前無資料";
-return;
+row.status="called";
+data.current=row.number;
+
 }
-
-box.innerHTML = "";
-
-queue.forEach(item=>{
-
-box.innerHTML += `
-<div class="card">
-
-<b>${item.number}</b><br>
-${item.name} / ${item.people}人<br>
-${statusText(item.status)}
-
-<button onclick="doneGuest('${item.number}')">
-到場
-</button>
-
-<button onclick="cancelGuest('${item.number}')">
-取消
-</button>
-
-</div>
-`;
 
 });
 
 }
 
-// =======================
-// 狀態文字
-// =======================
-function statusText(status){
+// ===============================
+async function doneNumber(no){
 
-if(status==="called") return "已叫號";
-if(status==="done") return "已到場";
-if(status==="cancel") return "取消";
+return await cloudPatch(data=>{
 
-return "等待中";
+const row =
+data.queue.find(v=>v.number===no);
+
+if(row) row.status="done";
+
+});
+
 }
 
-// =======================
-// 操作
-// =======================
-async function doneGuest(no){
-await doneNumber(no);
-}
+// ===============================
+async function cancelNumber(no){
 
-async function cancelGuest(no){
-await cancelNumber(no);
-}
+return await cloudPatch(data=>{
 
-// =======================
-// 啟動
-// =======================
-initCloud().then(renderAdmin);
-autoSync(renderAdmin,3000);
+const row =
+data.queue.find(v=>v.number===no);
+
+if(row) row.status="cancel";
+
+});
+
+}
