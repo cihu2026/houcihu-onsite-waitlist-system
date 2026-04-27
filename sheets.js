@@ -1,4 +1,3 @@
-```javascript
 // =====================================================
 // Houcihu 雲端同步 sheets.js 修正版（Apps Script 相容）
 // 修復：checkin.html 無法送出
@@ -316,4 +315,3 @@ async function refreshNow(callback){
     callback(data);
   }
 }
-```
