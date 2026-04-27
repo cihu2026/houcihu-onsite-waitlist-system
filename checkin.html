@@ -1,4 +1,3 @@
-<!-- checkin.html -->
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -6,17 +5,145 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>後慈湖｜現場候補登記</title>
 <link rel="stylesheet" href="style.css">
+
+<style>
+body{
+margin:0;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft JhengHei",sans-serif;
+background:linear-gradient(135deg,#eef6ef,#dfeee2);
+color:#1f2d1f;
+}
+
+header{
+background:linear-gradient(135deg,#1f5f35,#3e8b55);
+color:#fff;
+text-align:center;
+padding:32px 18px;
+}
+
+header h1{
+margin:0;
+font-size:34px;
+font-weight:900;
+}
+
+header p{
+margin:10px 0 0;
+font-size:17px;
+opacity:.95;
+}
+
+.wrap{
+max-width:760px;
+margin:auto;
+padding:20px;
+}
+
+.card{
+background:#fff;
+border-radius:24px;
+padding:24px;
+margin-bottom:18px;
+box-shadow:0 12px 28px rgba(0,0,0,.08);
+}
+
+label{
+display:block;
+margin:14px 0 8px;
+font-weight:800;
+}
+
+input,select{
+width:100%;
+padding:14px;
+border:1px solid #d9dfd9;
+border-radius:14px;
+font-size:17px;
+box-sizing:border-box;
+}
+
+button{
+width:100%;
+padding:16px;
+margin-top:18px;
+border:none;
+border-radius:16px;
+background:#1f7a3f;
+color:#fff;
+font-size:20px;
+font-weight:900;
+cursor:pointer;
+}
+
+.notice{
+background:#fff3cd;
+border-left:6px solid #d6a400;
+font-weight:800;
+color:#8a6d3b;
+line-height:1.8;
+}
+
+.big{
+font-size:56px;
+font-weight:900;
+text-align:center;
+color:#1f7a3f;
+}
+
+.slotinfo{
+margin-top:10px;
+font-weight:800;
+text-align:center;
+}
+
+.red{color:#d33;}
+.orange{color:#d98b00;}
+.green{color:#1f7a3f;}
+
+a.btn{
+display:block;
+text-decoration:none;
+text-align:center;
+padding:16px;
+border-radius:16px;
+background:#666;
+color:#fff;
+font-size:18px;
+font-weight:900;
+margin-top:12px;
+}
+
+footer{
+text-align:center;
+color:#666;
+padding:10px 0 30px;
+}
+
+@media(max-width:768px){
+
+header h1{font-size:28px;}
+.big{font-size:42px;}
+
+}
+</style>
 </head>
+
 <body>
 
-<header class="hero">
+<header>
 <h1>現場候補登記</h1>
 <p>請填寫資料後送出</p>
 </header>
 
 <div class="wrap">
 
+<div class="card notice">
+現場遞補不代表一定有名額。<br>
+實際入場資格依現場名額與工作人員安排為準。
+</div>
+
 <div class="card">
+
 <form id="waitForm">
 
 <label>姓名</label>
@@ -27,25 +154,215 @@
 
 <label>人數</label>
 <select id="people">
-<option>1</option><option>2</option><option>3</option>
-<option>4</option><option>5</option><option>6</option>
+<option value="1">1 人</option>
+<option value="2">2 人</option>
+<option value="3">3 人</option>
+<option value="4">4 人</option>
+<option value="5">5 人</option>
+<option value="6">6 人</option>
+<option value="7">7 人</option>
+<option value="8">8 人</option>
+<option value="9">9 人</option>
+<option value="10">10 人</option>
 </select>
 
-<button type="submit">送出登記</button>
+<label>選擇梯次</label>
+<select id="slot"></select>
+
+<div class="slotinfo" id="slotInfo">
+讀取梯次資訊中...
+</div>
+
+<button type="submit">
+送出登記
+</button>
 
 </form>
+
 </div>
 
 <div class="card" id="successBox" style="display:none;">
-<h2>登記成功</h2>
-<div id="ticketNo">A001</div>
-<p>現場遞補不代表一定有名額</p>
+
+<h2 style="text-align:center;">登記成功</h2>
+
+<div class="big" id="ticketNo">
+A001
 </div>
+
+<p style="text-align:center;line-height:1.8;">
+請留意現場叫號與廣播通知。
+</p>
+
+<a class="btn" href="visitor.html">
+返回首頁
+</a>
 
 </div>
 
-<script src="sheets.js"></script>
-<script src="script.js"></script>
+</div>
+
+<footer>
+Houcihu Visitor Service Center
+</footer>
+
+<script src="sheets.js?v=3"></script>
+
+<script>
+async function loadSlots(){
+
+const rows = await getSessions();
+
+const slot =
+document.getElementById("slot");
+
+slot.innerHTML="";
+
+for(let i=1;i<rows.length;i++){
+
+const no   = rows[i][0];
+const open = rows[i][1];
+const cap  = Number(rows[i][2]);
+
+if(!open) continue;
+
+let text="";
+
+if(cap<=0){
+
+text="第"+no+"梯（額滿候補）";
+
+}else{
+
+text="第"+no+"梯（剩 "+cap+" 位）";
+
+}
+
+slot.innerHTML += `
+<option value="第${no}梯">
+${text}
+</option>
+`;
+
+}
+
+showSlotInfo();
+
+}
+
+async function showSlotInfo(){
+
+const rows = await getSessions();
+
+const val =
+document.getElementById("slot").value;
+
+const no =
+val.replace("第","")
+.replace("梯","");
+
+const info =
+document.getElementById("slotInfo");
+
+for(let i=1;i<rows.length;i++){
+
+if(String(rows[i][0])===no){
+
+const cap = Number(rows[i][2]);
+
+if(cap<=0){
+
+info.className="slotinfo red";
+info.innerText=
+"目前額滿，可登記候補等待遞補";
+
+}else if(cap<=3){
+
+info.className="slotinfo orange";
+info.innerText=
+"剩餘名額較少，請儘速登記";
+
+}else{
+
+info.className="slotinfo green";
+info.innerText=
+"目前可候補登記";
+
+}
+
+}
+
+}
+
+}
+
+document.getElementById("slot")
+.addEventListener(
+"change",
+showSlotInfo
+);
+
+document.getElementById("waitForm")
+.addEventListener(
+"submit",
+async function(e){
+
+e.preventDefault();
+
+const name =
+document.getElementById("name").value;
+
+const phone =
+document.getElementById("phone").value;
+
+const people =
+document.getElementById("people").value;
+
+const slot =
+document.getElementById("slot").value;
+
+const rows =
+await cloudGet();
+
+const no =
+"A"+String(rows.length)
+.padStart(3,"0");
+
+const ok =
+await fetch(WEB_APP_URL,{
+method:"POST",
+body:new URLSearchParams({
+action:"add",
+number:no,
+name:name,
+phone:phone,
+people:people,
+slot:slot,
+status:"waiting"
+})
+});
+
+if(ok){
+
+document.getElementById("waitForm")
+.style.display="none";
+
+document.getElementById("successBox")
+.style.display="block";
+
+document.getElementById("ticketNo")
+.innerText=no;
+
+}else{
+
+alert("送出失敗");
+
+}
+
+}
+);
+
+loadSlots();
+</script>
 
 </body>
 </html>
