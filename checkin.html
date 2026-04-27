@@ -1,1 +1,51 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><title>checkin</title></head><body>checkin.html</body></html>
+<!-- checkin.html -->
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>後慈湖｜現場候補登記</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="hero">
+<h1>現場候補登記</h1>
+<p>請填寫資料後送出</p>
+</header>
+
+<div class="wrap">
+
+<div class="card">
+<form id="waitForm">
+
+<label>姓名</label>
+<input type="text" id="name" required>
+
+<label>手機號碼</label>
+<input type="tel" id="phone" required>
+
+<label>人數</label>
+<select id="people">
+<option>1</option><option>2</option><option>3</option>
+<option>4</option><option>5</option><option>6</option>
+</select>
+
+<button type="submit">送出登記</button>
+
+</form>
+</div>
+
+<div class="card" id="successBox" style="display:none;">
+<h2>登記成功</h2>
+<div id="ticketNo">A001</div>
+<p>現場遞補不代表一定有名額</p>
+</div>
+
+</div>
+
+<script src="sheets.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>
