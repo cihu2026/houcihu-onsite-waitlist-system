@@ -5,42 +5,188 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>後慈湖｜管理後台</title>
 <link rel="stylesheet" href="style.css">
+
+<style>
+body{
+margin:0;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft JhengHei",sans-serif;
+background:#eef3ef;
+color:#1f2d1f;
+}
+
+header{
+background:linear-gradient(135deg,#1f5f35,#3e8b55);
+color:#fff;
+text-align:center;
+padding:24px;
+}
+
+.wrap{
+max-width:1200px;
+margin:auto;
+padding:20px;
+}
+
+.card{
+background:#fff;
+border-radius:20px;
+padding:22px;
+margin-bottom:18px;
+box-shadow:0 12px 28px rgba(0,0,0,.08);
+}
+
+.big{
+font-size:72px;
+font-weight:900;
+text-align:center;
+color:#1f7a3f;
+}
+
+.sub{
+text-align:center;
+color:#666;
+margin-top:8px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:14px;
+}
+
+button{
+width:100%;
+padding:14px;
+border:none;
+border-radius:14px;
+background:#1f7a3f;
+color:#fff;
+font-size:18px;
+font-weight:800;
+cursor:pointer;
+}
+
+.red{background:#d33;}
+.gray{background:#888;}
+.blue{background:#2c69c9;}
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+th,td{
+padding:12px;
+border-bottom:1px solid #eee;
+text-align:center;
+font-size:15px;
+}
+
+th{
+background:#f7faf7;
+}
+
+.smallbtn{
+padding:8px 10px;
+font-size:14px;
+border-radius:10px;
+margin:2px;
+width:auto;
+}
+
+.wait{color:#1f7a3f;font-weight:700;}
+.called{color:#c88600;font-weight:700;}
+.done{color:#2c69c9;font-weight:700;}
+.cancel{color:#d33;font-weight:700;}
+
+@media(max-width:768px){
+
+.big{font-size:56px;}
+th,td{font-size:13px;padding:8px;}
+
+}
+</style>
 </head>
 
 <body>
 
 <header>
-<h1>管理後台</h1>
-<p>候補名單｜叫號｜到場｜取消</p>
+<h1>後慈湖 管理後台</h1>
+<div>候補叫號｜名單管理｜即時同步</div>
 </header>
 
 <div class="wrap">
 
+<!-- 目前叫號 -->
 <div class="card">
-<div class="big" id="currentNo">A000</div>
-<p style="text-align:center;">目前叫號</p>
 
-<button onclick="callNext()">
-下一號叫號
-</button>
+<div class="big" id="currentNo">
+A000
 </div>
 
+<div class="sub">
+目前叫號
+</div>
+
+</div>
+
+<!-- 快速操作 -->
 <div class="card">
+
+<div class="grid">
+
+<button onclick="callNextAndReload()">
+下一號叫號
+</button>
+
+<button class="blue" onclick="loadData()">
+立即刷新
+</button>
+
+<button class="gray"
+onclick="location.href='screen.html'">
+開啟看板
+</button>
+
+<button class="red"
+onclick="clearToday()">
+清空今日名單
+</button>
+
+</div>
+
+</div>
+
+<!-- 名單 -->
+<div class="card">
+
 <h2>候補名單</h2>
 
-<table width="100%" id="queueTable">
+<div style="overflow:auto;">
+
+<table>
+
 <thead>
 <tr>
+<th>列</th>
 <th>號碼</th>
 <th>姓名</th>
+<th>電話</th>
 <th>人數</th>
+<th>梯次</th>
 <th>狀態</th>
 <th>操作</th>
 </tr>
 </thead>
 
 <tbody id="tbody">
-<tr><td colspan="5">載入中...</td></tr>
+
+<tr>
+<td colspan="8">
+載入中...
+</td>
+</tr>
+
 </tbody>
 
 </table>
@@ -49,8 +195,146 @@
 
 </div>
 
+</div>
+
 <script src="sheets.js"></script>
-<script src="script.js"></script>
+
+<script>
+// ===============================
+// 載入資料
+// ===============================
+async function loadData(){
+
+const rows = await cloudGet();
+
+const tbody =
+document.getElementById("tbody");
+
+if(!rows || rows.length <= 1){
+
+tbody.innerHTML =
+"<tr><td colspan='8'>目前無資料</td></tr>";
+
+return;
+}
+
+// 找最後一筆 called
+let current = "A000";
+
+for(let i=1;i<rows.length;i++){
+
+if(rows[i][5] === "called"){
+current = rows[i][0];
+}
+
+}
+
+document.getElementById("currentNo")
+.innerText = current;
+
+// render table
+tbody.innerHTML = "";
+
+for(let i=1;i<rows.length;i++){
+
+const rowNo = i + 1;
+
+const no = rows[i][0];
+const name = rows[i][1];
+const phone = rows[i][2];
+const people = rows[i][3];
+const slot = rows[i][4];
+const status = rows[i][5];
+
+let cls = "wait";
+let txt = "等待中";
+
+if(status==="called"){
+cls="called";
+txt="已叫號";
+}
+
+if(status==="done"){
+cls="done";
+txt="已到場";
+}
+
+if(status==="cancel"){
+cls="cancel";
+txt="取消";
+}
+
+tbody.innerHTML += `
+<tr>
+<td>${rowNo}</td>
+<td>${no}</td>
+<td>${name}</td>
+<td>${phone}</td>
+<td>${people}</td>
+<td>${slot}</td>
+<td class="${cls}">
+${txt}
+</td>
+<td>
+
+<button class="smallbtn"
+onclick="doneGuest(${rowNo})">
+到場
+</button>
+
+<button class="smallbtn red"
+onclick="cancelGuest(${rowNo})">
+取消
+</button>
+
+</td>
+</tr>
+`;
+}
+
+}
+
+// ===============================
+// 操作
+// ===============================
+async function doneGuest(row){
+
+await doneNumber(row);
+loadData();
+
+}
+
+async function cancelGuest(row){
+
+await cancelNumber(row);
+loadData();
+
+}
+
+async function callNextAndReload(){
+
+await callNext();
+loadData();
+
+}
+
+async function clearToday(){
+
+if(confirm("確定清空今日名單？")){
+
+await clearQueue();
+loadData();
+
+}
+
+}
+
+// ===============================
+// 啟動
+// ===============================
+loadData();
+autoSync(loadData,3000);
+</script>
 
 </body>
 </html>
