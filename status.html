@@ -8,128 +8,128 @@
 
 <style>
 body{
-  margin:0;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft JhengHei",sans-serif;
-  background:linear-gradient(135deg,#eef6ef,#dfeee2);
-  color:#1f2d1f;
+margin:0;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft JhengHei",sans-serif;
+background:linear-gradient(135deg,#eef6ef,#dfeee2);
+color:#1f2d1f;
 }
 
 header{
-  background:linear-gradient(135deg,#1f5f35,#3e8b55);
-  color:#fff;
-  text-align:center;
-  padding:28px 18px;
+background:linear-gradient(135deg,#1f5f35,#3e8b55);
+color:#fff;
+text-align:center;
+padding:28px 18px;
 }
 
 header h1{
-  margin:0;
-  font-size:32px;
+margin:0;
+font-size:32px;
 }
 
 header p{
-  margin:10px 0 0;
-  opacity:.95;
+margin:10px 0 0;
+opacity:.95;
 }
 
 .wrap{
-  max-width:1000px;
-  margin:auto;
-  padding:20px;
+max-width:1000px;
+margin:auto;
+padding:20px;
 }
 
 .card{
-  background:#fff;
-  border-radius:22px;
-  padding:24px;
-  margin-bottom:18px;
-  box-shadow:0 12px 28px rgba(0,0,0,.08);
+background:#fff;
+border-radius:22px;
+padding:24px;
+margin-bottom:18px;
+box-shadow:0 12px 28px rgba(0,0,0,.08);
 }
 
 .big{
-  font-size:48px;
-  font-weight:900;
-  text-align:center;
-  color:#1f7a3f;
+font-size:44px;
+font-weight:900;
+text-align:center;
+color:#1f7a3f;
 }
 
 .grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:14px;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:14px;
 }
 
 .slot{
-  border:1px solid #e8ece8;
-  border-radius:18px;
-  padding:18px;
-  text-align:center;
+border:1px solid #e8ece8;
+border-radius:18px;
+padding:18px;
+text-align:center;
 }
 
 .slot h3{
-  margin:0 0 10px;
-  font-size:24px;
+margin:0 0 10px;
+font-size:24px;
 }
 
 .state{
-  font-size:30px;
-  font-weight:900;
+font-size:28px;
+font-weight:900;
 }
 
 .green{color:#1f7a3f;}
 .red{color:#d33;}
 .orange{color:#d98b00;}
+.gray{color:#888;}
 .blue{color:#2c69c9;}
 
 .note{
-  line-height:1.8;
-  color:#444;
+line-height:1.8;
+color:#444;
 }
 
 .btns{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:12px;
 }
 
 button{
-  width:100%;
-  border:none;
-  border-radius:14px;
-  padding:15px;
-  background:#1f7a3f;
-  color:#fff;
-  font-size:18px;
-  font-weight:800;
-  cursor:pointer;
+width:100%;
+border:none;
+border-radius:14px;
+padding:15px;
+background:#1f7a3f;
+color:#fff;
+font-size:18px;
+font-weight:800;
+cursor:pointer;
 }
 
-.gray{
-  background:#666;
+.graybtn{
+background:#666;
 }
 
 footer{
-  text-align:center;
-  color:#666;
-  padding:10px 0 30px;
+text-align:center;
+color:#666;
+padding:10px 0 30px;
 }
 
 @media(max-width:768px){
 
-  .big{
-    font-size:34px;
-  }
+.big{font-size:34px;}
 
-  .btns{
-    grid-template-columns:1fr;
-  }
+.btns{
+grid-template-columns:1fr;
+}
 
-  button{
-    font-size:17px;
-  }
+.state{
+font-size:22px;
+}
 
-  .state{
-    font-size:24px;
-  }
+button{
+font-size:17px;
+}
+
 }
 </style>
 </head>
@@ -143,11 +143,13 @@ footer{
 
 <div class="wrap">
 
-<!-- 目前梯次 -->
+<!-- 今日進度 -->
 <div class="card">
-<div class="big" id="nowSlot">
-目前入場：第 1 梯
+
+<div class="big" id="todayText">
+今日開放梯次資訊
 </div>
+
 </div>
 
 <!-- 梯次資訊 -->
@@ -160,15 +162,17 @@ footer{
 
 </div>
 
-<!-- 候補資訊 -->
+<!-- 候補 -->
 <div class="card">
 
 <h2>現場候補資訊</h2>
 
 <div class="note">
-目前候補號碼：<b id="waitNo">A000</b><br>
-請留意現場叫號與廣播通知。<br>
-候補依現場名額與順序遞補，不保證入場。
+目前候補號碼：
+<b id="waitNo">A000</b><br>
+
+現場遞補不代表一定有名額。<br>
+請留意現場叫號與工作人員引導。
 </div>
 
 </div>
@@ -184,7 +188,7 @@ footer{
 現場候補登記
 </button>
 
-<button class="gray"
+<button class="graybtn"
 onclick="location.href='screen.html'">
 查看叫號看板
 </button>
@@ -199,67 +203,127 @@ onclick="location.href='screen.html'">
 Houcihu Visitor Service Center
 </footer>
 
-<script src="sheets.js"></script>
+<script src="sheets.js?v=6"></script>
 
 <script>
-// ===================================
-// 可自行修改梯次資料
-// ===================================
-const slots = [
-{no:1,time:"09:30",state:"已入場"},
-{no:2,time:"10:00",state:"報到中"},
-{no:3,time:"10:30",state:"即將入場"},
-{no:4,time:"11:00",state:"額滿"},
-{no:5,time:"11:30",state:"尚餘 8 位"},
-{no:6,time:"12:00",state:"可預約"}
-];
+// =========================
+// 日期規則
+// =========================
+function getOpenSessions(){
 
-// ===================================
-function getClass(text){
+const now = new Date();
+const limit = new Date("2026-06-21");
 
-if(text.includes("額滿")) return "red";
-if(text.includes("尚餘")) return "orange";
-if(text.includes("已入場")) return "blue";
-if(text.includes("報到")) return "green";
-if(text.includes("可預約")) return "green";
-
-return "green";
+if(now < limit){
+return [1,3,5,7];
 }
 
-// ===================================
+return [1,2,3,4,5,6,7,8];
+}
+
+// =========================
+// 讀 localStorage 梯次名額
+// =========================
+function getCap(no){
+
+const v =
+localStorage.getItem(
+"session_cap_"+no
+);
+
+if(v===null){
+
+return 5;
+
+}
+
+return Number(v);
+}
+
+// =========================
+// 狀態文字
+// =========================
+function getStatus(no,open){
+
+if(!open){
+return {
+text:"未開放",
+cls:"gray"
+};
+}
+
+const cap =
+getCap(no);
+
+if(cap<=0){
+return {
+text:"額滿",
+cls:"red"
+};
+}
+
+if(cap<=3){
+return {
+text:"尚餘 "+cap+" 位",
+cls:"orange"
+};
+}
+
+return {
+text:"可遞補",
+cls:"green"
+};
+
+}
+
+// =========================
+// 顯示梯次
+// =========================
 function renderSlots(){
 
 const box =
 document.getElementById("slotGrid");
 
-box.innerHTML = "";
+box.innerHTML="";
 
-slots.forEach(s=>{
+const opens =
+getOpenSessions();
+
+for(let i=1;i<=8;i++){
+
+const open =
+opens.includes(i);
+
+const s =
+getStatus(i,open);
 
 box.innerHTML += `
 <div class="slot">
-<h3>第 ${s.no} 梯</h3>
-<div>${s.time}</div>
-<div class="state ${getClass(s.state)}">
-${s.state}
+
+<h3>第 ${i} 梯</h3>
+
+<div class="state ${s.cls}">
+${s.text}
 </div>
+
 </div>
 `;
 
-});
+}
 
 }
 
-// ===================================
-// 候補同步
-// ===================================
+// =========================
+// 候補號碼
+// =========================
 async function loadWait(){
 
 try{
 
-const rows = await cloudGet();
+const rows =
+await cloudGet();
 
-if(rows && rows.length > 1){
+if(rows && rows.length>1){
 
 const last =
 rows[rows.length-1][0];
@@ -275,10 +339,17 @@ console.log(e);
 
 }
 
-// ===================================
+// =========================
+// 啟動
+// =========================
 renderSlots();
 loadWait();
-setInterval(loadWait,5000);
+
+setInterval(()=>{
+renderSlots();
+loadWait();
+},5000);
+
 </script>
 
 </body>
