@@ -166,8 +166,47 @@ header h1{font-size:28px;}
 <option value="10">10 人</option>
 </select>
 
+<!-- 在原本「選擇梯次」區塊後面直接加上以下內容，其餘一字不改 -->
+
 <label>選擇梯次</label>
 <select id="slot"></select>
+
+<div class="slotinfo" id="slotInfo">
+讀取梯次資訊中...
+</div>
+
+<!-- 新增開始 -->
+<div class="card" style="margin-top:14px;padding:16px;background:#f7faf7;box-shadow:none;">
+
+<div style="font-weight:900;margin-bottom:8px;">
+候補安排意願
+</div>
+
+<label style="display:flex;align-items:flex-start;gap:10px;margin:8px 0;font-weight:700;">
+<input
+type="radio"
+name="flex"
+value="接受其他梯次"
+checked
+style="width:auto;margin-top:4px;">
+<span>
+若原梯次額滿，可接受安排其他相近梯次遞補
+</span>
+</label>
+
+<label style="display:flex;align-items:flex-start;gap:10px;margin:8px 0;font-weight:700;">
+<input
+type="radio"
+name="flex"
+value="僅原梯次"
+style="width:auto;margin-top:4px;">
+<span>
+僅接受原選梯次候補
+</span>
+</label>
+
+</div>
+<!-- 新增結束 -->
 
 <div class="slotinfo" id="slotInfo">
 讀取梯次資訊中...
@@ -196,8 +235,6 @@ A001
 <a class="btn" href="visitor.html">
 返回首頁
 </a>
-
-</div>
 
 </div>
 
