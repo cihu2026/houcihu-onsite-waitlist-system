@@ -1,171 +1,334 @@
-// ===============================
-// Google Sheets 雲端同步版
-// 請改成你的 Apps Script 網址
-// ===============================
-const WEB_APP_URL =
-"https://script.google.com/macros/s/你的網址/exec";
+// ======================================
+// 後慈湖 script.js v3 正式版
+// 搭配 sheets.js v3 使用
+// ======================================
 
-// ===============================
-const DEFAULT_DATA = {
-counter:1,
-current:"A000",
-queue:[]
-};
+// ======================================
+// 共用工具
+// ======================================
+function byId(id){
+return document.getElementById(id);
+}
 
-// ===============================
-async function cloudGet(){
+function setText(id,text){
 
-try{
+const el = byId(id);
 
-const res =
-await fetch(WEB_APP_URL + "?t=" + Date.now());
+if(el){
+el.innerText = text;
+}
 
-return await res.json();
+}
 
-}catch(e){
+// ======================================
+// 狀態文字
+// ======================================
+function statusText(status){
 
-console.log(e);
-return null;
+if(status==="waiting") return "等待中";
+if(status==="called") return "已叫號";
+if(status==="done") return "已到場";
+if(status==="cancel") return "取消";
+
+return status;
+
+}
+
+function statusClass(status){
+
+if(status==="waiting") return "wait";
+if(status==="called") return "called";
+if(status==="done") return "done";
+if(status==="cancel") return "cancel";
+
+return "";
+
+}
+
+// ======================================
+// admin 讀取名單
+// ======================================
+async function loadAdmin(){
+
+const rows =
+await cloudGet();
+
+const tbody =
+byId("tbody");
+
+if(!tbody) return;
+
+if(!rows || rows.length<=1){
+
+tbody.innerHTML =
+"<tr><td colspan='8'>目前無資料</td></tr>";
+
+return;
+
+}
+
+let current = "A000";
+
+tbody.innerHTML = "";
+
+for(let i=1;i<rows.length;i++){
+
+const rowNo = i+1;
+
+const no = rows[i][0];
+const name = rows[i][1];
+const phone = rows[i][2];
+const people = rows[i][3];
+const slot = rows[i][4];
+const status = rows[i][5];
+
+if(status==="called"){
+current = no;
+}
+
+tbody.innerHTML += `
+<tr>
+<td>${rowNo}</td>
+<td>${no}</td>
+<td>${name}</td>
+<td>${phone}</td>
+<td>${people}</td>
+<td>${slot}</td>
+<td class="${statusClass(status)}">
+${statusText(status)}
+</td>
+<td>
+
+<button class="smallbtn"
+onclick="doneGuest(${rowNo})">
+到場
+</button>
+
+<button class="smallbtn red"
+onclick="cancelGuest(${rowNo})">
+取消
+</button>
+
+</td>
+</tr>
+`;
+
+}
+
+setText("currentNo",current);
+
+}
+
+// ======================================
+// admin 操作
+// ======================================
+async function doneGuest(row){
+
+await doneNumber(row);
+loadAdmin();
+
+}
+
+async function cancelGuest(row){
+
+await cancelNumber(row);
+loadAdmin();
+
+}
+
+async function callNextAndReload(){
+
+await callNext();
+loadAdmin();
+
+}
+
+async function clearToday(){
+
+if(confirm("確定清空今日名單？")){
+
+await clearQueue();
+loadAdmin();
 
 }
 
 }
 
-// ===============================
-async function cloudSave(data){
+// ======================================
+// screen 看板
+// ======================================
+async function loadScreen(){
 
-try{
+const rows =
+await cloudGet();
 
-await fetch(WEB_APP_URL,{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify(data)
-});
+let current = "A000";
 
-return true;
+if(rows && rows.length>1){
 
-}catch(e){
+for(let i=1;i<rows.length;i++){
 
-console.log(e);
-return false;
-
+if(rows[i][5]==="called"){
+current = rows[i][0];
 }
 
 }
 
-// ===============================
-async function initCloud(){
+}
 
-let data = await cloudGet();
-
-if(!data){
-
-await cloudSave(DEFAULT_DATA);
-data = DEFAULT_DATA;
+setText("currentNo",current);
 
 }
 
-return data;
-}
+// ======================================
+// checkin 登記
+// ======================================
+async function submitCheckin(
+nameId="name",
+phoneId="phone",
+peopleId="people"
+){
 
-// ===============================
-function autoSync(callback,sec=3000){
+const name =
+byId(nameId).value.trim();
 
-setInterval(async()=>{
+const phone =
+byId(phoneId).value.trim();
 
-const data = await cloudGet();
+const people =
+byId(peopleId).value;
 
-if(data) callback(data);
-
-},sec);
-
-}
-
-// ===============================
-async function cloudPatch(fn){
-
-const data = await cloudGet();
-
-if(!data) return false;
-
-fn(data);
-
-return await cloudSave(data);
-
-}
-
-// ===============================
-async function addQueue(name,people,slot){
-
-return await cloudPatch(data=>{
+const rows =
+await cloudGet();
 
 const no =
 "A" +
-String(data.counter)
-.padStart(3,"0");
+String(rows.length).padStart(3,"0");
 
-data.queue.push({
-number:no,
-name:name,
-people:people,
-slot:slot,
-status:"waiting",
-time:new Date().toLocaleTimeString()
-});
-
-data.counter++;
-
-});
-
-}
-
-// ===============================
-async function callNext(){
-
-return await cloudPatch(data=>{
-
-const row =
-data.queue.find(
-v=>v.status==="waiting"
+const ok =
+await addQueue(
+no,
+name,
+phone,
+people,
+"現場"
 );
 
-if(row){
+if(ok){
 
-row.status="called";
-data.current=row.number;
+const form =
+document.querySelector("form");
+
+if(form){
+form.style.display="none";
+}
+
+const box =
+byId("successBox");
+
+if(box){
+box.style.display="block";
+}
+
+setText("ticketNo",no);
+
+}else{
+
+alert("送出失敗");
 
 }
 
-});
+}
+
+// ======================================
+// sessions 顯示
+// ======================================
+async function loadSessions(){
+
+const rows =
+await getSessions();
+
+const body =
+byId("sessionBody");
+
+if(!body) return;
+
+body.innerHTML = "";
+
+for(let i=1;i<rows.length;i++){
+
+const no = rows[i][0];
+const open = rows[i][1];
+const cap = rows[i][2];
+
+body.innerHTML += `
+<tr>
+<td>第${no}梯</td>
+<td>${open ? "✅":"❌"}</td>
+<td>
+<input
+type="number"
+id="cap${no}"
+value="${cap}"
+style="width:80px">
+</td>
+<td>
+<button class="smallbtn"
+onclick="saveCap(${no},${open})">
+儲存
+</button>
+</td>
+</tr>
+`;
 
 }
 
-// ===============================
-async function doneNumber(no){
+}
 
-return await cloudPatch(data=>{
+async function saveCap(no,open){
 
-const row =
-data.queue.find(v=>v.number===no);
+const cap =
+byId("cap"+no).value;
 
-if(row) row.status="done";
+await saveSession(
+no,
+open,
+cap
+);
 
-});
+alert("已儲存");
+
+loadSessions();
 
 }
 
-// ===============================
-async function cancelNumber(no){
+// ======================================
+// 自動啟動
+// ======================================
+document.addEventListener(
+"DOMContentLoaded",
+function(){
 
-return await cloudPatch(data=>{
+if(byId("tbody")){
 
-const row =
-data.queue.find(v=>v.number===no);
-
-if(row) row.status="cancel";
-
-});
+loadAdmin();
+autoSync(loadAdmin,3000);
 
 }
+
+if(byId("currentNo")
+&& !byId("tbody")){
+
+loadScreen();
+autoSync(loadScreen,3000);
+
+}
+
+if(byId("sessionBody")){
+
+loadSessions();
+
+}
+
+}
+);
