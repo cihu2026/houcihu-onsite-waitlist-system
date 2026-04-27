@@ -3,414 +3,146 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>後慈湖現場補位系統｜V3 電視看板</title>
-
+<title>後慈湖｜即時叫號看板</title>
 <link rel="stylesheet" href="style.css">
 
 <style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-}
-
 body{
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",
-  "Microsoft JhengHei",sans-serif;
-  background:linear-gradient(135deg,#0d3d28,#1e7a45);
-  color:#fff;
-  min-height:100vh;
-  overflow:hidden;
+text-align:center;
+background:#0f4726;
+color:#fff;
 }
 
-.wrap{
-  width:100%;
-  height:100vh;
-  display:flex;
-  flex-direction:column;
-  padding:24px;
+.board{
+max-width:1100px;
+margin:auto;
+padding:30px 20px;
 }
 
-header{
-  text-align:center;
-  margin-bottom:18px;
+.now{
+font-size:140px;
+font-weight:900;
+line-height:1;
+margin:20px 0;
 }
 
-header h1{
-  font-size:56px;
-  font-weight:900;
-  letter-spacing:2px;
+.sub{
+font-size:34px;
+opacity:.95;
 }
 
-header p{
-  font-size:24px;
-  opacity:.9;
-  margin-top:8px;
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:16px;
+margin-top:24px;
 }
 
-.main{
-  flex:1;
-  display:grid;
-  grid-template-columns:2fr 1fr;
-  gap:22px;
+.box{
+background:rgba(255,255,255,.12);
+border-radius:20px;
+padding:20px;
 }
 
-/* 左側主叫號 */
-.left{
-  background:#fff;
-  color:#14532d;
-  border-radius:34px;
-  padding:30px;
-  box-shadow:0 22px 50px rgba(0,0,0,.18);
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-}
-
-.label{
-  font-size:34px;
-  font-weight:700;
-  margin-bottom:16px;
-}
-
-.current{
-  font-size:200px;
-  font-weight:900;
-  line-height:1;
-  letter-spacing:6px;
-}
-
-.flash{
-  animation:flash 1s infinite;
-}
-
-@keyframes flash{
-  0%{opacity:1;}
-  50%{opacity:.35;}
-  100%{opacity:1;}
-}
-
-.next{
-  margin-top:16px;
-  font-size:34px;
-  color:#444;
-}
-
-/* 右側資訊 */
-.right{
-  display:grid;
-  grid-template-rows:repeat(4,1fr);
-  gap:18px;
-}
-
-.card{
-  background:rgba(255,255,255,.14);
-  border-radius:26px;
-  padding:24px;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-}
-
-.card h3{
-  font-size:24px;
-  margin-bottom:10px;
+.box h3{
+margin:0 0 10px;
+font-size:24px;
 }
 
 .value{
-  font-size:54px;
-  font-weight:900;
+font-size:46px;
+font-weight:900;
 }
 
-.small{
-  font-size:18px;
-  opacity:.9;
-  margin-top:8px;
+.notice{
+margin-top:28px;
+font-size:24px;
+opacity:.92;
 }
 
-/* 下方公告 */
-.bottom{
-  margin-top:18px;
-  background:rgba(255,255,255,.12);
-  border-radius:22px;
-  padding:18px 24px;
-  font-size:28px;
-  font-weight:700;
-  white-space:nowrap;
-  overflow:hidden;
-  position:relative;
+@media(max-width:768px){
+
+.now{
+font-size:90px;
 }
 
-.marquee{
-  position:absolute;
-  white-space:nowrap;
-  animation:move 20s linear infinite;
+.sub{
+font-size:24px;
 }
 
-@keyframes move{
-  0%{left:100%;}
-  100%{left:-100%;}
+.value{
+font-size:34px;
 }
 
-/* QR 區 */
-.qr{
-  position:fixed;
-  right:18px;
-  bottom:18px;
-  background:#fff;
-  color:#14532d;
-  padding:14px;
-  border-radius:18px;
-  text-align:center;
-  width:170px;
+.notice{
+font-size:18px;
 }
 
-.qr img{
-  width:100%;
-  border-radius:10px;
-}
-
-.qr div{
-  margin-top:8px;
-  font-size:15px;
-  font-weight:800;
-}
-
-/* 時間 */
-.clock{
-  position:fixed;
-  top:18px;
-  right:22px;
-  font-size:26px;
-  font-weight:800;
-}
-
-/* 手機 */
-@media(max-width:1000px){
-
-  .main{
-    grid-template-columns:1fr;
-  }
-
-  .current{
-    font-size:120px;
-  }
-
-  .value{
-    font-size:38px;
-  }
-
-  header h1{
-    font-size:34px;
-  }
-
-  .bottom{
-    font-size:18px;
-  }
-
-  .qr{
-    display:none;
-  }
 }
 </style>
 </head>
 
 <body>
 
-<div class="clock" id="clock">
-09:45
+<div class="board">
+
+<h1>後慈湖 現場候補叫號系統</h1>
+
+<div class="sub">目前叫號</div>
+<div class="now" id="nowNo">A000</div>
+
+<div class="grid">
+
+<div class="box">
+<h3>下一位</h3>
+<div class="value" id="nextNo">--</div>
 </div>
 
-<div class="wrap">
-
-<header>
-<h1>後慈湖 現場補位叫號系統</h1>
-<p>請留意現場叫號並依引導辦理入場</p>
-</header>
-
-<div class="main">
-
-<!-- 左 -->
-<div class="left">
-
-<div class="label">
-目前叫號
-</div>
-
-<div class="current flash" id="current">
-A015
-</div>
-
-<div class="next" id="next">
-下一位：A016
-</div>
-
-</div>
-
-<!-- 右 -->
-<div class="right">
-
-<div class="card">
-<h3>預估等待</h3>
-<div class="value" id="wait">
-15 分鐘
-</div>
-<div class="small">依現場流動更新</div>
-</div>
-
-<div class="card">
+<div class="box">
 <h3>等待組數</h3>
-<div class="value" id="queue">
-8 組
-</div>
-<div class="small">請耐心等候</div>
+<div class="value" id="waitCount">0</div>
 </div>
 
-<div class="card">
-<h3>目前梯次</h3>
-<div class="value" id="session">
-第3梯
-</div>
-<div class="small">09:45 入場</div>
-</div>
-
-<div class="card">
-<h3>剩餘名額</h3>
-<div class="value" id="left">
-6 位
-</div>
-<div class="small">可現場候補</div>
+<div class="box">
+<h3>預估等待</h3>
+<div class="value" id="waitMin">0 分</div>
 </div>
 
 </div>
 
+<div class="notice">
+請留意現場叫號，過號請洽服務人員
 </div>
 
-<div class="bottom">
-<div class="marquee" id="notice">
-📢 請留意叫號資訊｜過號請洽服務人員｜額滿梯次可登記現場補位
-</div>
-</div>
-
-</div>
-
-<!-- QR -->
-<div class="qr">
-<img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https://cihu2026.github.io/houcihu-onsite-waitlist-system/" alt="">
-<div>掃碼現場補位</div>
 </div>
 
 <script src="sheets.js"></script>
 
 <script>
-// ====================================
-// 時鐘
-// ====================================
-function updateClock(){
+function renderBoard(data){
 
-  const d = new Date();
+if(!data) return;
 
-  const t =
-    d.getHours().toString().padStart(2,"0")
-    + ":" +
-    d.getMinutes().toString().padStart(2,"0");
+document.getElementById("nowNo").innerText =
+data.current || "A000";
 
-  document.getElementById("clock").innerText = t;
+const queue =
+data.queue || [];
+
+const waiting =
+queue.filter(v=>v.status==="waiting");
+
+document.getElementById("waitCount").innerText =
+waiting.length;
+
+document.getElementById("nextNo").innerText =
+waiting[0] ? waiting[0].number : "--";
+
+document.getElementById("waitMin").innerText =
+(waiting.length * 3) + " 分";
 }
 
-setInterval(updateClock,1000);
-updateClock();
-
-// ====================================
-// 語音播報
-// ====================================
-function speak(text){
-
-  if(!window.speechSynthesis) return;
-
-  const msg =
-  new SpeechSynthesisUtterance(text);
-
-  msg.lang = "zh-TW";
-  msg.rate = 1;
-  speechSynthesis.speak(msg);
-}
-
-// ====================================
-// 主更新
-// ====================================
-let lastNumber = "";
-
-async function renderBoard(){
-
-  const data = await cloudGet();
-
-  if(!data) return;
-
-  // 目前叫號
-  document.getElementById("current").innerText =
-    data.current || "A000";
-
-  // 新號碼播報
-  if(lastNumber !== data.current){
-
-    if(lastNumber !== ""){
-      speak("請 " + data.current + " 號至服務台");
-    }
-
-    lastNumber = data.current;
-  }
-
-  // 下一位
-  const next =
-    data.queue.find(
-      v => v.status === "waiting"
-    );
-
-  document.getElementById("next").innerText =
-    "下一位：" +
-    (next ? next.number : "--");
-
-  // 等待組數
-  const waiting =
-    data.queue.filter(
-      v => v.status === "waiting"
-    ).length;
-
-  document.getElementById("queue").innerText =
-    waiting + " 組";
-
-  // 預估時間
-  document.getElementById("wait").innerText =
-    (waiting * 3) + " 分鐘";
-
-  // 梯次
-  let openSlot = "第1梯";
-
-  for(const k in data.open){
-    if(data.open[k]){
-      openSlot = "第" + k + "梯";
-      break;
-    }
-  }
-
-  document.getElementById("session").innerText =
-    openSlot;
-
-  // 剩餘名額（抓目前梯次）
-  const slotNum =
-    openSlot.replace("第","").replace("梯","");
-
-  const left =
-    data.caps[slotNum] - data.used[slotNum];
-
-  document.getElementById("left").innerText =
-    left + " 位";
-}
-
-// 啟動
-renderBoard();
+initCloud().then(renderBoard);
 autoSync(renderBoard,3000);
 </script>
 
