@@ -1,1 +1,285 @@
-.
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>後慈湖｜即時梯次資訊</title>
+<link rel="stylesheet" href="style.css">
+
+<style>
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft JhengHei",sans-serif;
+  background:linear-gradient(135deg,#eef6ef,#dfeee2);
+  color:#1f2d1f;
+}
+
+header{
+  background:linear-gradient(135deg,#1f5f35,#3e8b55);
+  color:#fff;
+  text-align:center;
+  padding:28px 18px;
+}
+
+header h1{
+  margin:0;
+  font-size:32px;
+}
+
+header p{
+  margin:10px 0 0;
+  opacity:.95;
+}
+
+.wrap{
+  max-width:1000px;
+  margin:auto;
+  padding:20px;
+}
+
+.card{
+  background:#fff;
+  border-radius:22px;
+  padding:24px;
+  margin-bottom:18px;
+  box-shadow:0 12px 28px rgba(0,0,0,.08);
+}
+
+.big{
+  font-size:48px;
+  font-weight:900;
+  text-align:center;
+  color:#1f7a3f;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:14px;
+}
+
+.slot{
+  border:1px solid #e8ece8;
+  border-radius:18px;
+  padding:18px;
+  text-align:center;
+}
+
+.slot h3{
+  margin:0 0 10px;
+  font-size:24px;
+}
+
+.state{
+  font-size:30px;
+  font-weight:900;
+}
+
+.green{color:#1f7a3f;}
+.red{color:#d33;}
+.orange{color:#d98b00;}
+.blue{color:#2c69c9;}
+
+.note{
+  line-height:1.8;
+  color:#444;
+}
+
+.btns{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+button{
+  width:100%;
+  border:none;
+  border-radius:14px;
+  padding:15px;
+  background:#1f7a3f;
+  color:#fff;
+  font-size:18px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.gray{
+  background:#666;
+}
+
+footer{
+  text-align:center;
+  color:#666;
+  padding:10px 0 30px;
+}
+
+@media(max-width:768px){
+
+  .big{
+    font-size:34px;
+  }
+
+  .btns{
+    grid-template-columns:1fr;
+  }
+
+  button{
+    font-size:17px;
+  }
+
+  .state{
+    font-size:24px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>後慈湖 即時梯次資訊</h1>
+<p>預約旅客｜現場候補｜即時更新</p>
+</header>
+
+<div class="wrap">
+
+<!-- 目前梯次 -->
+<div class="card">
+<div class="big" id="nowSlot">
+目前入場：第 1 梯
+</div>
+</div>
+
+<!-- 梯次資訊 -->
+<div class="card">
+
+<h2>今日梯次狀況</h2>
+
+<div class="grid" id="slotGrid">
+</div>
+
+</div>
+
+<!-- 候補資訊 -->
+<div class="card">
+
+<h2>現場候補資訊</h2>
+
+<div class="note">
+目前候補號碼：<b id="waitNo">A000</b><br>
+請留意現場叫號與廣播通知。<br>
+候補依現場名額與順序遞補，不保證入場。
+</div>
+
+</div>
+
+<!-- 快速入口 -->
+<div class="card">
+
+<h2>快速服務</h2>
+
+<div class="btns">
+
+<button onclick="location.href='checkin.html'">
+現場候補登記
+</button>
+
+<button class="gray"
+onclick="location.href='screen.html'">
+查看叫號看板
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<footer>
+Houcihu Visitor Service Center
+</footer>
+
+<script src="sheets.js"></script>
+
+<script>
+// ===================================
+// 可自行修改梯次資料
+// ===================================
+const slots = [
+{no:1,time:"09:30",state:"已入場"},
+{no:2,time:"10:00",state:"報到中"},
+{no:3,time:"10:30",state:"即將入場"},
+{no:4,time:"11:00",state:"額滿"},
+{no:5,time:"11:30",state:"尚餘 8 位"},
+{no:6,time:"12:00",state:"可預約"}
+];
+
+// ===================================
+function getClass(text){
+
+if(text.includes("額滿")) return "red";
+if(text.includes("尚餘")) return "orange";
+if(text.includes("已入場")) return "blue";
+if(text.includes("報到")) return "green";
+if(text.includes("可預約")) return "green";
+
+return "green";
+}
+
+// ===================================
+function renderSlots(){
+
+const box =
+document.getElementById("slotGrid");
+
+box.innerHTML = "";
+
+slots.forEach(s=>{
+
+box.innerHTML += `
+<div class="slot">
+<h3>第 ${s.no} 梯</h3>
+<div>${s.time}</div>
+<div class="state ${getClass(s.state)}">
+${s.state}
+</div>
+</div>
+`;
+
+});
+
+}
+
+// ===================================
+// 候補同步
+// ===================================
+async function loadWait(){
+
+try{
+
+const rows = await cloudGet();
+
+if(rows && rows.length > 1){
+
+const last =
+rows[rows.length-1][0];
+
+document.getElementById("waitNo")
+.innerText = last;
+
+}
+
+}catch(e){
+console.log(e);
+}
+
+}
+
+// ===================================
+renderSlots();
+loadWait();
+setInterval(loadWait,5000);
+</script>
+
+</body>
+</html>
