@@ -1,1 +1,288 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><title>screen</title></head><body>screen.html</body></html>
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>後慈湖｜即時叫號看板</title>
+<link rel="stylesheet" href="style.css">
+
+<style>
+body{
+margin:0;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft JhengHei",sans-serif;
+background:#0f2d18;
+color:#fff;
+overflow-x:hidden;
+}
+
+header{
+background:linear-gradient(135deg,#1f5f35,#3e8b55);
+text-align:center;
+padding:28px 18px;
+}
+
+header h1{
+margin:0;
+font-size:42px;
+font-weight:900;
+}
+
+header p{
+margin:10px 0 0;
+font-size:20px;
+opacity:.95;
+}
+
+.wrap{
+max-width:1600px;
+margin:auto;
+padding:20px;
+}
+
+.card{
+background:rgba(255,255,255,.08);
+border-radius:26px;
+padding:28px;
+margin-bottom:20px;
+}
+
+.big{
+font-size:150px;
+font-weight:900;
+text-align:center;
+color:#9cffb4;
+line-height:1;
+letter-spacing:4px;
+}
+
+.sub{
+text-align:center;
+font-size:34px;
+margin-top:12px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:16px;
+}
+
+.slot{
+background:rgba(255,255,255,.08);
+border-radius:20px;
+padding:20px;
+text-align:center;
+}
+
+.slot h3{
+margin:0 0 12px;
+font-size:34px;
+font-weight:900;
+}
+
+.state{
+font-size:32px;
+font-weight:900;
+}
+
+.green{color:#9cffb4;}
+.orange{color:#ffd27a;}
+.red{color:#ff9c9c;}
+.gray{color:#d8d8d8;}
+
+.footer{
+text-align:center;
+font-size:24px;
+padding:8px 0 28px;
+opacity:.92;
+}
+
+@media(max-width:1200px){
+
+.grid{
+grid-template-columns:repeat(2,1fr);
+}
+
+.big{
+font-size:110px;
+}
+
+}
+
+@media(max-width:768px){
+
+.grid{
+grid-template-columns:1fr;
+}
+
+header h1{
+font-size:30px;
+}
+
+header p{
+font-size:16px;
+}
+
+.big{
+font-size:82px;
+}
+
+.sub{
+font-size:24px;
+}
+
+.slot h3{
+font-size:26px;
+}
+
+.state{
+font-size:24px;
+}
+
+.footer{
+font-size:18px;
+}
+
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>後慈湖 即時叫號看板</h1>
+<p>請留意現場叫號與梯次資訊</p>
+</header>
+
+<div class="wrap">
+
+<!-- 目前叫號 -->
+<div class="card">
+
+<div class="big" id="currentNo">
+A000
+</div>
+
+<div class="sub">
+目前叫號
+</div>
+
+</div>
+
+<!-- 梯次資訊 -->
+<div class="card">
+
+<div class="grid" id="slotGrid">
+載入中...
+</div>
+
+</div>
+
+</div>
+
+<div class="footer">
+現場遞補不代表一定有名額，請依工作人員引導辦理
+</div>
+
+<script src="sheets.js?v=3"></script>
+
+<script>
+async function loadCurrent(){
+
+const rows =
+await cloudGet();
+
+let current="A000";
+
+if(rows && rows.length>1){
+
+for(let i=1;i<rows.length;i++){
+
+if(rows[i][5]==="called"){
+current = rows[i][0];
+}
+
+}
+
+}
+
+document.getElementById("currentNo")
+.innerText=current;
+
+}
+
+async function renderSessions(){
+
+const rows =
+await getSessions();
+
+const box =
+document.getElementById("slotGrid");
+
+box.innerHTML="";
+
+for(let i=1;i<rows.length;i++){
+
+const no   = rows[i][0];
+const open = rows[i][1];
+const cap  = Number(rows[i][2]);
+
+let text="";
+let cls="gray";
+
+if(!open){
+
+text="未開放";
+
+}else if(cap<=0){
+
+text="額滿";
+cls="red";
+
+}else if(cap<=3){
+
+text="剩 "+cap+" 位";
+cls="orange";
+
+}else{
+
+text="可遞補";
+cls="green";
+
+}
+
+box.innerHTML += `
+<div class="slot">
+
+<h3>第 ${no} 梯</h3>
+
+<div class="state ${cls}">
+${text}
+</div>
+
+</div>
+`;
+
+}
+
+}
+
+async function init(){
+
+await loadCurrent();
+await renderSessions();
+
+setInterval(async()=>{
+
+await loadCurrent();
+await renderSessions();
+
+},3000);
+
+}
+
+init();
+</script>
+
+</body>
+</html>
