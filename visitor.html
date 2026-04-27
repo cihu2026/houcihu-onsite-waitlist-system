@@ -1,3 +1,4 @@
+<!-- visitor.html -->
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -5,205 +6,55 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>後慈湖｜現場服務系統</title>
 <link rel="stylesheet" href="style.css">
-
-<style>
-body{
-margin:0;
-font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft JhengHei",sans-serif;
-background:linear-gradient(135deg,#eef6ef,#dfeee2);
-color:#1f2d1f;
-}
-
-header{
-background:linear-gradient(135deg,#1f5f35,#3e8b55);
-color:#fff;
-padding:42px 20px;
-text-align:center;
-}
-
-header h1{
-margin:0;
-font-size:38px;
-font-weight:900;
-}
-
-header p{
-margin:12px 0 0;
-font-size:18px;
-opacity:.95;
-}
-
-.wrap{
-max-width:1100px;
-margin:auto;
-padding:20px;
-}
-
-.card{
-background:#fff;
-border-radius:24px;
-padding:24px;
-margin-bottom:18px;
-box-shadow:0 12px 28px rgba(0,0,0,.08);
-}
-
-.notice{
-background:#fff3cd;
-border-left:6px solid #d6a400;
-font-weight:800;
-color:#8a6d3b;
-line-height:1.8;
-}
-
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-gap:14px;
-}
-
-a.btn{
-display:block;
-text-decoration:none;
-text-align:center;
-padding:20px;
-border-radius:18px;
-font-size:20px;
-font-weight:900;
-background:#1f7a3f;
-color:#fff;
-}
-
-a.gray{background:#666;}
-a.blue{background:#2c69c9;}
-a.orange{background:#d98b00;}
-
-.slotGrid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-gap:12px;
-}
-
-.slot{
-border:1px solid #e6ece6;
-border-radius:18px;
-padding:16px;
-text-align:center;
-}
-
-.slot h3{
-margin:0 0 10px;
-font-size:22px;
-}
-
-.state{
-font-size:22px;
-font-weight:900;
-}
-
-.green{color:#1f7a3f;}
-.red{color:#d33;}
-.orangeText{color:#d98b00;}
-.grayText{color:#888;}
-
-footer{
-text-align:center;
-color:#666;
-padding:10px 0 30px;
-}
-
-@media(max-width:768px){
-
-header h1{
-font-size:30px;
-}
-
-header p{
-font-size:16px;
-}
-
-a.btn{
-font-size:18px;
-padding:18px;
-}
-
-.state{
-font-size:20px;
-}
-
-}
-</style>
 </head>
 
 <body>
 
-<header>
+<header class="hero">
 <h1>後慈湖 現場服務系統</h1>
 <p>候補登記｜即時梯次資訊｜現場叫號</p>
 </header>
 
 <div class="wrap">
 
-<!-- 公告 -->
 <div class="card notice">
 現場遞補不代表一定有名額。<br>
 實際入場資格依現場名額與工作人員安排為準。
 </div>
 
-<!-- 快速入口 -->
 <div class="card">
-
 <h2>快速服務</h2>
 
 <div class="grid">
 
-<a class="btn"
-href="checkin.html">
+<a class="btn" href="checkin.html">
 現場候補登記
 </a>
 
-<a class="btn blue"
-href="status.html">
+<a class="btn blue" href="status.html">
 即時梯次資訊
 </a>
 
-<a class="btn gray"
-href="screen.html">
+<a class="btn gray" href="screen.html">
 查看叫號看板
 </a>
 
-<a class="btn orange"
-href="calendar.html">
+<a class="btn orange" href="calendar.html">
 營運資訊
 </a>
 
 </div>
-
 </div>
 
-<!-- 今日梯次 -->
 <div class="card">
-
-<h2>今日梯次資訊</h2>
-
-<div class="slotGrid" id="slotGrid">
-載入中...
-</div>
-
-</div>
-
-<!-- 說明 -->
-<div class="card">
-
 <h2>服務說明</h2>
 
-<div style="line-height:1.9;color:#444;">
-
+<p class="text">
 1. 現場額滿時可登記候補。<br>
-2. 候補依現場釋出名額遞補。<br>
-3. 請留意叫號看板與現場廣播。<br>
-4. 請依工作人員引導辦理。
-
-</div>
+2. 候補依釋出名額遞補。<br>
+3. 請留意現場叫號。<br>
+4. 請依工作人員引導。
+</p>
 
 </div>
 
@@ -212,69 +63,6 @@ href="calendar.html">
 <footer>
 Houcihu Visitor Service Center
 </footer>
-
-<script src="sheets.js?v=3"></script>
-
-<script>
-async function renderSlots(){
-
-const rows =
-await getSessions();
-
-const box =
-document.getElementById("slotGrid");
-
-box.innerHTML="";
-
-for(let i=1;i<rows.length;i++){
-
-const no = rows[i][0];
-const open = rows[i][1];
-const cap = Number(rows[i][2]);
-
-let text="";
-let cls="grayText";
-
-if(!open){
-
-text="未開放";
-
-}else if(cap<=0){
-
-text="額滿";
-cls="red";
-
-}else if(cap<=3){
-
-text="剩 "+cap+" 位";
-cls="orangeText";
-
-}else{
-
-text="可遞補";
-cls="green";
-
-}
-
-box.innerHTML += `
-<div class="slot">
-
-<h3>第 ${no} 梯</h3>
-
-<div class="state ${cls}">
-${text}
-</div>
-
-</div>
-`;
-
-}
-
-}
-
-renderSlots();
-setInterval(renderSlots,5000);
-</script>
 
 </body>
 </html>
