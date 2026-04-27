@@ -34,10 +34,10 @@
 <option value="4">4 人</option>
 <option value="5">5 人</option>
 </select>
-  
-<textarea id="note"></textarea>
 
-<button type="submit">送出登記</button>
+<button type="submit">
+送出登記
+</button>
 
 </form>
 
@@ -46,7 +46,10 @@
 <div class="card" id="successBox" style="display:none">
 
 <h2>登記成功</h2>
-<div class="big" id="ticketNo">A001</div>
+
+<div class="big" id="ticketNo">
+A001
+</div>
 
 <p>
 請留意現場叫號，是否遞補成功依現場名額為準。
@@ -77,15 +80,23 @@ document.getElementById("phone").value;
 const people =
 document.getElementById("people").value;
 
-const data = await cloudGet();
+const rows = await cloudGet();
 
-let no = "A001";
+const no =
+"A" + String(rows.length).padStart(3,"0");
 
-if(data && data.counter){
-no = "A" + String(data.counter).padStart(3,"0");
-}
-
-const ok = await addQueue(name,people,"現場");
+const ok = await fetch(WEB_APP_URL,{
+method:"POST",
+body:new URLSearchParams({
+action:"add",
+number:no,
+name:name,
+phone:phone,
+people:people,
+slot:"現場",
+status:"waiting"
+})
+});
 
 if(ok){
 
@@ -94,7 +105,9 @@ document.getElementById("successBox").style.display="block";
 document.getElementById("ticketNo").innerText=no;
 
 }else{
+
 alert("送出失敗");
+
 }
 
 });
