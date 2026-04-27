@@ -3,259 +3,54 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Houcihu 客人名單管理後台</title>
+<title>後慈湖｜管理後台</title>
 <link rel="stylesheet" href="style.css">
-
-<style>
-body{
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft JhengHei",sans-serif;
-  margin:0;
-  background:#eef3ef;
-  color:#1f2d1f;
-}
-header{
-  background:linear-gradient(135deg,#1f5f35,#3e8b55);
-  color:#fff;
-  text-align:center;
-  padding:22px;
-}
-.wrap{
-  max-width:1300px;
-  margin:auto;
-  padding:20px;
-}
-.card{
-  background:#fff;
-  border-radius:18px;
-  padding:22px;
-  margin-bottom:18px;
-  box-shadow:0 12px 28px rgba(0,0,0,.08);
-}
-.big{
-  font-size:72px;
-  font-weight:800;
-  text-align:center;
-  color:#1f7a3f;
-}
-button{
-  padding:10px 14px;
-  border:none;
-  border-radius:10px;
-  background:#1f7a3f;
-  color:#fff;
-  font-weight:700;
-  cursor:pointer;
-  transition: opacity 0.2s;
-}
-button:active{ opacity: 0.7; }
-button.gray{background:#888;}
-button.red{background:#d43c3c;}
-button.orange{background:#d98b00;}
-input,select{
-  width:100%;
-  padding:10px;
-  border:1px solid #d7dfd7;
-  border-radius:10px;
-  box-sizing: border-box;
-}
-table{
-  width:100%;
-  border-collapse:collapse;
-}
-th,td{
-  padding:12px;
-  border-bottom:1px solid #eee;
-  text-align:center;
-}
-th{
-  background:#f7faf7;
-}
-.grid2{
-  display:grid;
-  grid-template-columns:1fr 220px 220px;
-  gap:12px;
-}
-.tag-wait{color:#1f7a3f;font-weight:700;}
-.tag-call{color:#d98b00;font-weight:700;}
-.tag-done{color:#3a6ea5;font-weight:700;}
-.tag-cancel{color:#d43c3c;font-weight:700;}
-
-@media (max-width: 768px) {
-  .grid2 { grid-template-columns: 1fr; }
-  table { font-size: 14px; }
-  th, td { padding: 8px 4px; }
-}
-</style>
 </head>
 
 <body>
 
 <header>
-<h1>Houcihu 客人名單管理後台</h1>
-<div>客人名單｜叫號｜搜尋｜狀態管理</div>
+<h1>管理後台</h1>
+<p>候補名單｜叫號｜到場｜取消</p>
 </header>
 
 <div class="wrap">
 
 <div class="card">
-<h2>目前叫號</h2>
-<div class="big current" id="currentDisplay">A000</div>
-<div style="text-align:center;">
-    <button onclick="nextNo()" style="padding: 15px 40px; font-size: 20px;">下一號</button>
-</div>
+<div class="big" id="currentNo">A000</div>
+<p style="text-align:center;">目前叫號</p>
+
+<button onclick="callNext()">
+下一號叫號
+</button>
 </div>
 
 <div class="card">
-<h2>搜尋與篩選</h2>
-<div class="grid2">
-<input id="searchInput" placeholder="輸入姓名 / 電話 / 號碼" oninput="renderQueue()">
-<select id="filterSession" onchange="renderQueue()">
-<option value="">全部梯次</option>
-<option value="1">第1梯</option>
-<option value="3">第3梯</option>
-<option value="5">第5梯</option>
-<option value="7">第7梯</option>
-</select>
-<select id="filterStatus" onchange="renderQueue()">
-<option value="">全部狀態</option>
-<option value="等待中">等待中</option>
-<option value="已叫號">已叫號</option>
-<option value="已到場">已到場</option>
-<option value="取消">取消</option>
-</select>
-</div>
-<br>
-<button onclick="renderQueue()" class="orange" style="width:100%">手動強制更新名單</button>
-</div>
+<h2>候補名單</h2>
 
-<div class="card">
-<h2>客人預約 / 候補名單</h2>
-<div style="overflow-x: auto;">
-<table>
+<table width="100%" id="queueTable">
 <thead>
 <tr>
 <th>號碼</th>
 <th>姓名</th>
-<th>電話</th>
 <th>人數</th>
-<th>梯次</th>
 <th>狀態</th>
 <th>操作</th>
 </tr>
 </thead>
-<tbody id="queueBody"></tbody>
+
+<tbody id="tbody">
+<tr><td colspan="5">載入中...</td></tr>
+</tbody>
+
 </table>
-</div>
+
 </div>
 
 </div>
 
 <script src="sheets.js"></script>
 <script src="script.js"></script>
-
-<script>
-// 初始化檢查
-if (typeof db === 'undefined') {
-    var db = { queue: [] };
-}
-
-function renderQueue(){
-    let body = document.getElementById("queueBody");
-    if(!db || !db.queue){
-      body.innerHTML = "<tr><td colspan='7'>資料載入中...</td></tr>";
-      return;
-    }
-
-    let keyword = document.getElementById("searchInput").value.trim().toLowerCase();
-    let session = document.getElementById("filterSession").value;
-    let status = document.getElementById("filterStatus").value;
-
-    // 重要修正：先 map 原始索引 originalIndex，防止 filter 後操作到錯誤對象
-    let filtered = db.queue.map((item, index) => ({...item, originalIndex: index}))
-    .filter(item => {
-        let ok = true;
-        if(keyword){
-            ok = (item.no || "").toLowerCase().includes(keyword) ||
-                 (item.name || "").toLowerCase().includes(keyword) ||
-                 (item.phone || "").includes(keyword);
-        }
-        if(session) ok = ok && item.session == session;
-        if(status) ok = ok && (item.status || "等待中") == status;
-        return ok;
-    });
-
-    let rows = filtered.map(item => `
-    <tr>
-        <td><strong>${item.no}</strong></td>
-        <td>${item.name||""}</td>
-        <td>${item.phone||""}</td>
-        <td>${item.count||1}</td>
-        <td>第${item.session}梯</td>
-        <td class="${getStatusClass(item.status)}">${item.status||"等待中"}</td>
-        <td>
-            <button onclick="setStatus(${item.originalIndex},'已叫號')">叫號</button>
-            <button class="gray" onclick="setStatus(${item.originalIndex},'已到場')">到場</button>
-            <button class="red" onclick="setStatus(${item.originalIndex},'取消')">取消</button>
-        </td>
-    </tr>
-    `).join("");
-
-    body.innerHTML = rows || "<tr><td colspan='7'>找不到符合條件的客人</td></tr>";
-}
-
-function getStatusClass(s){
-    if(s=="已叫號") return "tag-call";
-    if(s=="已到場") return "tag-done";
-    if(s=="取消") return "tag-cancel";
-    return "tag-wait";
-}
-
-// 實作下一號邏輯：尋找第一個狀態為「等待中」的客人
-async function nextNo() {
-    let nextGuest = db.queue.find(item => !item.status || item.status === "等待中");
-    if (nextGuest) {
-        let realIndex = db.queue.indexOf(nextGuest);
-        await setStatus(realIndex, '已叫號');
-    } else {
-        alert("目前已無等待中的客人");
-    }
-}
-
-async function setStatus(i, status){
-    if(!db.queue[i]) return;
-    
-    db.queue[i].status = status;
-    
-    // 如果是叫號，更新上方大標題
-    if(status === '已叫號') {
-        document.getElementById("currentDisplay").innerText = db.queue[i].no;
-    }
-
-    // 呼叫 sheets.js 的儲存功能
-    if (typeof save === "function") {
-        try {
-            await save();
-        } catch (e) {
-            console.error("儲存失敗", e);
-            alert("儲存至雲端失敗，請檢查網路連線");
-        }
-    }
-    renderQueue();
-}
-
-// 確保頁面載入後，若資料尚未從 Sheets 抓到，則稍後重試
-window.addEventListener("load",()=>{
-    let retryCount = 0;
-    let checkData = setInterval(() => {
-        if (db && db.queue && db.queue.length > 0) {
-            renderQueue();
-            clearInterval(checkData);
-        }
-        if (retryCount > 10) clearInterval(checkData); // 最多等 5 秒
-        retryCount++;
-    }, 500);
-});
-</script>
 
 </body>
 </html>
