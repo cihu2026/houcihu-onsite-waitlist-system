@@ -1,104 +1,269 @@
+// ======================================
+// 後慈湖 sheets.js v3 雲端同步版
+// 候補名單 + 梯次設定 sessions
+// ======================================
+
 const WEB_APP_URL =
 "https://script.google.com/macros/s/AKfycbwMCPz4MM9IIbyLbdYeA8PlvosY6pbmOjGa3xmeUvnQv2Vmg1S4ozIOZ9O8Hq58crtv/exec";
 
-// 讀取資料
+// ======================================
+// 讀取候補名單
+// ======================================
 async function cloudGet(){
 
-  const res = await fetch(
-    WEB_APP_URL + "?t=" + Date.now()
-  );
+try{
 
-  return await res.json();
+const res =
+await fetch(
+WEB_APP_URL +
+"?mode=queue&t=" +
+Date.now()
+);
+
+return await res.json();
+
+}catch(e){
+
+console.log(e);
+return [];
+
 }
 
+}
+
+// ======================================
+// 讀取梯次設定
+// ======================================
+async function getSessions(){
+
+try{
+
+const res =
+await fetch(
+WEB_APP_URL +
+"?mode=sessions&t=" +
+Date.now()
+);
+
+return await res.json();
+
+}catch(e){
+
+console.log(e);
+return [];
+
+}
+
+}
+
+// ======================================
+// 儲存梯次設定
+// ======================================
+async function saveSession(
+no,
+open,
+cap
+){
+
+try{
+
+const res =
+await fetch(WEB_APP_URL,{
+
+method:"POST",
+
+body:new URLSearchParams({
+action:"saveSession",
+no:no,
+open:open,
+cap:cap
+})
+
+});
+
+return res.ok;
+
+}catch(e){
+
+console.log(e);
+return false;
+
+}
+
+}
+
+// ======================================
 // 新增候補
-async function addQueue(name, people, slot){
+// ======================================
+async function addQueue(
+number,
+name,
+phone,
+people,
+slot
+){
 
-  const rows = await cloudGet();
+try{
 
-  const no =
-    "A" +
-    String(rows.length).padStart(3,"0");
+const res =
+await fetch(WEB_APP_URL,{
 
-  const res = await fetch(WEB_APP_URL,{
-    method:"POST",
-    body:new URLSearchParams({
-      action:"add",
-      number:no,
-      name:name,
-      phone:"",
-      people:people,
-      slot:slot,
-      status:"waiting"
-    })
-  });
+method:"POST",
 
-  return res.ok;
+body:new URLSearchParams({
+action:"add",
+number:number,
+name:name,
+phone:phone,
+people:people,
+slot:slot,
+status:"waiting"
+})
+
+});
+
+return res.ok;
+
+}catch(e){
+
+console.log(e);
+return false;
+
 }
 
+}
+
+// ======================================
 // 更新狀態
-async function updateStatus(row,status){
+// ======================================
+async function updateStatus(
+row,
+status
+){
 
-  const res = await fetch(WEB_APP_URL,{
-    method:"POST",
-    body:new URLSearchParams({
-      action:"update",
-      row:row,
-      status:status
-    })
-  });
+try{
 
-  return res.ok;
+const res =
+await fetch(WEB_APP_URL,{
+
+method:"POST",
+
+body:new URLSearchParams({
+action:"update",
+row:row,
+status:status
+})
+
+});
+
+return res.ok;
+
+}catch(e){
+
+console.log(e);
+return false;
+
 }
 
+}
+
+// ======================================
 // 到場
+// ======================================
 async function doneNumber(row){
-  return await updateStatus(row,"done");
+
+return await updateStatus(
+row,
+"done"
+);
+
 }
 
+// ======================================
 // 取消
+// ======================================
 async function cancelNumber(row){
-  return await updateStatus(row,"cancel");
+
+return await updateStatus(
+row,
+"cancel"
+);
+
 }
 
-// 叫號
+// ======================================
+// 下一號叫號
+// ======================================
 async function callNext(){
 
-  const rows = await cloudGet();
+const rows =
+await cloudGet();
 
-  for(let i=1;i<rows.length;i++){
+for(let i=1;i<rows.length;i++){
 
-    if(rows[i][5]==="waiting"){
+if(rows[i][5]==="waiting"){
 
-      await updateStatus(i+1,"called");
-      return true;
-    }
-  }
+await updateStatus(
+i+1,
+"called"
+);
 
-  return false;
+return true;
+
 }
 
-// 清空
+}
+
+return false;
+
+}
+
+// ======================================
+// 清空候補名單
+// ======================================
 async function clearQueue(){
 
-  const res = await fetch(WEB_APP_URL,{
-    method:"POST",
-    body:new URLSearchParams({
-      action:"clear"
-    })
-  });
+try{
 
-  return res.ok;
+const res =
+await fetch(WEB_APP_URL,{
+
+method:"POST",
+
+body:new URLSearchParams({
+action:"clear"
+})
+
+});
+
+return res.ok;
+
+}catch(e){
+
+console.log(e);
+return false;
+
 }
 
+}
+
+// ======================================
 // 自動同步
-function autoSync(callback,ms=3000){
+// ======================================
+function autoSync(
+callback,
+ms=3000
+){
 
-  setInterval(async()=>{
+setInterval(async()=>{
 
-    const data = await cloudGet();
+const data =
+await cloudGet();
 
-    if(callback) callback(data);
+if(callback){
+callback(data);
+}
 
-  },ms);
+},ms);
+
 }
