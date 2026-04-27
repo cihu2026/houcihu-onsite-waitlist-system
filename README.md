@@ -10,17 +10,15 @@
 
 ---
 
-## 核心功能
+## 專案特色
 
-✅ 現場候補 QR Code 自助登記  
+✅ QR Code 現場候補登記  
 ✅ 遊客自行填寫姓名／電話／人數  
-✅ 後台即時叫號與名單管理  
-✅ 到場／取消／過號處理  
-✅ 梯次名額管理與額滿控制  
-✅ 電視看板即時顯示叫號資訊  
-✅ 遊客資訊頁顯示可候補梯次  
+✅ 工作人員後台管理  
+✅ 手機版快速操作  
+✅ 電視即時叫號看板  
 ✅ Google Sheets 雲端同步  
-✅ 支援手機、平板、電腦操作  
+✅ GitHub Pages 免費部署  
 
 ---
 
@@ -33,10 +31,40 @@
 | checkin.html | 現場候補登記 |
 | admin-login.html | 後台登入 |
 | admin.html | 管理後台 |
+| mobile.html | 手機版操作 |
 | screen.html | 即時叫號看板 |
 | status.html | 梯次資訊頁 |
 | calendar.html | 營運資訊頁 |
-| mobile.html | 手機操作頁 |
+
+---
+
+## 使用情境
+
+適用於：
+
+- 景區現場補位管理  
+- 候補叫號系統  
+- 活動報到排隊  
+- 名額釋出管理  
+- 志工櫃台現場作業  
+
+---
+
+## Demo
+
+GitHub Pages：
+
+https://cihu2026.github.io/houcihu-onsite-waitlist-system/
+
+---
+
+## 技術架構
+
+- HTML  
+- CSS  
+- JavaScript  
+- Google Apps Script  
+- Google Sheets  
 
 ---
 
@@ -62,21 +90,12 @@
 
 ---
 
-## 建議部署方式
-
-- GitHub Pages（前端頁面）
-- Google Sheets（資料庫）
-- Google Apps Script（API）
-
----
-
 ## 維護版本
 
-text v6 Final 穩定正式版 
+text id="q7m4za" Version: v6 Final Status: Production Ready 
 
 ---
 
-## 專案用途
+## 維護資訊
 
-本系統為後慈湖園區現場服務輔助工具，可作為候補管理、旅客引導及現場資訊整合平台使用。
-::
+由專案建立者持續維護與優化中。
