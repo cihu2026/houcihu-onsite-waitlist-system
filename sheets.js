@@ -1,5 +1,7 @@
+```javascript
 // =====================================================
-// Houcihu 雲端同步 sheets.js v2 專業穩定版
+// Houcihu 雲端同步 sheets.js 修正版（Apps Script 相容）
+// 修復：checkin.html 無法送出
 // Google Sheets + Apps Script
 // =====================================================
 
@@ -47,46 +49,48 @@ const DEFAULT_DATA = {
 };
 
 // =====================================================
-// 共用工具
+// 工具
 // =====================================================
-function sleep(ms) {
+function sleep(ms){
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-function deepClone(obj) {
+function deepClone(obj){
   return JSON.parse(JSON.stringify(obj));
 }
 
 // =====================================================
 // 讀取雲端資料
 // =====================================================
-async function cloudGet(retry = 0) {
-  try {
+async function cloudGet(retry = 0){
+
+  try{
+
     const response = await fetch(
       WEB_APP_URL + "?t=" + Date.now(),
       {
-        method: "GET",
-        cache: "no-store"
+        method:"GET",
+        cache:"no-store"
       }
     );
 
-    if (!response.ok) {
+    if(!response.ok){
       throw new Error("讀取失敗");
     }
 
     const data = await response.json();
 
-    if (!data || typeof data !== "object") {
+    if(!data || typeof data !== "object"){
       throw new Error("資料格式錯誤");
     }
 
     return data;
 
-  } catch (error) {
+  }catch(error){
 
     console.log("cloudGet error:", error);
 
-    if (retry < RETRY_LIMIT) {
+    if(retry < RETRY_LIMIT){
       await sleep(1000);
       return await cloudGet(retry + 1);
     }
@@ -96,34 +100,37 @@ async function cloudGet(retry = 0) {
 }
 
 // =====================================================
-// 完整覆蓋儲存
+// 儲存雲端資料（改成 Apps Script 最穩格式）
 // =====================================================
-async function cloudSave(data, retry = 0) {
+async function cloudSave(data, retry = 0){
 
-  try {
+  try{
 
     data.updatedAt = Date.now();
     data.version = (data.version || 1) + 1;
 
     const response = await fetch(WEB_APP_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
+      method:"POST",
+      headers:{
+        "Content-Type":
+        "application/x-www-form-urlencoded"
       },
-      body: JSON.stringify(data)
+      body:new URLSearchParams({
+        data: JSON.stringify(data)
+      })
     });
 
-    if (!response.ok) {
+    if(!response.ok){
       throw new Error("儲存失敗");
     }
 
     return true;
 
-  } catch (error) {
+  }catch(error){
 
     console.log("cloudSave error:", error);
 
-    if (retry < RETRY_LIMIT) {
+    if(retry < RETRY_LIMIT){
       await sleep(1000);
       return await cloudSave(data, retry + 1);
     }
@@ -133,13 +140,13 @@ async function cloudSave(data, retry = 0) {
 }
 
 // =====================================================
-// 局部更新（Patch）
+// 局部更新
 // =====================================================
-async function cloudPatch(callback) {
+async function cloudPatch(callback){
 
   const current = await cloudGet();
 
-  if (!current) return false;
+  if(!current) return false;
 
   const newData = deepClone(current);
 
@@ -154,21 +161,21 @@ async function cloudPatch(callback) {
 let syncTimer = null;
 let lastVersion = 0;
 
-function autoSync(callback, interval = SYNC_INTERVAL) {
+function autoSync(callback, interval = SYNC_INTERVAL){
 
-  if (syncTimer) clearInterval(syncTimer);
+  if(syncTimer) clearInterval(syncTimer);
 
-  syncTimer = setInterval(async () => {
+  syncTimer = setInterval(async()=>{
 
     const data = await cloudGet();
 
-    if (!data) return;
+    if(!data) return;
 
-    if (data.version !== lastVersion) {
+    if(data.version !== lastVersion){
 
       lastVersion = data.version;
 
-      if (callback) callback(data);
+      if(callback) callback(data);
     }
 
   }, interval);
@@ -177,14 +184,13 @@ function autoSync(callback, interval = SYNC_INTERVAL) {
 // =====================================================
 // 初始化
 // =====================================================
-async function initCloud() {
+async function initCloud(){
 
   let data = await cloudGet();
 
-  if (!data) {
+  if(!data){
 
     await cloudSave(DEFAULT_DATA);
-
     data = DEFAULT_DATA;
   }
 
@@ -194,29 +200,29 @@ async function initCloud() {
 }
 
 // =====================================================
-// 候補號碼產生
+// 號碼產生
 // =====================================================
-function makeNumber(counter) {
-  return "A" + String(counter).padStart(3, "0");
+function makeNumber(counter){
+  return "A" + String(counter).padStart(3,"0");
 }
 
 // =====================================================
 // 新增候補
 // =====================================================
-async function addQueue(name, people, slot) {
+async function addQueue(name, people, slot){
 
-  return await cloudPatch(data => {
+  return await cloudPatch(data=>{
 
     const number =
       makeNumber(data.counter);
 
     data.queue.push({
-      number,
-      name,
-      people,
-      slot,
-      status: "waiting",
-      time: new Date().toLocaleTimeString()
+      number:number,
+      name:name,
+      people:people,
+      slot:slot,
+      status:"waiting",
+      time:new Date().toLocaleTimeString()
     });
 
     data.counter++;
@@ -225,18 +231,18 @@ async function addQueue(name, people, slot) {
 }
 
 // =====================================================
-// 叫號下一位
+// 下一號叫號
 // =====================================================
-async function callNext() {
+async function callNext(){
 
-  return await cloudPatch(data => {
+  return await cloudPatch(data=>{
 
     const next =
       data.queue.find(
         item => item.status === "waiting"
       );
 
-    if (!next) return;
+    if(!next) return;
 
     next.status = "called";
     data.current = next.number;
@@ -245,83 +251,55 @@ async function callNext() {
 }
 
 // =====================================================
-// 完成號碼
+// 到場
 // =====================================================
-async function doneNumber(number) {
+async function doneNumber(number){
 
-  return await cloudPatch(data => {
+  return await cloudPatch(data=>{
 
     const row =
       data.queue.find(
         item => item.number === number
       );
 
-    if (!row) return;
-
-    row.status = "done";
+    if(row) row.status = "done";
 
   });
 }
 
 // =====================================================
-// 取消號碼
+// 取消
 // =====================================================
-async function cancelNumber(number) {
+async function cancelNumber(number){
 
-  return await cloudPatch(data => {
+  return await cloudPatch(data=>{
 
     const row =
       data.queue.find(
         item => item.number === number
       );
 
-    if (!row) return;
-
-    row.status = "cancel";
+    if(row) row.status = "cancel";
 
   });
 }
 
 // =====================================================
-// 梯次開關
+// 清空
 // =====================================================
-async function setOpen(slot, value) {
+async function clearQueue(){
 
-  return await cloudPatch(data => {
-
-    data.open[slot] = value;
-
-  });
-}
-
-// =====================================================
-// 修改名額
-// =====================================================
-async function setCap(slot, qty) {
-
-  return await cloudPatch(data => {
-
-    data.caps[slot] = Number(qty);
-
-  });
-}
-
-// =====================================================
-// 清空候補
-// =====================================================
-async function clearQueue() {
-
-  return await cloudPatch(data => {
+  return await cloudPatch(data=>{
 
     data.queue = [];
     data.current = "A000";
     data.counter = 1;
 
     data.used = {
-      1: 0,
-      3: 0,
-      5: 0,
-      7: 0
+      1:0,
+      3:0,
+      5:0,
+      7:0
     };
 
   });
@@ -330,19 +308,12 @@ async function clearQueue() {
 // =====================================================
 // 手動刷新
 // =====================================================
-async function refreshNow(callback) {
+async function refreshNow(callback){
 
   const data = await cloudGet();
 
-  if (data && callback) {
+  if(data && callback){
     callback(data);
   }
 }
-
-// =====================================================
-// 使用方式
-// =====================================================
-// initCloud();
-// autoSync(renderUI);
-// addQueue("Abby",2,1);
-// callNext();
+```
