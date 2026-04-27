@@ -1,4 +1,3 @@
-```javascript id="7gnyow"
 const WEB_APP_URL =
 "https://script.google.com/macros/s/AKfycbwMCPz4MM9IIbyLbdYeA8PlvosY6pbmOjGa3xmeUvnQv2Vmg1S4ozIOZ9O8Hq58crtv/exec";
 
@@ -103,4 +102,3 @@ function autoSync(callback,ms=3000){
 
   },ms);
 }
-```
