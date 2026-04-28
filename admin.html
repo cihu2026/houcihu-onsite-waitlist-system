@@ -10,129 +10,139 @@ admin.html v9 Final
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="author" content="Abby Luo">
-<meta name="generator" content="Houcihu Admin Panel v9">
 <title>後慈湖｜管理後台</title>
-<link rel="stylesheet" href="style.css">
 
 <style>
+:root{
+--green:#1f7a3f;
+--green2:#3e8b55;
+--blue:#2c69c9;
+--gray:#666;
+--orange:#d98b00;
+--red:#d33;
+--bg1:#eef6ef;
+--bg2:#dfeee2;
+--card:#ffffff;
+--text:#1f2d1f;
+--muted:#666;
+--line:#e9ece9;
+--shadow:0 12px 28px rgba(0,0,0,.08);
+--shadow-hover:0 18px 34px rgba(0,0,0,.12);
+--radius:24px;
+--radius-sm:16px;
+}
+
+*{ box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+
 body{
 margin:0;
 font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft JhengHei",sans-serif;
-background:#eef3ef;
-color:#1f2d1f;
+background:linear-gradient(135deg,var(--bg1),var(--bg2));
+background-attachment: fixed;
+color:var(--text);
+line-height:1.5;
 }
 
 header{
-background:linear-gradient(135deg,#1f5f35,#3e8b55);
+background:linear-gradient(135deg,var(--green),var(--green2));
 color:#fff;
 text-align:center;
-padding:24px;
+padding:42px 20px;
+box-shadow:0 8px 22px rgba(0,0,0,.08);
 }
 
-header h1{
-margin:0;
-font-size:34px;
-font-weight:900;
-}
+header h1{ margin:0; font-size:38px; font-weight:900; }
+header p{ margin:12px 0 0; font-size:18px; opacity:.95; }
 
-header p{
-margin:10px 0 0;
-opacity:.95;
-}
-
-.wrap{
-max-width:1200px;
-margin:auto;
-padding:20px;
-}
+.wrap{ max-width:1100px; margin:auto; padding:20px; }
 
 .card{
-background:#fff;
-border-radius:24px;
+background:var(--card);
+border-radius:var(--radius);
 padding:24px;
 margin-bottom:18px;
-box-shadow:0 12px 28px rgba(0,0,0,.08);
+box-shadow:var(--shadow);
+transition:.2s ease;
 }
+
+.card:hover{ transform:translateY(-2px); box-shadow:var(--shadow-hover); }
 
 .notice{
 background:#fff3cd;
 border-left:6px solid #d6a400;
 font-weight:800;
 color:#8a6d3b;
-line-height:1.8;
+padding: 15px;
 }
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:14px;
+margin-top: 15px;
+}
+
+button{
+display:block;
+width:100%;
+padding:16px;
+border:none;
+border-radius:18px;
+font-size:18px;
+font-weight:900;
+cursor:pointer;
+background:var(--green);
+color:#fff;
+transition:.18s ease;
+}
+
+button:active{ transform:scale(0.96); opacity:0.9; }
+
+.blue{background:var(--blue);}
+.gray{background:var(--gray);}
+.red{background:var(--red);}
 
 .big{
 font-size:72px;
 font-weight:900;
 text-align:center;
-color:#1f7a3f;
-line-height:1;
+color:var(--green);
+margin: 10px 0;
 }
 
-.sub{
-text-align:center;
-color:#666;
-margin-top:8px;
+.sub{ text-align:center; color:var(--muted); font-size: 14px; }
+
+/* 表格容器：解決手機溢出問題 */
+.table-scroll {
+width: 100%;
+overflow-x: auto;
+-webkit-overflow-scrolling: touch;
+border-radius: 14px;
 }
 
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-gap:14px;
-}
-
-button{
-width:100%;
-padding:14px;
-border:none;
-border-radius:14px;
-background:#1f7a3f;
-color:#fff;
-font-size:18px;
-font-weight:900;
-cursor:pointer;
-}
-
-.red{background:#d33;}
-.gray{background:#666;}
-.blue{background:#2c69c9;}
-
-table{
-width:100%;
-border-collapse:collapse;
-}
-
-th,td{
-padding:12px;
-border-bottom:1px solid #eee;
-text-align:center;
-font-size:15px;
-}
-
-th{
-background:#f7faf7;
-}
+table{ width:100%; border-collapse:collapse; min-width: 600px; }
+th,td{ padding:12px; border-bottom:1px solid var(--line); text-align:center; font-size:15px; }
+th{ background:#f7faf7; font-weight:900; }
 
 .smallbtn{
-padding:8px 10px;
+padding:8px 12px;
 font-size:13px;
 border-radius:10px;
 width:auto;
 display:inline-block;
-margin:2px;
+margin: 2px;
 }
+
+/* 狀態標籤顏色 */
+.wait { color: var(--orange); font-weight: bold; }
+.called { color: var(--blue); font-weight: bold; }
+.done { color: var(--green); font-weight: bold; }
+.cancel { color: var(--red); font-weight: bold; }
 
 @media(max-width:768px){
-
-.big{font-size:52px;}
-
-th,td{
-font-size:13px;
-padding:8px;
-}
-
+header h1{ font-size:30px; }
+.big{ font-size:52px; }
+.grid{ grid-template-columns: 1fr 1fr; } /* 手機改兩欄 */
 }
 </style>
 </head>
@@ -153,142 +163,68 @@ location.href="admin-login.html";
 <div class="wrap">
 
 <div class="card notice">
-現場遞補不代表一定有名額
+⚠️ 提醒：現場遞補不代表一定有名額，請依剩餘量調整。
 </div>
 
-<!-- 目前叫號 -->
 <div class="card">
-
-<div class="big" id="currentNo">
-A000
+<div class="big" id="currentNo">A000</div>
+<div class="sub">目前叫號狀態</div>
 </div>
 
-<div class="sub">
-目前叫號
-</div>
-
-</div>
-
-<!-- 快速操作 -->
 <div class="card">
-
 <h2>快速操作</h2>
-
 <div class="grid">
-
-<button onclick="callNextAndReload()">
-下一號叫號
-</button>
-
-<button class="blue"
-onclick="loadAdmin()">
-立即刷新
-</button>
-
-<button class="gray"
-onclick="location.href='screen.html'">
-開啟看板
-</button>
-
-<button class="red"
-onclick="clearToday()">
-清空今日名單
-</button>
-
-<button class="gray"
-onclick="logout()">
-登出系統
-</button>
-
+<button onclick="callNextAndReload()">下一號叫號</button>
+<button class="blue" onclick="loadAdmin()">立即刷新</button>
+<button class="gray" onclick="location.href='screen.html'">開啟看板</button>
+<button class="red" onclick="clearToday()">清空名單</button>
+</div>
 </div>
 
-</div>
-
-<!-- 自動補位 -->
 <div class="card">
-
-<h2>自動補位</h2>
-
-<div class="grid" id="autofillArea">
-載入中...
+<h2>自動補位區</h2>
+<div class="grid" id="autofillArea">載入中...</div>
 </div>
 
-</div>
-
-<!-- 梯次管理 -->
 <div class="card">
-
 <h2>梯次管理</h2>
-
+<div class="table-scroll">
 <table>
-
 <thead>
-<tr>
-<th>梯次</th>
-<th>開放</th>
-<th>可遞補</th>
-<th>操作</th>
-</tr>
+<tr><th>梯次</th><th>開放</th><th>可遞補</th><th>操作</th></tr>
 </thead>
-
 <tbody id="sessionBody">
-<tr>
-<td colspan="4">載入中...</td>
-</tr>
+<tr><td colspan="4">載入中...</td></tr>
 </tbody>
-
 </table>
-
+</div>
 </div>
 
-<!-- 候補名單 -->
 <div class="card">
-
 <h2>候補名單</h2>
-
-<div style="overflow:auto;">
-
+<div class="table-scroll">
 <table>
-
 <thead>
 <tr>
-<th>列</th>
-<th>號碼</th>
-<th>姓名</th>
-<th>電話</th>
-<th>人數</th>
-<th>梯次</th>
-<th>狀態</th>
-<th>操作</th>
+<th>列</th><th>號碼</th><th>姓名</th><th>人數</th><th>梯次</th><th>狀態</th><th>操作</th>
 </tr>
 </thead>
-
 <tbody id="tbody">
-<tr>
-<td colspan="8">載入中...</td>
-</tr>
+<tr><td colspan="7">載入中...</td></tr>
 </tbody>
-
 </table>
-
+</div>
 </div>
 
 </div>
 
-</div>
-
-<script src="sheets.js?v=9"></script>
-<script src="script.js?v=9"></script>
+<script src="sheets.js?v=9.1"></script>
+<script src="script.js?v=9.1"></script>
 
 <script>
 function logout(){
-
-localStorage.removeItem(
-"houcihu_admin_login"
-);
-
+localStorage.removeItem("houcihu_admin_login");
 location.href="admin-login.html";
-
 }
 </script>
 
