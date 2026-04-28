@@ -2,130 +2,260 @@
 Houcihu Onsite Waitlist System
 Designed & Developed by Abby Luo
 2026 Official Build
-admin-login.html v11 ENTERPRISE
+admin-login.html v13 TITANIUM PRO MAX
 -->
 
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="author" content="Abby Luo">
-<meta name="generator" content="Houcihu Admin Login v11">
-<title>後慈湖｜後台登入</title>
-<link rel="stylesheet" href="style.css">
+<title>後慈湖｜後台登入 v13</title>
 
 <style>
 :root{
 --green:#1f7a3f;
 --green2:#3e8b55;
+--blue:#2c69c9;
 --red:#d33;
 --line:#e7ece7;
+--card:#ffffff;
+--text:#1f2d1f;
+--shadow:0 20px 45px rgba(0,0,0,.08);
 }
 
-.msg{
-margin-top:16px;
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft JhengHei",sans-serif;
+min-height:100vh;
+background:
+linear-gradient(135deg,#eef6ef,#dfeee2);
+display:flex;
+align-items:center;
+justify-content:center;
+padding:20px;
+color:var(--text);
+}
+
+.wrap{
+width:100%;
+max-width:520px;
+}
+
+.hero{
 text-align:center;
+margin-bottom:18px;
+}
+
+.hero h1{
+font-size:40px;
 font-weight:900;
-font-size:16px;
-min-height:24px;
+letter-spacing:1px;
+}
+
+.hero p{
+margin-top:8px;
+color:#5f6f5f;
+font-size:15px;
+font-weight:700;
+}
+
+.card{
+background:var(--card);
+border-radius:28px;
+padding:30px;
+box-shadow:var(--shadow);
+}
+
+.badge{
+display:inline-block;
+padding:8px 14px;
+border-radius:999px;
+background:#eef6ef;
+color:var(--green);
+font-size:13px;
+font-weight:900;
+margin-bottom:18px;
 }
 
 label{
 display:block;
-margin:14px 0 8px;
+margin:16px 0 8px;
 font-weight:900;
+font-size:15px;
+}
+
+.inputWrap{
+position:relative;
 }
 
 input{
 width:100%;
-padding:15px;
+padding:16px;
 border:1px solid var(--line);
 border-radius:16px;
 font-size:16px;
 outline:none;
-box-sizing:border-box;
+transition:.2s;
+background:#fff;
 }
 
 input:focus{
 border-color:var(--green);
-box-shadow:0 0 0 3px rgba(31,122,63,.12);
+box-shadow:0 0 0 4px rgba(31,122,63,.10);
+}
+
+.togglePass{
+position:absolute;
+right:14px;
+top:50%;
+transform:translateY(-50%);
+font-size:14px;
+font-weight:900;
+color:#666;
+cursor:pointer;
+user-select:none;
 }
 
 button{
 width:100%;
-margin-top:18px;
+margin-top:20px;
 padding:16px;
 border:none;
 border-radius:16px;
 background:linear-gradient(135deg,var(--green),var(--green2));
-color:#fff;
+color:#fff !important;
+-webkit-text-fill-color:#fff;
 font-size:18px;
 font-weight:900;
 cursor:pointer;
+appearance:none;
+-webkit-appearance:none;
+transition:.15s;
 }
 
 button:active{
 transform:scale(.98);
 }
 
-.small{
-margin-top:18px;
+button:disabled{
+opacity:.75;
+cursor:not-allowed;
+}
+
+.msg{
+margin-top:16px;
 text-align:center;
-color:#666;
-line-height:1.8;
+font-weight:900;
+min-height:24px;
+font-size:15px;
+}
+
+.secure{
+margin-top:16px;
+text-align:center;
 font-size:14px;
+font-weight:900;
+color:var(--green);
+}
+
+.info{
+margin-top:16px;
+text-align:center;
+font-size:14px;
+line-height:1.8;
+color:#666;
 }
 
 .credit{
-margin-top:10px;
+margin-top:14px;
 text-align:center;
 font-size:13px;
 color:#888;
 }
 
-.secure{
-margin-top:14px;
-text-align:center;
-font-size:14px;
-color:#1f7a3f;
-font-weight:800;
+.quick{
+margin-top:18px;
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
 }
 
-.wrap{
-max-width:520px;
+.quick button{
+margin-top:0;
+padding:13px;
+font-size:15px;
+border-radius:14px;
+}
+
+.blue{
+background:linear-gradient(135deg,#2c69c9,#4b82d9);
+}
+
+.gray{
+background:linear-gradient(135deg,#6f6f6f,#8a8a8a);
+}
+
+@media(max-width:600px){
+
+.hero h1{
+font-size:32px;
+}
+
+.card{
+padding:22px;
+border-radius:24px;
+}
+
+.quick{
+grid-template-columns:1fr;
+}
+
 }
 </style>
 </head>
 
 <body>
 
-<header class="hero">
-<h1>後台登入</h1>
-<p>後慈湖 現場管理系統 v11</p>
-</header>
-
 <div class="wrap">
 
+<div class="hero">
+<h1>後台登入</h1>
+<p>後慈湖 現場管理系統 v13 TITANIUM PRO MAX</p>
+</div>
+
 <div class="card">
+
+<div class="badge">🔒 僅限授權工作人員使用</div>
 
 <form id="loginForm">
 
 <label>帳號</label>
+<div class="inputWrap">
 <input
 type="text"
 id="user"
 placeholder="請輸入帳號"
 autocomplete="username"
 required>
+</div>
 
 <label>密碼</label>
+<div class="inputWrap">
 <input
 type="password"
 id="pass"
 placeholder="請輸入密碼"
 autocomplete="current-password"
 required>
+<div class="togglePass" onclick="togglePass()">顯示</div>
+</div>
 
 <button type="submit" id="loginBtn">
 登入後台
@@ -135,12 +265,17 @@ required>
 
 <div id="msg" class="msg"></div>
 
-<div class="secure">
-🔒 僅限授權工作人員使用
+<div class="quick">
+<button class="blue" onclick="fillDemo()">快速填入</button>
+<button class="gray" onclick="clearBox()">清除內容</button>
 </div>
 
-<div class="small">
-登入後可使用候補叫號、梯次管理、報表匯出等功能
+<div class="secure">
+🛡️ 登入後可使用叫號 / 候補 / 報表功能
+</div>
+
+<div class="info">
+系統具備登入憑證保存、12 小時自動失效、手機版最佳化
 </div>
 
 <div class="credit">
@@ -148,40 +283,41 @@ Designed & Developed by Abby Luo
 </div>
 
 </div>
-
 </div>
 
 <script>
 const ADMIN_USER="admin";
 const ADMIN_PASS="1234";
 
-const form =
-document.getElementById("loginForm");
+const form=document.getElementById("loginForm");
+const msg=document.getElementById("msg");
+const btn=document.getElementById("loginBtn");
 
-const msg =
-document.getElementById("msg");
+(function autoCheck(){
+try{
+let raw=localStorage.getItem("houcihu_admin_token");
+if(!raw) return;
 
-const btn =
-document.getElementById("loginBtn");
+let token=JSON.parse(raw);
+
+if(token.auth && Date.now()<token.expire){
+location.href="admin.html";
+}
+}catch(e){}
+})();
 
 function showMsg(text,color){
-
 msg.innerText=text;
 msg.style.color=color;
-
 }
 
 function createToken(){
-
 const now=Date.now();
 
-const expire =
-now + (12*60*60*1000); //12hr
-
-const token = {
+const token={
 auth:true,
 time:now,
-expire:expire
+expire:now+(12*60*60*1000)
 };
 
 localStorage.setItem(
@@ -193,54 +329,60 @@ localStorage.setItem(
 "houcihu_admin_login",
 "yes"
 );
-
 }
 
-form.addEventListener(
-"submit",
-function(e){
+function togglePass(){
+const p=document.getElementById("pass");
+const btn=document.querySelector(".togglePass");
+
+if(p.type==="password"){
+p.type="text";
+btn.innerText="隱藏";
+}else{
+p.type="password";
+btn.innerText="顯示";
+}
+}
+
+function fillDemo(){
+document.getElementById("user").value="admin";
+document.getElementById("pass").value="1234";
+showMsg("已填入測試帳號", "#2c69c9");
+}
+
+function clearBox(){
+document.getElementById("user").value="";
+document.getElementById("pass").value="";
+showMsg("", "#000");
+}
+
+form.addEventListener("submit",function(e){
 
 e.preventDefault();
 
-const user =
-document.getElementById("user")
-.value.trim();
-
-const pass =
-document.getElementById("pass")
-.value.trim();
+const user=document.getElementById("user").value.trim();
+const pass=document.getElementById("pass").value.trim();
 
 btn.disabled=true;
 btn.innerText="驗證中...";
 
 setTimeout(function(){
 
-if(
-user===ADMIN_USER &&
-pass===ADMIN_PASS
-){
+if(user===ADMIN_USER && pass===ADMIN_PASS){
 
 createToken();
 
-showMsg(
-"登入成功，跳轉中...",
-"#1f7a3f"
-);
+showMsg("登入成功，跳轉中...", "#1f7a3f");
 
 btn.innerText="登入成功";
 
 setTimeout(function(){
-
 location.href="admin.html";
-
-},500);
+},600);
 
 }else{
 
-showMsg(
-"帳號或密碼錯誤",
-"#d33"
-);
+showMsg("帳號或密碼錯誤", "#d33");
 
 btn.disabled=false;
 btn.innerText="登入後台";
@@ -251,15 +393,10 @@ btn.innerText="登入後台";
 
 });
 
-// Enter 鍵優化
-document.addEventListener(
-"keydown",
-function(e){
-
+document.addEventListener("keydown",function(e){
 if(e.key==="Enter"){
 form.requestSubmit();
 }
-
 });
 </script>
 
