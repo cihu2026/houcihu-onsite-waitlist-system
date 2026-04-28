@@ -2,15 +2,15 @@
 Houcihu Onsite Waitlist System
 Designed & Developed by Abby Luo
 2026 Official Build
-admin.html v12 ULTRA PRO
+admin.html v13 TITANIUM PRO MAX
 -->
 
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>後慈湖｜管理後台 v12 ULTRA PRO</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>後慈湖｜管理後台 v13</title>
 
 <style>
 :root{
@@ -24,13 +24,16 @@ admin.html v12 ULTRA PRO
 --card:#fff;
 --line:#e8ece8;
 --text:#1f2d1f;
---shadow:0 12px 28px rgba(0,0,0,.08);
+--shadow:0 14px 30px rgba(0,0,0,.08);
 }
 
-*{box-sizing:border-box;}
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+}
 
 body{
-margin:0;
 font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft JhengHei",sans-serif;
 background:linear-gradient(135deg,#eef6ef,#dfeee2);
 color:var(--text);
@@ -38,14 +41,14 @@ color:var(--text);
 
 .app{
 display:grid;
-grid-template-columns:260px 1fr;
+grid-template-columns:250px 1fr;
 min-height:100vh;
 }
 
 /* sidebar */
 .sidebar{
 background:linear-gradient(180deg,var(--green),var(--green2));
-padding:24px 18px;
+padding:22px;
 color:#fff;
 }
 
@@ -53,19 +56,19 @@ color:#fff;
 font-size:28px;
 font-weight:900;
 line-height:1.3;
-margin-bottom:22px;
+margin-bottom:20px;
 }
 
 .brand small{
 display:block;
-font-size:14px;
+font-size:13px;
 margin-top:8px;
 opacity:.9;
 }
 
 .menu a{
 display:block;
-padding:14px 16px;
+padding:14px;
 border-radius:14px;
 text-decoration:none;
 color:#fff;
@@ -75,7 +78,7 @@ background:rgba(255,255,255,.08);
 }
 
 .main{
-padding:20px;
+padding:18px;
 }
 
 .topbar{
@@ -87,32 +90,32 @@ margin-bottom:18px;
 }
 
 .title h1{
-margin:0;
 font-size:34px;
 font-weight:900;
 }
 
 .title p{
-margin:8px 0 0;
+margin-top:6px;
 color:#666;
 }
 
 .search{
 flex:1;
-min-width:240px;
+min-width:220px;
 }
 
 .search input{
 width:100%;
 padding:14px;
-border:1px solid #ddd;
 border-radius:14px;
+border:1px solid #ddd;
 font-size:16px;
 }
 
+/* cards */
 .grid4{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
 gap:14px;
 margin-bottom:18px;
 }
@@ -128,29 +131,35 @@ margin-bottom:18px;
 .kpi{
 font-size:42px;
 font-weight:900;
-margin-top:10px;
+margin-top:8px;
 }
 
 .green{color:var(--green);}
-.orange{color:var(--orange);}
 .blue{color:var(--blue);}
+.orange{color:var(--orange);}
 .red{color:var(--red);}
-.gray{color:var(--gray);}
+
+.notice{
+background:#fff3cd;
+border-left:6px solid #d6a400;
+font-weight:900;
+color:#8a6d3b;
+}
 
 .bigNo{
-font-size:78px;
+font-size:80px;
 font-weight:900;
 text-align:center;
 color:var(--green);
-line-height:1;
 }
 
 .sub{
 text-align:center;
-color:#666;
 margin-top:8px;
+color:#666;
 }
 
+/* buttons */
 .actions{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
@@ -165,30 +174,19 @@ border-radius:16px;
 font-size:16px;
 font-weight:900;
 cursor:pointer;
-color:#fff;
+appearance:none;
+-webkit-appearance:none;
+color:#fff !important;
+-webkit-text-fill-color:#fff;
 background:var(--green);
 }
 
-button.blue{
-background:var(--blue);
-color:#fff;
-}
+.blueBtn{background:var(--blue);}
+.orangeBtn{background:var(--orange);}
+.redBtn{background:var(--red);}
+.grayBtn{background:var(--gray);}
 
-button.orange{
-background:var(--orange);
-color:#fff;
-}
-
-button.red{
-background:var(--red);
-color:#fff;
-}
-
-button.gray{
-background:var(--gray);
-color:#fff;
-}
-
+/* table */
 .table-wrap{
 overflow:auto;
 }
@@ -196,7 +194,7 @@ overflow:auto;
 table{
 width:100%;
 border-collapse:collapse;
-min-width:950px;
+min-width:920px;
 }
 
 th,td{
@@ -211,33 +209,53 @@ background:#f7faf7;
 font-weight:900;
 }
 
-.notice{
-background:#fff3cd;
-border-left:6px solid #d6a400;
-font-weight:900;
-color:#8a6d3b;
-}
-
 .badge{
-display:inline-block;
 padding:6px 10px;
 border-radius:999px;
 font-size:13px;
 font-weight:900;
-background:#eef6ef;
+display:inline-block;
 }
+
+.waiting{background:#fff3cd;}
+.done{background:#dff3e3;}
+.cancel{background:#ffe0e0;}
 
 .footer{
 text-align:center;
-color:#666;
 font-size:14px;
+color:#666;
 margin-top:10px;
 }
 
+/* mobile */
 @media(max-width:900px){
-.app{grid-template-columns:1fr;}
-.title h1{font-size:28px;}
-.bigNo{font-size:54px;}
+
+.app{
+grid-template-columns:1fr;
+}
+
+.sidebar{
+padding:16px;
+}
+
+.title h1{
+font-size:28px;
+}
+
+.bigNo{
+font-size:56px;
+}
+
+table{
+min-width:700px;
+}
+
+button{
+padding:14px;
+font-size:15px;
+}
+
 }
 </style>
 </head>
@@ -252,31 +270,32 @@ location.href="admin-login.html";
 
 <div class="app">
 
+<!-- sidebar -->
 <div class="sidebar">
 
 <div class="brand">
-後慈湖 後台系統
-<small>v12 ULTRA PRO</small>
+後慈湖後台
+<small>v13 TITANIUM PRO MAX</small>
 </div>
 
 <div class="menu">
-<a href="#">總覽儀表板</a>
+<a href="#">總覽</a>
 <a href="#queue">候補名單</a>
-<a href="#sessions">梯次管理</a>
 <a href="screen.html">即時看板</a>
 <a href="mobile.html">手機版</a>
-<a href="#" onclick="logout()">登出系統</a>
+<a href="#" onclick="logout()">登出</a>
 </div>
 
 </div>
 
+<!-- main -->
 <div class="main">
 
 <div class="topbar">
 
 <div class="title">
 <h1>管理後台</h1>
-<p>企業級營運管理中心</p>
+<p>企業級營運中心</p>
 </div>
 
 <div class="search">
@@ -311,7 +330,7 @@ location.href="admin-login.html";
 </div>
 
 <div class="card notice">
-⚠️ 正式營運模式，所有操作即時同步。
+⚠️ 正式營運模式，所有資料即時同步。
 </div>
 
 <div class="card">
@@ -319,44 +338,22 @@ location.href="admin-login.html";
 <div class="sub">目前叫號</div>
 </div>
 
-<div class="grid4">
-
-<div class="card">
-補位成功率
-<div class="kpi green" id="successRate">0%</div>
-</div>
-
-<div class="card">
-熱門梯次
-<div class="kpi blue" id="hotSlot">-</div>
-</div>
-
-<div class="card">
-等待壓力
-<div class="kpi orange" id="pressure">低</div>
-</div>
-
-<div class="card">
-平均人數
-<div class="kpi red" id="avgPeople">0</div>
-</div>
-
-</div>
-
-<!-- actions -->
+<!-- buttons -->
 <div class="actions">
 
-<button onclick="callNextAndReload()">下一號叫號</button>
-<button class="orange" onclick="voiceCall()">語音叫號</button>
-<button class="blue" onclick="loadAdmin()">立即刷新</button>
-<button class="gray" onclick="location.href='screen.html'">開啟看板</button>
-<button class="blue" onclick="exportCSV()">匯出報表</button>
-<button class="red" onclick="clearToday()">清空名單</button>
+<button onclick="callNext()">下一號叫號</button>
+<button class="orangeBtn" onclick="voiceCall()">語音叫號</button>
+<button class="blueBtn" onclick="loadData()">立即刷新</button>
+<button class="grayBtn" onclick="location.href='screen.html'">開啟看板</button>
+<button class="blueBtn" onclick="exportCSV()">下載報表</button>
+<button class="redBtn" onclick="clearToday()">清空名單</button>
 
 </div>
 
+<!-- queue -->
 <div class="card" id="queue">
-<h2>候補名單</h2>
+
+<h2 style="margin-bottom:15px;">候補名單</h2>
 
 <div class="table-wrap">
 <table>
@@ -369,34 +366,13 @@ location.href="admin-login.html";
 <th>人數</th>
 <th>梯次</th>
 <th>狀態</th>
-<th>操作</th>
 </tr>
 </thead>
+
 <tbody id="tbody">
-<tr><td colspan="8">載入中...</td></tr>
+<tr><td colspan="7">載入中...</td></tr>
 </tbody>
-</table>
-</div>
 
-</div>
-
-<div class="card" id="sessions">
-<h2>梯次管理</h2>
-
-<div class="table-wrap">
-<table>
-<thead>
-<tr>
-<th>梯次</th>
-<th>開放</th>
-<th>可遞補</th>
-<th>操作</th>
-</tr>
-</thead>
-
-<tbody id="sessionBody">
-<tr><td colspan="4">載入中...</td></tr>
-</tbody>
 </table>
 </div>
 
@@ -409,8 +385,7 @@ Designed & Developed by Abby Luo ｜ Houcihu Official Build
 </div>
 </div>
 
-<script src="sheets.js?v=12"></script>
-<script src="script.js?v=12"></script>
+<script src="sheets.js?v=13"></script>
 
 <script>
 function logout(){
@@ -418,92 +393,103 @@ localStorage.removeItem("houcihu_admin_token");
 location.href="admin-login.html";
 }
 
-function exportCSV(){
-const rows=[...document.querySelectorAll("#tbody tr")];
-const csv=rows.map(r=>
-[...r.children].slice(0,7).map(td=>td.innerText).join(",")
-).join("\n");
+function voiceCall(){
+let no=document.getElementById("currentNo").innerText;
+let msg=new SpeechSynthesisUtterance(no+"號旅客請至櫃台");
+msg.lang="zh-TW";
+speechSynthesis.speak(msg);
+}
 
-const blob=new Blob([csv],{type:"text/csv"});
-const a=document.createElement("a");
+function exportCSV(){
+let rows=[...document.querySelectorAll("#tbody tr")];
+let csv=rows.map(r=>[...r.children].map(td=>td.innerText).join(",")).join("\n");
+let blob=new Blob([csv],{type:"text/csv"});
+let a=document.createElement("a");
 a.href=URL.createObjectURL(blob);
 a.download="houcihu-report.csv";
 a.click();
 }
 
-function voiceCall(){
-const no=document.getElementById("currentNo").innerText;
-const msg=new SpeechSynthesisUtterance(no+"號旅客請至櫃台");
-msg.lang="zh-TW";
-speechSynthesis.speak(msg);
+function statusBadge(s){
+if(s=="done") return '<span class="badge done">完成</span>';
+if(s=="cancel") return '<span class="badge cancel">取消</span>';
+return '<span class="badge waiting">等待</span>';
 }
 
-document.getElementById("searchBox").addEventListener("input",function(){
-const q=this.value.toLowerCase();
-
-document.querySelectorAll("#tbody tr").forEach(r=>{
-r.style.display=(r.innerText.toLowerCase().includes(q)||q==="")?"":"none";
-});
-});
-
-function calcPressure(waiting){
-if(waiting>=15) return "高";
-if(waiting>=8) return "中";
-return "低";
-}
-
-async function ultraSync(){
+async function loadData(){
 
 if(typeof cloudGet!=="function") return;
 
-const rows=await cloudGet();
+let rows=await cloudGet();
 
-if(!rows || rows.length<=1) return;
+if(!rows || rows.length<=1){
+document.getElementById("tbody").innerHTML='<tr><td colspan="7">尚無資料</td></tr>';
+return;
+}
 
-let total=0,waiting=0,done=0,cancel=0,peopleSum=0;
-let slotMap={};
+let html="";
+let total=0,waiting=0,done=0,cancel=0;
 
 for(let i=1;i<rows.length;i++){
 
+let no=rows[i][0]||"";
+let name=rows[i][1]||"";
+let tel=rows[i][2]||"";
+let people=rows[i][3]||"1";
+let slot=rows[i][4]||"-";
+let status=rows[i][5]||"waiting";
+
 total++;
 
-const people=Number(rows[i][3]||1);
-peopleSum+=people;
+if(status=="waiting") waiting++;
+if(status=="done") done++;
+if(status=="cancel") cancel++;
 
-const slot=String(rows[i][4]||"-");
-slotMap[slot]=(slotMap[slot]||0)+1;
-
-const s=rows[i][5];
-
-if(s==="waiting") waiting++;
-if(s==="done") done++;
-if(s==="cancel") cancel++;
+html+=`
+<tr>
+<td>${i}</td>
+<td>${no}</td>
+<td>${name}</td>
+<td>${tel}</td>
+<td>${people}</td>
+<td>${slot}</td>
+<td>${statusBadge(status)}</td>
+</tr>
+`;
 }
+
+document.getElementById("tbody").innerHTML=html;
 
 document.getElementById("kpiTotal").innerText=total;
 document.getElementById("kpiWaiting").innerText=waiting;
 document.getElementById("kpiDone").innerText=done;
 document.getElementById("kpiCancel").innerText=cancel;
 
-document.getElementById("successRate").innerText=
-total?Math.round(done/total*100)+"%":"0%";
-
-let hot="-",max=0;
-for(let k in slotMap){
-if(slotMap[k]>max){max=slotMap[k];hot=k;}
-}
-document.getElementById("hotSlot").innerText=hot;
-
-document.getElementById("pressure").innerText=
-calcPressure(waiting);
-
-document.getElementById("avgPeople").innerText=
-total?(peopleSum/total).toFixed(1):"0";
-
 }
 
-ultraSync();
-setInterval(ultraSync,5000);
+function callNext(){
+let first=document.querySelector("#tbody tr td:nth-child(2)");
+if(first){
+document.getElementById("currentNo").innerText=first.innerText;
+voiceCall();
+}
+}
+
+function clearToday(){
+if(confirm("確定清空今日名單？")){
+document.getElementById("tbody").innerHTML='<tr><td colspan="7">已清空</td></tr>';
+}
+}
+
+document.getElementById("searchBox").addEventListener("input",function(){
+let q=this.value.toLowerCase();
+document.querySelectorAll("#tbody tr").forEach(r=>{
+r.style.display=r.innerText.toLowerCase().includes(q)?"":"none";
+});
+});
+
+loadData();
+setInterval(loadData,5000);
 </script>
 
 </body>
