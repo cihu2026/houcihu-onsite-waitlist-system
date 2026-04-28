@@ -1,1 +1,217 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><title>報表</title><link rel="stylesheet" href="style.css"></head><body><header><h1>報表</h1></header><div class="wrap"><div class="card">智慧版報表頁</div></div></body></html>
+<!--
+Houcihu Onsite Waitlist System
+Designed & Developed by Abby Luo
+2026 Official Build
+-->
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Abby Luo">
+<meta name="generator" content="Houcihu Smart Report Dashboard">
+<title>報表</title>
+<link rel="stylesheet" href="style.css">
+
+<style>
+body{
+margin:0;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft JhengHei",sans-serif;
+background:linear-gradient(135deg,#eef6ef,#dfeee2);
+color:#1f2d1f;
+}
+
+header{
+background:linear-gradient(135deg,#1f5f35,#3e8b55);
+color:#fff;
+text-align:center;
+padding:26px 18px;
+}
+
+header h1{
+margin:0;
+font-size:34px;
+font-weight:900;
+}
+
+header p{
+margin:10px 0 0;
+opacity:.95;
+font-size:16px;
+}
+
+.wrap{
+max-width:1100px;
+margin:auto;
+padding:20px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+gap:16px;
+}
+
+.card{
+background:#fff;
+border-radius:24px;
+padding:24px;
+box-shadow:0 12px 28px rgba(0,0,0,.08);
+}
+
+.card h2{
+margin:0 0 12px;
+font-size:22px;
+}
+
+.big{
+font-size:52px;
+font-weight:900;
+color:#1f7a3f;
+line-height:1;
+}
+
+.label{
+margin-top:8px;
+color:#666;
+font-weight:700;
+}
+
+.list{
+line-height:2;
+font-weight:700;
+}
+
+footer{
+text-align:center;
+color:#666;
+padding:18px;
+}
+
+@media(max-width:768px){
+
+header h1{
+font-size:28px;
+}
+
+.big{
+font-size:42px;
+}
+
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>報表</h1>
+<p>智慧版報表頁</p>
+</header>
+
+<div class="wrap">
+
+<div class="grid">
+
+<div class="card">
+<h2>今日候補總數</h2>
+<div class="big" id="totalCount">0</div>
+<div class="label">已登記筆數</div>
+</div>
+
+<div class="card">
+<h2>目前等待中</h2>
+<div class="big" id="waitingCount">0</div>
+<div class="label">waiting 狀態</div>
+</div>
+
+<div class="card">
+<h2>已完成入場</h2>
+<div class="big" id="doneCount">0</div>
+<div class="label">done 狀態</div>
+</div>
+
+<div class="card">
+<h2>目前叫號</h2>
+<div class="big" id="currentNo">A000</div>
+<div class="label">最新 called 號碼</div>
+</div>
+
+<div class="card">
+<h2>取消筆數</h2>
+<div class="big" id="cancelCount">0</div>
+<div class="label">cancel 狀態</div>
+</div>
+
+<div class="card">
+<h2>營運建議</h2>
+<div class="list" id="suggestBox">
+讀取中...
+</div>
+</div>
+
+</div>
+
+</div>
+
+<footer>
+Houcihu Smart Report Dashboard
+</footer>
+
+<script src="sheets.js?v=8"></script>
+
+<script>
+async function loadReport(){
+
+const rows = await cloudGet();
+
+let total=0;
+let waiting=0;
+let done=0;
+let cancel=0;
+let current="A000";
+
+if(rows && rows.length>1){
+
+for(let i=1;i<rows.length;i++){
+
+total++;
+
+const status = rows[i][5];
+
+if(status==="waiting") waiting++;
+if(status==="done") done++;
+if(status==="cancel") cancel++;
+if(status==="called") current=rows[i][0];
+
+}
+
+}
+
+document.getElementById("totalCount").innerText=total;
+document.getElementById("waitingCount").innerText=waiting;
+document.getElementById("doneCount").innerText=done;
+document.getElementById("cancelCount").innerText=cancel;
+document.getElementById("currentNo").innerText=current;
+
+let msg="營運穩定";
+
+if(waiting>=20){
+msg="候補量高，建議加快補位";
+}else if(waiting>=10){
+msg="候補增加，請留意叫號";
+}else if(waiting===0){
+msg="目前無等待名單";
+}
+
+document.getElementById("suggestBox").innerText=msg;
+
+}
+
+loadReport();
+autoSync(loadReport,5000);
+</script>
+
+</body>
+</html>
