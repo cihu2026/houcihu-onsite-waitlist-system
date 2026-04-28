@@ -1,4 +1,4 @@
-# 後慈湖現場候補叫號系統 v.9
+# 後慈湖現場候補叫號系統 v9
 
 提供後慈湖園區現場候補旅客之數位化管理方案，整合候補登記、即時叫號、梯次控管與雲端同步機制，提升現場服務效率與旅客體驗。
 
@@ -12,19 +12,13 @@
 
 ## 專案特色
 
-✅ QR Code 現場候補登記
-
-✅ 遊客自行填寫姓名／電話／人數
-
-✅ 工作人員後台管理
-
-✅ 手機版快速操作
-
-✅ 電視即時叫號看板
-
-✅ Google Sheets 雲端同步
-
-✅ GitHub Pages 免費部署
+✅ QR Code 現場候補登記  
+✅ 遊客自行填寫姓名／電話／人數  
+✅ 工作人員後台管理  
+✅ 手機版快速操作  
+✅ 電視即時叫號看板  
+✅ Google Sheets 雲端同步  
+✅ GitHub Pages 免費部署  
 
 ---
 
@@ -77,15 +71,19 @@ https://cihu2026.github.io/houcihu-onsite-waitlist-system/
 ## 系統特色
 
 ### 即時同步
+
 採用 Google Apps Script + Google Sheets 架構，多裝置資料同步更新。
 
 ### 現場友善
+
 介面簡潔，適合第一線工作人員快速操作。
 
 ### 旅客清楚易懂
+
 公開顯示候補狀態與梯次資訊，降低重複詢問。
 
 ### 彈性擴充
+
 可依營運需求調整梯次、名額、開放日期與版面內容。
 
 ---
@@ -98,7 +96,8 @@ https://cihu2026.github.io/houcihu-onsite-waitlist-system/
 
 ## 維護版本
 
-text id="q7m4za" Version: v6 Final Status: Production Ready 
+Version: v9  
+Status: Production Ready  
 
 ---
 
@@ -132,6 +131,6 @@ text id="q7m4za" Version: v6 Final Status: Production Ready
 
 Designed, Developed and Maintained by Abby Luo.
 
-Developer: Abby Luo
-Designed & Developed Independently
+Developer: Abby Luo  
+Designed & Developed Independently  
 Production Version: v9
