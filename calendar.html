@@ -1,8 +1,16 @@
+<!--
+Houcihu Onsite Waitlist System
+Designed & Developed by Abby Luo
+2026 Official Build
+-->
+
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Abby Luo">
+<meta name="generator" content="Houcihu Calendar v9">
 <title>後慈湖｜營運資訊</title>
 <link rel="stylesheet" href="style.css">
 
@@ -54,17 +62,9 @@ text-align:center;
 color:#1f7a3f;
 }
 
-.red{
-color:#d33;
-}
-
-.orange{
-color:#d98b00;
-}
-
-.green{
-color:#1f7a3f;
-}
+.red{color:#d33;}
+.orange{color:#d98b00;}
+.green{color:#1f7a3f;}
 
 table{
 width:100%;
@@ -147,14 +147,12 @@ grid-template-columns:1fr;
 
 <div class="wrap">
 
-<!-- 今日狀態 -->
 <div class="card">
 <div class="big" id="todayStatus">
 讀取中...
 </div>
 </div>
 
-<!-- 本週資訊 -->
 <div class="card">
 
 <h2>本週營運資訊</h2>
@@ -171,7 +169,6 @@ grid-template-columns:1fr;
 
 </div>
 
-<!-- 公告 -->
 <div class="card">
 
 <h2>最新公告</h2>
@@ -185,7 +182,6 @@ grid-template-columns:1fr;
 
 </div>
 
-<!-- 快速入口 -->
 <div class="card">
 
 <h2>快速服務</h2>
@@ -229,7 +225,6 @@ return y + "/" + m + "/" + day;
 
 function isHolidayClose(d){
 
-// 每週二固定休園
 if(d.getDay()===2){
 return true;
 }
@@ -247,7 +242,6 @@ document.getElementById(
 "todayStatus"
 );
 
-// 今日狀態
 if(isHolidayClose(now)){
 
 today.innerHTML =
@@ -260,7 +254,6 @@ today.innerHTML =
 
 }
 
-// 本週表格
 const table =
 document.getElementById(
 "weekTable"
