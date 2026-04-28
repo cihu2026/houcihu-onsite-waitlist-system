@@ -2,7 +2,7 @@
 Houcihu Onsite Waitlist System
 Designed & Developed by Abby Luo
 2026 Official Build
-admin.html v10 PRO
+admin.html v11 ENTERPRISE
 -->
 
 <!DOCTYPE html>
@@ -10,24 +10,21 @@ admin.html v10 PRO
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>後慈湖｜管理後台</title>
+<title>後慈湖｜管理後台 v11 ENTERPRISE</title>
 
 <style>
 :root{
 --green:#1f7a3f;
 --green2:#3e8b55;
 --blue:#2c69c9;
---gray:#666;
 --orange:#d98b00;
 --red:#d33;
---bg1:#eef6ef;
---bg2:#dfeee2;
---card:#ffffff;
+--gray:#666;
+--bg:#eef6ef;
+--card:#fff;
+--line:#e8ece8;
 --text:#1f2d1f;
---muted:#666;
---line:#e9ece9;
---shadow:0 12px 28px rgba(0,0,0,.08);
---radius:24px;
+--shadow:0 10px 26px rgba(0,0,0,.08);
 }
 
 *{box-sizing:border-box;}
@@ -35,55 +32,122 @@ admin.html v10 PRO
 body{
 margin:0;
 font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft JhengHei",sans-serif;
-background:linear-gradient(135deg,var(--bg1),var(--bg2));
+background:linear-gradient(135deg,#eef6ef,#dfeee2);
 color:var(--text);
 }
 
-header{
-background:linear-gradient(135deg,var(--green),var(--green2));
-color:#fff;
-text-align:center;
-padding:42px 20px;
+.app{
+display:grid;
+grid-template-columns:260px 1fr;
+min-height:100vh;
 }
 
-header h1{
+/* Sidebar */
+.sidebar{
+background:linear-gradient(180deg,var(--green),var(--green2));
+color:#fff;
+padding:24px 18px;
+}
+
+.brand{
+font-size:28px;
+font-weight:900;
+line-height:1.3;
+margin-bottom:24px;
+}
+
+.brand small{
+display:block;
+font-size:14px;
+opacity:.9;
+font-weight:600;
+margin-top:8px;
+}
+
+.menu a{
+display:block;
+padding:14px 16px;
+border-radius:14px;
+text-decoration:none;
+color:#fff;
+font-weight:800;
+margin-bottom:10px;
+background:rgba(255,255,255,.08);
+}
+
+.menu a:hover{
+background:rgba(255,255,255,.18);
+}
+
+/* Main */
+.main{
+padding:20px;
+}
+
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:14px;
+margin-bottom:18px;
+flex-wrap:wrap;
+}
+
+.title h1{
 margin:0;
-font-size:38px;
+font-size:34px;
 font-weight:900;
 }
 
-header p{
-margin:12px 0 0;
-font-size:18px;
-opacity:.95;
+.title p{
+margin:8px 0 0;
+color:#666;
 }
 
-.wrap{
-max-width:1180px;
-margin:auto;
-padding:20px;
+.search{
+flex:1;
+min-width:240px;
+}
+
+.search input{
+width:100%;
+padding:14px;
+border:1px solid #ddd;
+border-radius:14px;
+font-size:16px;
+}
+
+.grid4{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:14px;
+margin-bottom:18px;
 }
 
 .card{
 background:#fff;
-border-radius:var(--radius);
-padding:24px;
-margin-bottom:18px;
+border-radius:22px;
+padding:22px;
 box-shadow:var(--shadow);
 }
 
-.notice{
-background:#fff3cd;
-border-left:6px solid #d6a400;
+.kpi{
+font-size:42px;
 font-weight:900;
-color:#8a6d3b;
+margin-top:10px;
 }
 
-.big{
-font-size:72px;
+.green{color:var(--green);}
+.blue{color:var(--blue);}
+.orange{color:var(--orange);}
+.red{color:var(--red);}
+
+.bigNo{
+font-size:76px;
 font-weight:900;
 text-align:center;
 color:var(--green);
+line-height:1;
 }
 
 .sub{
@@ -92,38 +156,30 @@ color:#666;
 margin-top:8px;
 }
 
-.grid{
+.actions{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-gap:14px;
-}
-
-button,input{
-width:100%;
-padding:15px;
-border:none;
-border-radius:16px;
-font-size:17px;
-}
-
-input{
-border:1px solid #ddd;
-background:#fff;
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+gap:12px;
+margin-bottom:18px;
 }
 
 button{
-background:var(--green);
-color:#fff;
+border:none;
+padding:16px;
+border-radius:16px;
+font-size:16px;
 font-weight:900;
 cursor:pointer;
+color:#fff;
+background:var(--green);
 }
 
-.blue{background:var(--blue);}
-.gray{background:var(--gray);}
-.red{background:var(--red);}
-.orange{background:var(--orange);}
+button.blue{background:var(--blue);}
+button.orange{background:var(--orange);}
+button.red{background:var(--red);}
+button.gray{background:var(--gray);}
 
-.table-scroll{
+.table-wrap{
 overflow:auto;
 }
 
@@ -135,40 +191,52 @@ min-width:900px;
 
 th,td{
 padding:12px;
-border-bottom:1px solid #eee;
+border-bottom:1px solid var(--line);
 text-align:center;
 font-size:15px;
 }
 
 th{
 background:#f7faf7;
+font-weight:900;
 }
 
 .smallbtn{
-width:auto;
 padding:8px 10px;
 font-size:13px;
 border-radius:10px;
-margin:2px;
+width:auto;
 display:inline-block;
+margin:2px;
 }
 
-.wait{color:#d98b00;font-weight:900;}
-.called{color:#2c69c9;font-weight:900;}
-.done{color:#1f7a3f;font-weight:900;}
-.cancel{color:#d33;font-weight:900;}
-
-.topbar{
-display:grid;
-grid-template-columns:2fr 1fr;
-gap:14px;
-margin-bottom:18px;
+.notice{
+background:#fff3cd;
+color:#8a6d3b;
+font-weight:900;
+border-left:6px solid #d6a400;
 }
 
-@media(max-width:768px){
-.big{font-size:52px;}
-header h1{font-size:30px;}
-.grid,.topbar{grid-template-columns:1fr;}
+footer{
+margin-top:20px;
+text-align:center;
+color:#666;
+font-size:14px;
+}
+
+@media(max-width:900px){
+.app{
+grid-template-columns:1fr;
+}
+.sidebar{
+padding:18px;
+}
+.title h1{
+font-size:28px;
+}
+.bigNo{
+font-size:54px;
+}
 }
 </style>
 </head>
@@ -181,77 +249,94 @@ location.href="admin-login.html";
 }
 </script>
 
-<header>
-<h1>後慈湖 管理後台 v10 PRO</h1>
-<p>候補叫號｜搜尋管理｜梯次設定｜專業版</p>
-</header>
+<div class="app">
 
-<div class="wrap">
+<!-- Sidebar -->
+<div class="sidebar">
+
+<div class="brand">
+後慈湖 後台系統
+<small>v11 ENTERPRISE</small>
+</div>
+
+<div class="menu">
+<a href="#">總覽儀表板</a>
+<a href="#queue">候補名單</a>
+<a href="#sessions">梯次管理</a>
+<a href="screen.html">即時看板</a>
+<a href="mobile.html">手機版</a>
+<a href="#" onclick="logout()">登出系統</a>
+</div>
+
+</div>
+
+<!-- Main -->
+<div class="main">
+
+<div class="topbar">
+
+<div class="title">
+<h1>管理後台</h1>
+<p>候補叫號｜營運數據｜即時同步管理</p>
+</div>
+
+<div class="search">
+<input id="searchBox" type="text" placeholder="搜尋姓名 / 電話 / 號碼">
+</div>
+
+</div>
+
+<!-- KPI -->
+<div class="grid4">
+
+<div class="card">
+今日總候補
+<div class="kpi green" id="kpiTotal">0</div>
+</div>
+
+<div class="card">
+等待中
+<div class="kpi orange" id="kpiWaiting">0</div>
+</div>
+
+<div class="card">
+已完成
+<div class="kpi blue" id="kpiDone">0</div>
+</div>
+
+<div class="card">
+取消數
+<div class="kpi red" id="kpiCancel">0</div>
+</div>
+
+</div>
 
 <div class="card notice">
 ⚠️ 正式營運模式，所有操作即時同步。
 </div>
 
 <div class="card">
-<div class="big" id="currentNo">A000</div>
+<div class="bigNo" id="currentNo">A000</div>
 <div class="sub">目前叫號</div>
 </div>
 
-<div class="topbar">
+<!-- Actions -->
+<div class="actions">
 
-<div class="card">
-<h2>搜尋旅客</h2>
-<input type="text" id="searchBox" placeholder="輸入姓名 / 電話 / 號碼">
-</div>
-
-<div class="card">
-<h2>資料工具</h2>
-<div class="grid">
-<button class="blue" onclick="loadAdmin()">立即刷新</button>
-<button class="gray" onclick="exportCSV()">匯出CSV</button>
-</div>
-</div>
-
-</div>
-
-<div class="card">
-<h2>快速操作</h2>
-<div class="grid">
 <button onclick="callNextAndReload()">下一號叫號</button>
 <button class="orange" onclick="smartSort()">自動排序</button>
+<button class="blue" onclick="loadAdmin()">立即刷新</button>
 <button class="gray" onclick="location.href='screen.html'">開啟看板</button>
+<button class="blue" onclick="exportCSV()">匯出報表</button>
 <button class="red" onclick="clearToday()">清空名單</button>
-<button class="gray" onclick="logout()">登出系統</button>
-</div>
+
 </div>
 
-<div class="card">
-<h2>自動補位</h2>
-<div class="grid" id="autofillArea">載入中...</div>
-</div>
-
-<div class="card">
-<h2>梯次管理</h2>
-<div class="table-scroll">
-<table>
-<thead>
-<tr>
-<th>梯次</th>
-<th>開放</th>
-<th>可遞補</th>
-<th>操作</th>
-</tr>
-</thead>
-<tbody id="sessionBody">
-<tr><td colspan="4">載入中...</td></tr>
-</tbody>
-</table>
-</div>
-</div>
-
-<div class="card">
+<!-- Queue -->
+<div class="card" id="queue">
 <h2>候補名單</h2>
-<div class="table-scroll">
+
+<div class="table-wrap">
 <table>
 <thead>
 <tr>
@@ -265,17 +350,47 @@ location.href="admin-login.html";
 <th>操作</th>
 </tr>
 </thead>
+
 <tbody id="tbody">
 <tr><td colspan="8">載入中...</td></tr>
 </tbody>
 </table>
 </div>
+
+</div>
+
+<!-- Sessions -->
+<div class="card" id="sessions">
+<h2>梯次管理</h2>
+
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>梯次</th>
+<th>開放</th>
+<th>可遞補</th>
+<th>操作</th>
+</tr>
+</thead>
+
+<tbody id="sessionBody">
+<tr><td colspan="4">載入中...</td></tr>
+</tbody>
+</table>
 </div>
 
 </div>
 
-<script src="sheets.js?v=10"></script>
-<script src="script.js?v=10"></script>
+<footer>
+Designed & Developed by Abby Luo ｜ Houcihu Official Build
+</footer>
+
+</div>
+</div>
+
+<script src="sheets.js?v=11"></script>
+<script src="script.js?v=11"></script>
 
 <script>
 function logout(){
@@ -285,15 +400,17 @@ location.href="admin-login.html";
 
 function exportCSV(){
 
-let table=document.querySelector("table:last-of-type");
-let rows=[...table.querySelectorAll("tr")];
+const rows=[...document.querySelectorAll("#tbody tr")];
 
-let csv=rows.map(r=>
-[...r.children].map(td=>td.innerText).join(",")
+const csv=rows.map(r=>
+[...r.children]
+.slice(0,7)
+.map(td=>td.innerText.replace(/,/g," "))
+.join(",")
 ).join("\n");
 
-let blob=new Blob([csv],{type:"text/csv"});
-let a=document.createElement("a");
+const blob=new Blob([csv],{type:"text/csv"});
+const a=document.createElement("a");
 
 a.href=URL.createObjectURL(blob);
 a.download="houcihu-report.csv";
@@ -302,28 +419,69 @@ a.click();
 }
 
 function smartSort(){
-alert("已啟用優先補位排序（依梯次＋等待順序）");
+alert("已啟用企業版優先補位排序");
 }
 
 document.getElementById("searchBox")
 .addEventListener("input",function(){
 
-const q=this.value.trim();
+const q=this.value.trim().toLowerCase();
 
-const rows=
-document.querySelectorAll("#tbody tr");
+document
+.querySelectorAll("#tbody tr")
+.forEach(r=>{
 
-rows.forEach(r=>{
+const t=r.innerText.toLowerCase();
 
-if(r.innerText.includes(q) || q===""){
-r.style.display="";
-}else{
-r.style.display="none";
+r.style.display=
+(t.includes(q)||q==="")
+? ""
+: "none";
+
+});
+
+});
+
+function updateKPI(rows){
+
+let total=0;
+let waiting=0;
+let done=0;
+let cancel=0;
+
+for(let i=1;i<rows.length;i++){
+
+total++;
+
+const s=rows[i][5];
+
+if(s==="waiting") waiting++;
+if(s==="done") done++;
+if(s==="cancel") cancel++;
+
 }
 
-});
+document.getElementById("kpiTotal").innerText=total;
+document.getElementById("kpiWaiting").innerText=waiting;
+document.getElementById("kpiDone").innerText=done;
+document.getElementById("kpiCancel").innerText=cancel;
 
-});
+}
+
+async function enterpriseSync(){
+
+if(typeof cloudGet!=="function") return;
+
+const rows=await cloudGet();
+
+if(rows && rows.length){
+updateKPI(rows);
+}
+
+}
+
+enterpriseSync();
+setInterval(enterpriseSync,5000);
 </script>
 
 </body>
