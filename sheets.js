@@ -1,11 +1,18 @@
-// sheets.js v8 最終穩定版
-// 後慈湖 雲端同步 API
+```javascript id="u4m8qa"
+/*
+Houcihu Onsite Waitlist System
+Designed & Developed by Abby Luo
+2026 Official Build
+
+sheets.js v9 Final Stable
+後慈湖 雲端同步 API
+*/
 
 const WEB_APP_URL =
 "https://script.google.com/macros/s/AKfycbwMCPz4MM9IIbyLbdYeA8PlvosY6pbmOjGa3xmeUvnQv2Vmg1S4ozIOZ9O8Hq58crtv/exec";
 
 // =======================
-// 共用 fetch
+// 共用 GET
 // =======================
 async function apiGet(url){
 
@@ -15,6 +22,8 @@ const r = await fetch(url,{
 method:"GET",
 cache:"no-store"
 });
+
+if(!r.ok) throw new Error("HTTP "+r.status);
 
 return await r.json();
 
@@ -27,6 +36,9 @@ return [];
 
 }
 
+// =======================
+// 共用 POST
+// =======================
 async function apiPost(data){
 
 try{
@@ -37,6 +49,8 @@ WEB_APP_URL,
 method:"POST",
 body:new URLSearchParams(data)
 });
+
+if(!r.ok) throw new Error("HTTP "+r.status);
 
 return await r.text();
 
@@ -143,6 +157,18 @@ status:"waiting"
 }
 
 // =======================
+// 重新整理單筆資料（預留）
+// =======================
+async function pingSystem(){
+
+return await apiGet(
+WEB_APP_URL+
+"?ping=1&t="+Date.now()
+);
+
+}
+
+// =======================
 // 自動同步
 // =======================
 function autoSync(
@@ -156,3 +182,4 @@ ms
 );
 
 }
+```
