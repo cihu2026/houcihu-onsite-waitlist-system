@@ -2,7 +2,7 @@
 Houcihu Onsite Waitlist System
 Designed & Developed by Abby Luo
 2026 Official Build
-calendar.html v10 全站一致版
+calendar.html Final
 -->
 
 <!DOCTYPE html>
@@ -11,20 +11,21 @@ calendar.html v10 全站一致版
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="author" content="Abby Luo">
+<meta name="generator" content="Houcihu Calendar Final">
 <title>後慈湖｜營運資訊</title>
 <link rel="stylesheet" href="style.css">
 
 <style>
-.red{color:#d33;font-weight:900;}
-.orange{color:#d98b00;font-weight:900;}
-.green{color:#1f7a3f;font-weight:900;}
-.gray{color:#888;font-weight:900;}
-
 .big{
 font-size:42px;
 font-weight:900;
 text-align:center;
 }
+
+.red{color:#d33;font-weight:900;}
+.orange{color:#d98b00;font-weight:900;}
+.green{color:#1f7a3f;font-weight:900;}
+.gray{color:#888;font-weight:900;}
 
 .note{
 line-height:1.9;
@@ -39,7 +40,9 @@ gap:12px;
 
 @media(max-width:768px){
 
-.big{font-size:34px;}
+.big{
+font-size:34px;
+}
 
 .btns{
 grid-template-columns:1fr;
@@ -130,6 +133,7 @@ const dayNames = [
 "日","一","二","三","四","五","六"
 ];
 
+// 日期格式
 function formatDate(d){
 
 const y = d.getFullYear();
@@ -140,8 +144,8 @@ return y + "/" + m + "/" + day;
 
 }
 
-// 固定週二休園
-function isClose(d){
+// 每週二休園
+function isClosed(d){
 
 return d.getDay()===2;
 
@@ -151,13 +155,13 @@ function renderPage(){
 
 const now = new Date();
 
+// 今日狀態
 const today =
 document.getElementById(
 "todayStatus"
 );
 
-// 今日狀態
-if(isClose(now)){
+if(isClosed(now)){
 
 today.innerHTML =
 '<span class="red">休園</span>';
@@ -189,7 +193,7 @@ d.getDay();
 let text="";
 let cls="green";
 
-if(isClose(d)){
+if(isClosed(d)){
 
 text="休園";
 cls="red";
