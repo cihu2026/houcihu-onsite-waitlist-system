@@ -11,74 +11,177 @@ checkin.html v10 Premium
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="author" content="Abby Luo">
-<meta name="generator" content="Houcihu Waitlist Checkin v10">
 <title>後慈湖｜現場候補登記</title>
-<link rel="stylesheet" href="style.css">
 
 <style>
-.wrap{
-max-width:760px;
+/* 繼承 v10.1 Premium 全域樣式 */
+:root{
+--green:#1f7a3f;
+--green2:#3e8b55;
+--blue:#2c69c9;
+--gray:#666;
+--orange:#d98b00;
+--red:#d33;
+--bg1:#eef6ef;
+--bg2:#dfeee2;
+--card:#ffffff;
+--text:#1f2d1f;
+--muted:#666;
+--line:#e9ece9;
+--shadow:0 12px 28px rgba(0,0,0,.08);
+--shadow-hover:0 18px 34px rgba(0,0,0,.12);
+--radius:24px;
+--radius-sm:16px;
+}
+
+*{ box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+
+body{
+margin:0;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft JhengHei",sans-serif;
+background:linear-gradient(135deg,var(--bg1),var(--bg2));
+background-attachment: fixed;
+color:var(--text);
+line-height:1.5;
+}
+
+header{
+background:linear-gradient(135deg,var(--green),var(--green2));
+color:#fff;
+text-align:center;
+padding:42px 20px;
+box-shadow:0 8px 22px rgba(0,0,0,.08);
+}
+
+header h1{ margin:0; font-size:32px; font-weight:900; }
+header p{ margin:12px 0 0; font-size:16px; opacity:.95; }
+
+.wrap{ max-width:600px; margin:auto; padding:20px; }
+
+.card{
+background:var(--card);
+border-radius:var(--radius);
+padding:24px;
+margin-bottom:18px;
+box-shadow:var(--shadow);
+}
+
+.notice{
+background:#fff3cd;
+border-left:6px solid #d6a400;
+font-weight:800;
+color:#8a6d3b;
+padding:15px;
+font-size: 14px;
+}
+
+label {
+display: block;
+margin-top: 15px;
+font-weight: 900;
+color: var(--green);
+margin-bottom: 5px;
+}
+
+input, select {
+width:100%;
+padding:14px;
+border:1px solid #d9dfd9;
+border-radius:14px;
+font-size:16px;
+outline:none;
+background:#fff;
+}
+
+input:focus, select:focus {
+border-color:var(--green);
+box-shadow:0 0 0 3px rgba(31,122,63,.12);
 }
 
 .slotinfo{
-margin-top:12px;
+margin: 15px 0;
+padding: 10px;
+border-radius: 12px;
 font-weight:900;
 text-align:center;
-line-height:1.6;
+background: rgba(0,0,0,0.03);
 }
 
 .option{
-margin-top:16px;
+margin-top:20px;
 padding:16px;
 background:#f7faf7;
 border-radius:18px;
+border: 1px solid var(--line);
 }
 
 .option label{
 display:flex;
-gap:10px;
+gap:12px;
 align-items:flex-start;
 font-weight:700;
-margin:10px 0;
+color: var(--text);
+margin:12px 0;
 }
 
-.option input{
+.option input[type="radio"]{
 width:auto;
-margin-top:4px;
+margin-top:5px;
 }
 
-.red{color:#d33;}
-.orange{color:#d98b00;}
-.green{color:#1f7a3f;}
+button[type="submit"]{
+margin-top: 25px;
+width:100%;
+padding:18px;
+border:none;
+border-radius:18px;
+background:var(--green);
+color:#fff;
+font-size:20px;
+font-weight:900;
+cursor:pointer;
+box-shadow: 0 8px 15px rgba(31,122,63,0.2);
+}
+
+button:active{ transform:scale(0.96); opacity:0.9; }
+
+.big{ font-size:64px; font-weight:900; text-align:center; color:var(--green); margin:15px 0; }
+.red{color:var(--red);}
+.orange{color:var(--orange);}
+.green{color:var(--green);}
+.gray{background:var(--gray);}
+.btn{ display:block; text-decoration:none; text-align:center; padding:15px; border-radius:14px; color:#fff; font-weight:bold; }
+
+footer{ text-align:center; color:var(--muted); padding:20px; font-size:13px; }
+
+@media(max-width:480px){
+header h1{ font-size:26px; }
+.wrap{ padding: 15px; }
+}
 </style>
 </head>
 
 <body>
 
-<header class="hero">
+<header>
 <h1>現場候補登記</h1>
-<p>請填寫資料後送出</p>
+<p>請填寫資料完成登記</p>
 </header>
 
 <div class="wrap">
 
-<!-- 公告 -->
 <div class="card notice">
-現場遞補不代表一定有名額。<br>
-實際入場資格依現場名額與工作人員安排為準。
+⚠️ 現場遞補不代表一定有名額，請依現場叫號與工作人員安排為準。
 </div>
 
-<!-- 表單 -->
-<div class="card">
-
+<div class="card" id="formBox">
 <form id="waitForm">
 
 <label>姓名</label>
-<input type="text" id="name" required>
+<input type="text" id="name" placeholder="請輸入姓名" required>
 
 <label>手機號碼</label>
-<input type="tel" id="phone" inputmode="numeric" required>
+<input type="tel" id="phone" placeholder="例如：0912345678" inputmode="numeric" required>
 
 <label>人數</label>
 <select id="people">
@@ -86,275 +189,126 @@ margin-top:4px;
 <option value="2">2 人</option>
 <option value="3">3 人</option>
 <option value="4">4 人</option>
-<option value="5">5 人</option>
-<option value="6">6 人</option>
-<option value="7">7 人</option>
-<option value="8">8 人</option>
-<option value="9">9 人</option>
-<option value="10">10 人</option>
+<option value="5">5 人以上 (請洽詢櫃檯)</option>
 </select>
 
 <label>選擇梯次</label>
 <select id="slot"></select>
 
-<div class="slotinfo" id="slotInfo">
-讀取梯次資訊中...
-</div>
+<div class="slotinfo" id="slotInfo">讀取梯次資訊中...</div>
 
 <div class="option">
-
-<div style="font-weight:900;">
-候補安排意願
+<div style="font-weight:900; color:var(--green);">候補安排意願</div>
+<label>
+<input type="radio" name="flex" value="接受其他梯次" checked>
+<span>若原梯次額滿，接受安排其他相近梯次遞補</span>
+</label>
+<label>
+<input type="radio" name="flex" value="僅原梯次">
+<span>僅接受原選梯次候補</span>
+</label>
 </div>
 
-<label>
-<input type="radio"
-name="flex"
-value="接受其他梯次"
-checked>
-<span>
-若原梯次額滿，可接受安排其他相近梯次遞補
-</span>
-</label>
-
-<label>
-<input type="radio"
-name="flex"
-value="僅原梯次">
-<span>
-僅接受原選梯次候補
-</span>
-</label>
-
-</div>
-
-<button type="submit">
-送出登記
-</button>
-
+<button type="submit">確認送出登記</button>
 </form>
-
 </div>
 
-<!-- 成功 -->
-<div class="card"
-id="successBox"
-style="display:none;">
-
-<h2 style="text-align:center;">
-登記成功
-</h2>
-
-<div class="big" id="ticketNo">
-A001
-</div>
-
-<p class="text" style="text-align:center;">
-請留意現場叫號與廣播通知。
+<div class="card" id="successBox" style="display:none;">
+<h2 style="text-align:center; color:var(--green);">登記成功</h2>
+<div class="big" id="ticketNo">---</div>
+<p style="text-align:center; font-weight:bold;">您的候補號碼</p>
+<p style="text-align:center; color:var(--muted); font-size:14px;">
+請截圖保存此畫面，並留意現場看板叫號。<br>過號需重新排隊。
 </p>
-
-<a class="btn gray"
-href="visitor.html">
-返回首頁
-</a>
-
+<a class="btn gray" href="visitor.html">返回首頁</a>
 </div>
 
 </div>
 
 <footer>
-Houcihu Visitor Service Center
+Houcihu Visitor Service Center &copy; 2026
 </footer>
 
-<script src="sheets.js?v=10"></script>
-
+<script src="sheets.js?v=10.1"></script>
 <script>
+// --- 載入梯次邏輯 ---
 async function loadSlots(){
-
-const rows = await getSessions();
-
-const slot =
-document.getElementById(
-"slot"
-);
-
-slot.innerHTML="";
-
-for(let i=1;i<rows.length;i++){
-
-const no   = rows[i][0];
-const open = rows[i][1];
-const cap  = Number(rows[i][2]);
-
-if(!open) continue;
-
-let text="";
-
-if(cap<=0){
-
-text="第"+no+"梯（額滿候補）";
-
-}else{
-
-text="第"+no+"梯（剩 "+cap+" 位）";
-
-}
-
-slot.innerHTML += `
-<option value="第${no}梯">
-${text}
-</option>
-`;
-
-}
-
-showSlotInfo();
-
+    const rows = await getSessions();
+    const slotSelect = document.getElementById("slot");
+    slotSelect.innerHTML = "";
+    
+    for(let i=1; i<rows.length; i++){
+        const [no, open, cap] = rows[i];
+        if(!open) continue;
+        
+        let text = `第 ${no} 梯 ` + (cap <= 0 ? `(額滿候補)` : `(餘 ${cap} 位)`);
+        slotSelect.innerHTML += `<option value="第${no}梯">${text}</option>`;
+    }
+    showSlotInfo();
 }
 
 async function showSlotInfo(){
+    const rows = await getSessions();
+    const val = document.getElementById("slot").value;
+    const no = val.replace(/[^0-9]/g, "");
+    const info = document.getElementById("slotInfo");
 
-const rows = await getSessions();
-
-const val =
-document.getElementById(
-"slot"
-).value;
-
-const no =
-val.replace("第","")
-.replace("梯","");
-
-const info =
-document.getElementById(
-"slotInfo"
-);
-
-for(let i=1;i<rows.length;i++){
-
-if(String(rows[i][0])===no){
-
-const cap =
-Number(rows[i][2]);
-
-if(cap<=0){
-
-info.className=
-"slotinfo red";
-
-info.innerText=
-"目前額滿，可登記候補等待遞補";
-
-}else if(cap<=3){
-
-info.className=
-"slotinfo orange";
-
-info.innerText=
-"剩餘名額較少，請儘速登記";
-
-}else{
-
-info.className=
-"slotinfo green";
-
-info.innerText=
-"目前可候補登記";
-
+    for(let i=1; i<rows.length; i++){
+        if(String(rows[i][0]) === no){
+            const cap = Number(rows[i][2]);
+            if(cap <= 0){
+                info.className = "slotinfo red";
+                info.innerText = "● 目前額滿，登記後需等待遞補";
+            } else if(cap <= 3){
+                info.className = "slotinfo orange";
+                info.innerText = `● 剩餘名額極少 (${cap} 位)，請儘速登記`;
+            } else {
+                info.className = "slotinfo green";
+                info.innerText = `● 目前尚有名額 (${cap} 位)，推薦登記`;
+            }
+        }
+    }
 }
 
-}
+document.getElementById("slot").addEventListener("change", showSlotInfo);
 
-}
+// --- 表單送出邏輯 ---
+document.getElementById("waitForm").addEventListener("submit", async function(e){
+    e.preventDefault();
+    const btn = e.target.querySelector('button');
+    btn.disabled = true;
+    btn.innerText = "處理中...";
 
-}
+    const name = document.getElementById("name").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    
+    if(!/^09\d{8}$/.test(phone)){
+        alert("請輸入正確的 10 碼手機號碼");
+        btn.disabled = false;
+        btn.innerText = "確認送出登記";
+        return;
+    }
 
-document.getElementById(
-"slot"
-).addEventListener(
-"change",
-showSlotInfo
-);
+    const people = document.getElementById("people").value;
+    const slot = document.getElementById("slot").value;
+    const flex = document.querySelector('input[name="flex"]:checked').value;
 
-document.getElementById(
-"waitForm"
-).addEventListener(
-"submit",
-async function(e){
+    const rows = await cloudGet();
+    const no = "A" + String(rows.length).padStart(3, "0");
 
-e.preventDefault();
+    const result = await addQueue(no, name, phone, people, `${slot}｜${flex}`);
 
-const name =
-document.getElementById(
-"name"
-).value.trim();
-
-const phone =
-document.getElementById(
-"phone"
-).value.trim();
-
-if(!/^09\d{8}$/.test(phone)){
-
-alert("請輸入正確手機號碼");
-return;
-
-}
-
-const people =
-document.getElementById(
-"people"
-).value;
-
-const slot =
-document.getElementById(
-"slot"
-).value;
-
-const flex =
-document.querySelector(
-'input[name="flex"]:checked'
-).value;
-
-const rows =
-await cloudGet();
-
-const no =
-"A"+
-String(rows.length)
-.padStart(3,"0");
-
-const result =
-await addQueue(
-no,
-name,
-phone,
-people,
-slot+"｜"+flex
-);
-
-if(result){
-
-document.getElementById(
-"waitForm"
-).style.display="none";
-
-document.getElementById(
-"successBox"
-).style.display="block";
-
-document.getElementById(
-"ticketNo"
-).innerText=no;
-
-}else{
-
-alert("送出失敗");
-
-}
-
-}
-);
+    if(result){
+        document.getElementById("formBox").style.display = "none";
+        document.getElementById("successBox").style.display = "block";
+        document.getElementById("ticketNo").innerText = no;
+        window.scrollTo(0,0);
+    } else {
+        alert("系統忙碌中，請稍後再試或洽現場人員。");
+        btn.disabled = false;
+        btn.innerText = "確認送出登記";
+    }
+});
 
 loadSlots();
 </script>
