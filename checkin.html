@@ -1,8 +1,16 @@
+<!--
+Houcihu Onsite Waitlist System
+Designed & Developed by Abby Luo
+2026 Official Build
+-->
+
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Abby Luo">
+<meta name="generator" content="Houcihu Waitlist Checkin v9">
 <title>後慈湖｜現場候補登記</title>
 <link rel="stylesheet" href="style.css">
 
@@ -47,6 +55,14 @@ margin-bottom:18px;
 box-shadow:0 12px 28px rgba(0,0,0,.08);
 }
 
+.notice{
+background:#fff3cd;
+border-left:6px solid #d6a400;
+font-weight:800;
+color:#8a6d3b;
+line-height:1.8;
+}
+
 label{
 display:block;
 margin:14px 0 8px;
@@ -75,14 +91,6 @@ font-weight:900;
 cursor:pointer;
 }
 
-.notice{
-background:#fff3cd;
-border-left:6px solid #d6a400;
-font-weight:800;
-color:#8a6d3b;
-line-height:1.8;
-}
-
 .big{
 font-size:56px;
 font-weight:900;
@@ -91,14 +99,35 @@ color:#1f7a3f;
 }
 
 .slotinfo{
-margin-top:10px;
-font-weight:800;
+margin-top:12px;
+font-weight:900;
 text-align:center;
+line-height:1.6;
 }
 
 .red{color:#d33;}
 .orange{color:#d98b00;}
 .green{color:#1f7a3f;}
+
+.option{
+margin-top:16px;
+padding:16px;
+background:#f7faf7;
+border-radius:18px;
+}
+
+.option label{
+display:flex;
+gap:10px;
+align-items:flex-start;
+font-weight:700;
+margin:10px 0;
+}
+
+.option input{
+width:auto;
+margin-top:4px;
+}
 
 a.btn{
 display:block;
@@ -166,8 +195,6 @@ header h1{font-size:28px;}
 <option value="10">10 人</option>
 </select>
 
-<!-- 在原本「選擇梯次」區塊後面直接加上以下內容，其餘一字不改 -->
-
 <label>選擇梯次</label>
 <select id="slot"></select>
 
@@ -175,41 +202,22 @@ header h1{font-size:28px;}
 讀取梯次資訊中...
 </div>
 
-<!-- 新增開始 -->
-<div class="card" style="margin-top:14px;padding:16px;background:#f7faf7;box-shadow:none;">
+<div class="option">
 
-<div style="font-weight:900;margin-bottom:8px;">
+<div style="font-weight:900;">
 候補安排意願
 </div>
 
-<label style="display:flex;align-items:flex-start;gap:10px;margin:8px 0;font-weight:700;">
-<input
-type="radio"
-name="flex"
-value="接受其他梯次"
-checked
-style="width:auto;margin-top:4px;">
-<span>
-若原梯次額滿，可接受安排其他相近梯次遞補
-</span>
+<label>
+<input type="radio" name="flex" value="接受其他梯次" checked>
+<span>若原梯次額滿，可接受安排其他相近梯次遞補</span>
 </label>
 
-<label style="display:flex;align-items:flex-start;gap:10px;margin:8px 0;font-weight:700;">
-<input
-type="radio"
-name="flex"
-value="僅原梯次"
-style="width:auto;margin-top:4px;">
-<span>
-僅接受原選梯次候補
-</span>
+<label>
+<input type="radio" name="flex" value="僅原梯次">
+<span>僅接受原選梯次候補</span>
 </label>
 
-</div>
-<!-- 新增結束 -->
-
-<div class="slotinfo" id="slotInfo">
-讀取梯次資訊中...
 </div>
 
 <button type="submit">
@@ -238,19 +246,19 @@ A001
 
 </div>
 
+</div>
+
 <footer>
 Houcihu Visitor Service Center
 </footer>
 
-<script src="sheets.js?v=3"></script>
+<script src="sheets.js?v=8"></script>
 
 <script>
 async function loadSlots(){
 
 const rows = await getSessions();
-
-const slot =
-document.getElementById("slot");
+const slot = document.getElementById("slot");
 
 slot.innerHTML="";
 
@@ -265,13 +273,9 @@ if(!open) continue;
 let text="";
 
 if(cap<=0){
-
 text="第"+no+"梯（額滿候補）";
-
 }else{
-
 text="第"+no+"梯（剩 "+cap+" 位）";
-
 }
 
 slot.innerHTML += `
@@ -294,8 +298,7 @@ const val =
 document.getElementById("slot").value;
 
 const no =
-val.replace("第","")
-.replace("梯","");
+val.replace("第","").replace("梯","");
 
 const info =
 document.getElementById("slotInfo");
@@ -309,20 +312,17 @@ const cap = Number(rows[i][2]);
 if(cap<=0){
 
 info.className="slotinfo red";
-info.innerText=
-"目前額滿，可登記候補等待遞補";
+info.innerText="目前額滿，可登記候補等待遞補";
 
 }else if(cap<=3){
 
 info.className="slotinfo orange";
-info.innerText=
-"剩餘名額較少，請儘速登記";
+info.innerText="剩餘名額較少，請儘速登記";
 
 }else{
 
 info.className="slotinfo green";
-info.innerText=
-"目前可候補登記";
+info.innerText="目前可候補登記";
 
 }
 
@@ -333,29 +333,29 @@ info.innerText=
 }
 
 document.getElementById("slot")
-.addEventListener(
-"change",
-showSlotInfo
-);
+.addEventListener("change",showSlotInfo);
 
 document.getElementById("waitForm")
-.addEventListener(
-"submit",
-async function(e){
+.addEventListener("submit",async function(e){
 
 e.preventDefault();
 
 const name =
-document.getElementById("name").value;
+document.getElementById("name").value.trim();
 
 const phone =
-document.getElementById("phone").value;
+document.getElementById("phone").value.trim();
 
 const people =
 document.getElementById("people").value;
 
 const slot =
 document.getElementById("slot").value;
+
+const flex =
+document.querySelector(
+'input[name="flex"]:checked'
+).value;
 
 const rows =
 await cloudGet();
@@ -365,20 +365,15 @@ const no =
 .padStart(3,"0");
 
 const ok =
-await fetch(WEB_APP_URL,{
-method:"POST",
-body:new URLSearchParams({
-action:"add",
-number:no,
-name:name,
-phone:phone,
-people:people,
-slot:slot,
-status:"waiting"
-})
-});
+await addQueue(
+no,
+name,
+phone,
+people,
+slot+"｜"+flex
+);
 
-if(ok){
+if(ok!==undefined){
 
 document.getElementById("waitForm")
 .style.display="none";
@@ -395,8 +390,7 @@ alert("送出失敗");
 
 }
 
-}
-);
+});
 
 loadSlots();
 </script>
