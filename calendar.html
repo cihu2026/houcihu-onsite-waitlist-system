@@ -126,7 +126,7 @@ background:var(--green); color:#fff; font-size:18px; font-weight:900;
         <h2>最新公告 Notice</h2>
         <div class="note">
             📍 <b>固定休園日</b>：每週二休園。<br>
-            📍 <b>連假順延規則</b>：若週二遇國定連假則照常開園，並順延至週三補休。<br>
+            📍 <b>連假順延規則</b>：若週二遇國定連假則照常開園，並順延至次日補休。<br>
             📍 現場候補僅依當日釋出名額進行，不保證一定有位。<br>
         </div>
     </div>
@@ -142,67 +142,232 @@ background:var(--green); color:#fff; font-size:18px; font-weight:900;
 
 <footer>Houcihu Visitor Service Center &copy; 2026</footer>
 
+<!-- 只需替換你原本 <script> ... </script> 內容即可 -->
+
 <script>
-// --- 設定區：請填入遇連假的週二日期 ---
-const holidayTuesdays = [
-    "2026/1/27", // 農曆春節範例
-    "2026/2/24", 
-    "2026/4/28"  // 測試：假設今天 4/28 週二是連假
+
+// =======================
+// 後慈湖 Calendar v11 修正版
+// 週二固定休園
+// 若週二連假 → 週三補休
+// 若週二、週三連假 → 週四補休
+// =======================
+
+// 可自行新增國定連假日期
+const holidayDates = [
+"2026/01/27",
+"2026/01/28",
+"2026/02/24",
+"2026/04/28"
 ];
 
-const dayNames = ["日","一","二","三","四","五","六"];
+const dayNames = [
+"日","一","二","三","四","五","六"
+];
 
-function isHolidayClose(d){
-    const dateStr = `${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()}`;
-    const day = d.getDay();
+// 日期格式
+function formatDate(d){
 
-    // 1. 如果是週二，但在連假清單內 -> 開園
-    if (day === 2 && holidayTuesdays.includes(dateStr)) return false;
+const y=d.getFullYear();
+const m=("0"+(d.getMonth()+1)).slice(-2);
+const day=("0"+d.getDate()).slice(-2);
 
-    // 2. 如果是週三，且昨天(週二)是連假 -> 補休休園
-    const yesterday = new Date(d);
-    yesterday.setDate(d.getDate() - 1);
-    const yesterdayStr = `${yesterday.getFullYear()}/${yesterday.getMonth()+1}/${yesterday.getDate()}`;
-    if (day === 3 && holidayTuesdays.includes(yesterdayStr)) return true;
+return `${y}/${m}/${day}`;
 
-    // 3. 一般週二 -> 休園
-    if (day === 2) return true;
-
-    return false;
 }
 
+// 短日期
+function shortDate(d){
+return (d.getMonth()+1)+"/"+d.getDate();
+}
+
+// =======================
+// 判斷休園
+// =======================
+function isHolidayClose(d){
+
+const day = d.getDay();
+const dateStr = formatDate(d);
+
+// 一般週二休園（非連假）
+if(
+day===2 &&
+!holidayDates.includes(dateStr)
+){
+return true;
+}
+
+// ------------------
+// 週三補休
+// ------------------
+if(day===3){
+
+const tue = new Date(d);
+tue.setDate(d.getDate()-1);
+
+const tueStr = formatDate(tue);
+
+if(
+holidayDates.includes(tueStr) &&
+!holidayDates.includes(dateStr)
+){
+return true;
+}
+
+}
+
+// ------------------
+// 週四補休
+// ------------------
+if(day===4){
+
+const tue = new Date(d);
+tue.setDate(d.getDate()-2);
+
+const wed = new Date(d);
+wed.setDate(d.getDate()-1);
+
+const tueStr = formatDate(tue);
+const wedStr = formatDate(wed);
+
+if(
+holidayDates.includes(tueStr) &&
+holidayDates.includes(wedStr)
+){
+return true;
+}
+
+}
+
+return false;
+
+}
+
+// =======================
+// 下次休園日
+// =======================
+function getNextClose(){
+
+const d = new Date();
+
+for(let i=0;i<60;i++){
+
+const t = new Date();
+t.setDate(d.getDate()+i);
+
+if(isHolidayClose(t)){
+return t;
+}
+
+}
+
+return null;
+
+}
+
+// =======================
+// 畫面渲染
+// =======================
 function renderCalendar(){
-    const now = new Date();
-    const statusBox = document.getElementById("statusBox");
-    const todayStatus = document.getElementById("todayStatus");
-    const tableBody = document.querySelector("#weekTable tbody");
 
-    // 渲染今日
-    const todayClosed = isHolidayClose(now);
-    statusBox.className = `card status-card ${todayClosed ? 'is-closed' : 'is-open'}`;
-    
-    if(todayClosed){
-        const isWed = now.getDay() === 3;
-        todayStatus.innerHTML = `<span class="red">今日休園<br><small style="font-size:16px;">${isWed ? '遇連假順延補休' : '每週二固定休園'}</small></span>`;
-    } else {
-        todayStatus.innerHTML = '<span class="green">今日正常開園</span>';
-    }
+const now = new Date();
 
-    // 渲染一週
-    let html = "";
-    for(let i=0; i<7; i++){
-        const d = new Date();
-        d.setDate(now.getDate() + i);
-        const dayIdx = d.getDay();
-        const dateStr = `${d.getMonth()+1}/${d.getDate()}`;
-        const closed = isHolidayClose(d);
-        const isWeekend = (dayIdx === 0 || dayIdx === 6);
+const statusBox =
+document.getElementById("statusBox");
 
-        html += `
-            <tr class="${isWeekend ? 'weekend' : ''}">
-                <td>${dateStr}</td>
-                <td>週${dayNames[dayIdx]}</td>
-                <td class="${closed ? 'red' : 'green'}"><b>${closed ? '休園' : '正常開園'}</b></td>
+const todayStatus =
+document.getElementById("todayStatus");
+
+const nextClose =
+document.getElementById("nextClose");
+
+const tbody =
+document.querySelector("#weekTable tbody");
+
+// 今日狀態
+const closed =
+isHolidayClose(now);
+
+statusBox.className =
+"card status-card " +
+(closed ? "status-close":"status-open");
+
+if(closed){
+
+let reason="每週二固定休園";
+
+if(now.getDay()===3){
+reason="遇連假順延補休";
+}
+
+if(now.getDay()===4){
+reason="連假延長順延補休";
+}
+
+todayStatus.innerHTML =
+`<span class="red">
+今日休園<br>
+<span style="font-size:16px;">
+${reason}
+</span>
+</span>`;
+
+}else{
+
+todayStatus.innerHTML =
+`<span class="green">
+今日正常開園
+</span>`;
+
+}
+
+// 下次休園日
+const next = getNextClose();
+
+nextClose.innerHTML =
+next ?
+`${shortDate(next)}（週${dayNames[next.getDay()]}）`
+:
+"暫無資料";
+
+// 本週表格
+let html="";
+
+for(let i=0;i<7;i++){
+
+const d = new Date();
+d.setDate(now.getDate()+i);
+
+const dayIdx=d.getDay();
+
+const off=isHolidayClose(d);
+
+html += `
+<tr class="${
+(dayIdx===0||dayIdx===6)
+? 'weekend':''
+}">
+<td>${shortDate(d)}</td>
+<td>週${dayNames[dayIdx]}</td>
+<td class="${
+off?'red':'green'
+}">
+<b>${
+off?'休園':'正常開園'
+}</b>
+</td>
+</tr>
+`;
+
+}
+
+tbody.innerHTML=html;
+
+}
+
+renderCalendar();
+
+</script>
             </tr>
         `;
     }
