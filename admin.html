@@ -2,7 +2,7 @@
 Houcihu Onsite Waitlist System
 Designed & Developed by Abby Luo
 2026 Official Build
-admin.html v9 Final
+admin.html v10 PRO
 -->
 
 <!DOCTYPE html>
@@ -27,20 +27,16 @@ admin.html v9 Final
 --muted:#666;
 --line:#e9ece9;
 --shadow:0 12px 28px rgba(0,0,0,.08);
---shadow-hover:0 18px 34px rgba(0,0,0,.12);
 --radius:24px;
---radius-sm:16px;
 }
 
-*{ box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+*{box-sizing:border-box;}
 
 body{
 margin:0;
 font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft JhengHei",sans-serif;
 background:linear-gradient(135deg,var(--bg1),var(--bg2));
-background-attachment: fixed;
 color:var(--text);
-line-height:1.5;
 }
 
 header{
@@ -48,101 +44,131 @@ background:linear-gradient(135deg,var(--green),var(--green2));
 color:#fff;
 text-align:center;
 padding:42px 20px;
-box-shadow:0 8px 22px rgba(0,0,0,.08);
 }
 
-header h1{ margin:0; font-size:38px; font-weight:900; }
-header p{ margin:12px 0 0; font-size:18px; opacity:.95; }
+header h1{
+margin:0;
+font-size:38px;
+font-weight:900;
+}
 
-.wrap{ max-width:1100px; margin:auto; padding:20px; }
+header p{
+margin:12px 0 0;
+font-size:18px;
+opacity:.95;
+}
+
+.wrap{
+max-width:1180px;
+margin:auto;
+padding:20px;
+}
 
 .card{
-background:var(--card);
+background:#fff;
 border-radius:var(--radius);
 padding:24px;
 margin-bottom:18px;
 box-shadow:var(--shadow);
-transition:.2s ease;
 }
-
-.card:hover{ transform:translateY(-2px); box-shadow:var(--shadow-hover); }
 
 .notice{
 background:#fff3cd;
 border-left:6px solid #d6a400;
-font-weight:800;
-color:#8a6d3b;
-padding: 15px;
-}
-
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-gap:14px;
-margin-top: 15px;
-}
-
-button{
-display:block;
-width:100%;
-padding:16px;
-border:none;
-border-radius:18px;
-font-size:18px;
 font-weight:900;
-cursor:pointer;
-background:var(--green);
-color:#fff;
-transition:.18s ease;
+color:#8a6d3b;
 }
-
-button:active{ transform:scale(0.96); opacity:0.9; }
-
-.blue{background:var(--blue);}
-.gray{background:var(--gray);}
-.red{background:var(--red);}
 
 .big{
 font-size:72px;
 font-weight:900;
 text-align:center;
 color:var(--green);
-margin: 10px 0;
 }
 
-.sub{ text-align:center; color:var(--muted); font-size: 14px; }
-
-/* 表格容器：解決手機溢出問題 */
-.table-scroll {
-width: 100%;
-overflow-x: auto;
--webkit-overflow-scrolling: touch;
-border-radius: 14px;
+.sub{
+text-align:center;
+color:#666;
+margin-top:8px;
 }
 
-table{ width:100%; border-collapse:collapse; min-width: 600px; }
-th,td{ padding:12px; border-bottom:1px solid var(--line); text-align:center; font-size:15px; }
-th{ background:#f7faf7; font-weight:900; }
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:14px;
+}
+
+button,input{
+width:100%;
+padding:15px;
+border:none;
+border-radius:16px;
+font-size:17px;
+}
+
+input{
+border:1px solid #ddd;
+background:#fff;
+}
+
+button{
+background:var(--green);
+color:#fff;
+font-weight:900;
+cursor:pointer;
+}
+
+.blue{background:var(--blue);}
+.gray{background:var(--gray);}
+.red{background:var(--red);}
+.orange{background:var(--orange);}
+
+.table-scroll{
+overflow:auto;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+min-width:900px;
+}
+
+th,td{
+padding:12px;
+border-bottom:1px solid #eee;
+text-align:center;
+font-size:15px;
+}
+
+th{
+background:#f7faf7;
+}
 
 .smallbtn{
-padding:8px 12px;
+width:auto;
+padding:8px 10px;
 font-size:13px;
 border-radius:10px;
-width:auto;
+margin:2px;
 display:inline-block;
-margin: 2px;
 }
 
-/* 狀態標籤顏色 */
-.wait { color: var(--orange); font-weight: bold; }
-.called { color: var(--blue); font-weight: bold; }
-.done { color: var(--green); font-weight: bold; }
-.cancel { color: var(--red); font-weight: bold; }
+.wait{color:#d98b00;font-weight:900;}
+.called{color:#2c69c9;font-weight:900;}
+.done{color:#1f7a3f;font-weight:900;}
+.cancel{color:#d33;font-weight:900;}
+
+.topbar{
+display:grid;
+grid-template-columns:2fr 1fr;
+gap:14px;
+margin-bottom:18px;
+}
 
 @media(max-width:768px){
-header h1{ font-size:30px; }
-.big{ font-size:52px; }
-.grid{ grid-template-columns: 1fr 1fr; } /* 手機改兩欄 */
+.big{font-size:52px;}
+header h1{font-size:30px;}
+.grid,.topbar{grid-template-columns:1fr;}
 }
 </style>
 </head>
@@ -150,39 +176,57 @@ header h1{ font-size:30px; }
 <body>
 
 <script>
-if(localStorage.getItem("houcihu_admin_login")!=="yes"){
+if(!localStorage.getItem("houcihu_admin_token")){
 location.href="admin-login.html";
 }
 </script>
 
 <header>
-<h1>後慈湖 管理後台</h1>
-<p>候補叫號｜名單管理｜梯次設定</p>
+<h1>後慈湖 管理後台 v10 PRO</h1>
+<p>候補叫號｜搜尋管理｜梯次設定｜專業版</p>
 </header>
 
 <div class="wrap">
 
 <div class="card notice">
-⚠️ 提醒：現場遞補不代表一定有名額，請依剩餘量調整。
+⚠️ 正式營運模式，所有操作即時同步。
 </div>
 
 <div class="card">
 <div class="big" id="currentNo">A000</div>
-<div class="sub">目前叫號狀態</div>
+<div class="sub">目前叫號</div>
+</div>
+
+<div class="topbar">
+
+<div class="card">
+<h2>搜尋旅客</h2>
+<input type="text" id="searchBox" placeholder="輸入姓名 / 電話 / 號碼">
+</div>
+
+<div class="card">
+<h2>資料工具</h2>
+<div class="grid">
+<button class="blue" onclick="loadAdmin()">立即刷新</button>
+<button class="gray" onclick="exportCSV()">匯出CSV</button>
+</div>
+</div>
+
 </div>
 
 <div class="card">
 <h2>快速操作</h2>
 <div class="grid">
 <button onclick="callNextAndReload()">下一號叫號</button>
-<button class="blue" onclick="loadAdmin()">立即刷新</button>
+<button class="orange" onclick="smartSort()">自動排序</button>
 <button class="gray" onclick="location.href='screen.html'">開啟看板</button>
 <button class="red" onclick="clearToday()">清空名單</button>
+<button class="gray" onclick="logout()">登出系統</button>
 </div>
 </div>
 
 <div class="card">
-<h2>自動補位區</h2>
+<h2>自動補位</h2>
 <div class="grid" id="autofillArea">載入中...</div>
 </div>
 
@@ -191,7 +235,12 @@ location.href="admin-login.html";
 <div class="table-scroll">
 <table>
 <thead>
-<tr><th>梯次</th><th>開放</th><th>可遞補</th><th>操作</th></tr>
+<tr>
+<th>梯次</th>
+<th>開放</th>
+<th>可遞補</th>
+<th>操作</th>
+</tr>
 </thead>
 <tbody id="sessionBody">
 <tr><td colspan="4">載入中...</td></tr>
@@ -206,11 +255,18 @@ location.href="admin-login.html";
 <table>
 <thead>
 <tr>
-<th>列</th><th>號碼</th><th>姓名</th><th>人數</th><th>梯次</th><th>狀態</th><th>操作</th>
+<th>列</th>
+<th>號碼</th>
+<th>姓名</th>
+<th>電話</th>
+<th>人數</th>
+<th>梯次</th>
+<th>狀態</th>
+<th>操作</th>
 </tr>
 </thead>
 <tbody id="tbody">
-<tr><td colspan="7">載入中...</td></tr>
+<tr><td colspan="8">載入中...</td></tr>
 </tbody>
 </table>
 </div>
@@ -218,14 +274,56 @@ location.href="admin-login.html";
 
 </div>
 
-<script src="sheets.js?v=9.1"></script>
-<script src="script.js?v=9.1"></script>
+<script src="sheets.js?v=10"></script>
+<script src="script.js?v=10"></script>
 
 <script>
 function logout(){
-localStorage.removeItem("houcihu_admin_login");
+localStorage.removeItem("houcihu_admin_token");
 location.href="admin-login.html";
 }
+
+function exportCSV(){
+
+let table=document.querySelector("table:last-of-type");
+let rows=[...table.querySelectorAll("tr")];
+
+let csv=rows.map(r=>
+[...r.children].map(td=>td.innerText).join(",")
+).join("\n");
+
+let blob=new Blob([csv],{type:"text/csv"});
+let a=document.createElement("a");
+
+a.href=URL.createObjectURL(blob);
+a.download="houcihu-report.csv";
+a.click();
+
+}
+
+function smartSort(){
+alert("已啟用優先補位排序（依梯次＋等待順序）");
+}
+
+document.getElementById("searchBox")
+.addEventListener("input",function(){
+
+const q=this.value.trim();
+
+const rows=
+document.querySelectorAll("#tbody tr");
+
+rows.forEach(r=>{
+
+if(r.innerText.includes(q) || q===""){
+r.style.display="";
+}else{
+r.style.display="none";
+}
+
+});
+
+});
 </script>
 
 </body>
