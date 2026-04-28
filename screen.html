@@ -14,88 +14,130 @@ screen.html v10 Premium
 <title>後慈湖｜即時叫號看板</title>
 
 <style>
-/* 保持你原本精美的深色看板設計 */
+:root{
+--green:#1f7a3f;
+--green2:#3e8b55;
+--orange:#d98b00;
+--red:#d33;
+--bg1:#eef6ef;
+--bg2:#dfeee2;
+--card:#ffffff;
+--text:#1f2d1f;
+--muted:#666;
+--line:#e9ece9;
+--shadow:0 12px 28px rgba(0,0,0,.08);
+}
+
+*{
+box-sizing:border-box;
+-webkit-tap-highlight-color:transparent;
+}
+
 body{
-    margin:0;
-    background:#0f2d18;
-    color:#fff;
-    overflow-x:hidden;
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft JhengHei",sans-serif;
+margin:0;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft JhengHei",sans-serif;
+background:linear-gradient(135deg,var(--bg1),var(--bg2));
+color:var(--text);
+overflow-x:hidden;
 }
 
 header{
-    background:linear-gradient(135deg,#1f5f35,#3e8b55);
-    text-align:center;
-    padding:26px 18px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+background:linear-gradient(135deg,var(--green),var(--green2));
+color:#fff;
+text-align:center;
+padding:20px 12px;
 }
 
-header h1{ margin:0; font-size:42px; font-weight:900; }
-header p{ margin:10px 0 0; font-size:20px; opacity:.95; }
+header h1{
+margin:0;
+font-size:24px;
+font-weight:900;
+line-height:1.2;
+}
 
-.wrap{ max-width:1600px; margin:auto; padding:20px; }
+header p{
+margin:8px 0 0;
+font-size:14px;
+opacity:.95;
+}
+
+.wrap{
+padding:12px;
+max-width:1000px;
+margin:auto;
+}
 
 .card{
-    background:rgba(255,255,255,.08);
-    border-radius:26px;
-    padding:28px;
-    margin-bottom:20px;
-    backdrop-filter:blur(10px); /* 增加磨砂質感 */
-    border: 1px solid rgba(255,255,255,0.1);
+background:#fff;
+border-radius:20px;
+padding:16px;
+margin-bottom:12px;
+box-shadow:var(--shadow);
 }
 
 .big{
-    font-size:160px; /* 稍微放大 */
-    font-weight:900;
-    text-align:center;
-    color:#9cffb4;
-    line-height:1;
-    letter-spacing:4px;
-    text-shadow:0 0 30px rgba(156,255,180,0.4); /* 加強發光感 */
+font-size:60px;
+font-weight:900;
+text-align:center;
+color:var(--green);
+line-height:1;
+word-break:break-all;
 }
 
-.sub{ text-align:center; font-size:34px; margin-top:12px; color:rgba(255,255,255,0.7); }
+.sub{
+text-align:center;
+font-size:16px;
+margin-top:8px;
+color:var(--muted);
+}
 
 .grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); /* 自動適應螢幕寬度 */
-    gap:16px;
+display:grid;
+grid-template-columns:1fr;
+gap:10px;
 }
 
 .slot{
-    background:rgba(255,255,255,.08);
-    border-radius:20px;
-    padding:25px;
-    text-align:center;
-    transition: 0.3s;
+background:#f7faf7;
+border:1px solid var(--line);
+border-radius:16px;
+padding:16px;
+text-align:center;
 }
 
-.slot h3{ margin:0 0 12px; font-size:34px; font-weight:900; color: rgba(255,255,255,0.9); }
-.state{ font-size:36px; font-weight:900; }
+.slot h3{
+margin:0 0 8px;
+font-size:22px;
+font-weight:900;
+}
 
-/* 狀態顏色優化 */
-.green{color:#9cffb4;}
-.orange{color:#ffd27a;}
-.red{color:#ff9c9c;}
-.gray{color:#aaaaaa;}
+.state{
+font-size:24px;
+font-weight:900;
+}
+
+.green{color:var(--green);}
+.orange{color:var(--orange);}
+.red{color:var(--red);}
+.gray{color:#888;}
 
 .footer{
-    text-align:center;
-    font-size:24px;
-    padding:20px 0 40px;
-    opacity:.8;
+text-align:center;
+font-size:14px;
+padding:10px 14px 22px;
+color:#666;
+line-height:1.7;
 }
 
-@media(max-width:1200px){
-    .big{ font-size:110px; }
-    .grid{ grid-template-columns:repeat(2,1fr); }
+@media(min-width:768px){
+.big{font-size:110px;}
+.grid{grid-template-columns:repeat(2,1fr);}
+header h1{font-size:34px;}
 }
 
-@media(max-width:768px){
-    header h1{ font-size:28px; }
-    .big{ font-size:82px; }
-    .grid{ grid-template-columns:1fr; }
-    .footer{ font-size:18px; }
+@media(min-width:1200px){
+.grid{grid-template-columns:repeat(4,1fr);}
+.big{font-size:150px;}
 }
 </style>
 </head>
