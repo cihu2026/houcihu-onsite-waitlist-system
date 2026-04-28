@@ -131,3 +131,7 @@ text id="q7m4za" Version: v6 Final Status: Production Ready
 ### Developer Credit
 
 Designed, Developed and Maintained by Abby Luo.
+
+Developer: Abby Luo
+Designed & Developed Independently
+Production Version: v9
