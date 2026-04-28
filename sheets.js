@@ -1,4 +1,3 @@
-```javascript id="u4m8qa"
 /*
 Houcihu Onsite Waitlist System
 Designed & Developed by Abby Luo
@@ -180,6 +179,3 @@ setInterval(
 fn,
 ms
 );
-
-}
-```
