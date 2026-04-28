@@ -11,136 +11,86 @@ calendar.html Final
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>後慈湖｜營運資訊</title>
-<link rel="stylesheet" href="style.css">
 
 <style>
+:root{
+--green:#1f7a3f;
+--green2:#3e8b55;
+--blue:#2c69c9;
+--gray:#666;
+--orange:#d98b00;
+--red:#d33;
+--bg1:#eef6ef;
+--bg2:#dfeee2;
+--card:#ffffff;
+--text:#1f2d1f;
+--muted:#666;
+--line:#e9ece9;
+--shadow:0 12px 28px rgba(0,0,0,.08);
+--radius:24px;
+}
+
+*{ box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+
 body{
 margin:0;
 font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft JhengHei",sans-serif;
-background:linear-gradient(135deg,#eef6ef,#dfeee2);
-color:#1f2d1f;
+background:linear-gradient(135deg,var(--bg1),var(--bg2));
+background-attachment: fixed;
+color:var(--text);
+line-height:1.5;
 }
 
 header{
-background:linear-gradient(135deg,#1f5f35,#3e8b55);
+background:linear-gradient(135deg,var(--green),var(--green2));
 color:#fff;
 text-align:center;
-padding:32px 18px;
+padding:42px 20px;
 }
 
-header h1{
-margin:0;
-font-size:34px;
-font-weight:900;
-}
+header h1{ margin:0; font-size:32px; font-weight:900; }
+header p{ margin:10px 0 0; font-size:16px; opacity:.95; }
 
-header p{
-margin:10px 0 0;
-font-size:17px;
-opacity:.95;
-}
-
-.wrap{
-max-width:1100px;
-margin:auto;
-padding:20px;
-}
+.wrap{ max-width:800px; margin:auto; padding:20px; }
 
 .card{
-background:#fff;
-border-radius:24px;
+background:var(--card);
+border-radius:var(--radius);
 padding:24px;
 margin-bottom:18px;
-box-shadow:0 12px 28px rgba(0,0,0,.08);
+box-shadow:var(--shadow);
 }
 
-.big{
-font-size:42px;
-font-weight:900;
-text-align:center;
-color:#1f7a3f;
+.status-card { text-align: center; transition: 0.3s; border: 2px solid transparent; }
+.status-card.is-closed { background: #fff1f1; border-color: var(--red); }
+.status-card.is-open { background: #f1fff4; border-color: var(--green); }
+
+.big{ font-size:42px; font-weight:900; line-height: 1.2; }
+h2 { font-size: 20px; color: var(--green); margin-top: 0; margin-bottom: 15px; border-left: 5px solid var(--green); padding-left: 12px; }
+
+table{ width:100%; border-collapse:collapse; }
+th,td{ padding:14px 10px; border-bottom:1px solid var(--line); text-align:center; }
+th{ background:#f8faf8; font-weight:900; color: var(--gray); }
+.weekend { background: rgba(211, 51, 51, 0.03); color: var(--red); }
+
+.note{ line-height:1.9; color:#444; font-size: 15px; }
+
+.btns{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top: 10px; }
+.btn{
+display:flex; align-items:center; justify-content:center;
+text-decoration:none; padding:16px; border-radius:18px;
+background:var(--green); color:#fff; font-size:18px; font-weight:900;
 }
+.btn.gray{ background:var(--gray); }
+.btn:active{ transform:scale(0.95); opacity:0.9; }
 
-.red{
-color:#d33;
-}
+.red{ color:var(--red); }
+.green{ color:var(--green); }
 
-.orange{
-color:#d98b00;
-}
-
-.green{
-color:#1f7a3f;
-}
-
-table{
-width:100%;
-border-collapse:collapse;
-}
-
-th,td{
-padding:12px;
-border-bottom:1px solid #eee;
-text-align:center;
-font-size:15px;
-}
-
-th{
-background:#f7faf7;
-}
-
-.note{
-line-height:1.9;
-color:#444;
-}
-
-.btns{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:12px;
-}
-
-a.btn{
-display:block;
-text-decoration:none;
-text-align:center;
-padding:16px;
-border-radius:16px;
-background:#1f7a3f;
-color:#fff;
-font-size:18px;
-font-weight:900;
-}
-
-a.graybtn{
-background:#666;
-}
-
-footer{
-text-align:center;
-color:#666;
-padding:10px 0 30px;
-}
-
-@media(max-width:768px){
-
-header h1{
-font-size:28px;
-}
-
-.big{
-font-size:34px;
-}
-
-th,td{
-font-size:13px;
-padding:8px;
-}
-
-.btns{
-grid-template-columns:1fr;
-}
-
+@media(max-width:480px){
+    header h1{ font-size:26px; }
+    .big{ font-size:32px; }
+    .btns{ grid-template-columns:1fr; }
 }
 </style>
 </head>
@@ -148,168 +98,115 @@ grid-template-columns:1fr;
 <body>
 
 <header>
-<h1>後慈湖 營運資訊</h1>
-<p>開園資訊｜休園公告｜現場服務</p>
+    <h1>後慈湖 營運資訊</h1>
+    <p>開園公告與順延休園說明</p>
 </header>
 
 <div class="wrap">
 
-<!-- 今日狀態 -->
-<div class="card">
-<div class="big" id="todayStatus">
-讀取中...
-</div>
-</div>
+    <div class="card status-card" id="statusBox">
+        <div class="big" id="todayStatus">讀取中...</div>
+    </div>
 
-<!-- 本週資訊 -->
-<div class="card">
+    <div class="card">
+        <h2>本週營運概況</h2>
+        <table id="weekTable">
+            <thead>
+                <tr>
+                    <th>日期</th>
+                    <th>星期</th>
+                    <th>營運狀態</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
 
-<h2>本週營運資訊</h2>
+    <div class="card">
+        <h2>最新公告 Notice</h2>
+        <div class="note">
+            📍 <b>固定休園日</b>：每週二休園。<br>
+            📍 <b>連假順延規則</b>：若週二遇國定連假則照常開園，並順延至週三補休。<br>
+            📍 現場候補僅依當日釋出名額進行，不保證一定有位。<br>
+        </div>
+    </div>
 
-<table id="weekTable">
-
-<tr>
-<th>日期</th>
-<th>星期</th>
-<th>狀態</th>
-</tr>
-
-</table>
-
-</div>
-
-<!-- 公告 -->
-<div class="card">
-
-<h2>最新公告</h2>
-
-<div class="note">
-1. 每週二固定休園（如遇連假依官方公告調整）。<br>
-2. 現場候補依名額及順序遞補，不保證入場。<br>
-3. 請依現場工作人員引導辦理。<br>
-4. 開放梯次與入園時間依現場公告為準。
-</div>
+    <div class="card">
+        <div class="btns">
+            <a class="btn" href="visitor.html">返回首頁</a>
+            <a class="btn gray" href="checkin.html">現場候補登記</a>
+        </div>
+    </div>
 
 </div>
 
-<!-- 快速入口 -->
-<div class="card">
-
-<h2>快速服務</h2>
-
-<div class="btns">
-
-<a class="btn"
-href="visitor.html">
-返回首頁
-</a>
-
-<a class="btn graybtn"
-href="checkin.html">
-現場候補登記
-</a>
-
-</div>
-
-</div>
-
-</div>
-
-<footer>
-Houcihu Visitor Service Center
-</footer>
+<footer>Houcihu Visitor Service Center &copy; 2026</footer>
 
 <script>
-const dayNames = [
-"日","一","二","三","四","五","六"
+// --- 設定區：請填入遇連假的週二日期 ---
+const holidayTuesdays = [
+    "2026/1/27", // 農曆春節範例
+    "2026/2/24", 
+    "2026/4/28"  // 測試：假設今天 4/28 週二是連假
 ];
 
-function formatDate(d){
-
-const y = d.getFullYear();
-const m = d.getMonth()+1;
-const day = d.getDate();
-
-return y + "/" + m + "/" + day;
-
-}
+const dayNames = ["日","一","二","三","四","五","六"];
 
 function isHolidayClose(d){
+    const dateStr = `${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()}`;
+    const day = d.getDay();
 
-// 每週二固定休園
-if(d.getDay()===2){
-return true;
-}
+    // 1. 如果是週二，但在連假清單內 -> 開園
+    if (day === 2 && holidayTuesdays.includes(dateStr)) return false;
 
-return false;
+    // 2. 如果是週三，且昨天(週二)是連假 -> 補休休園
+    const yesterday = new Date(d);
+    yesterday.setDate(d.getDate() - 1);
+    const yesterdayStr = `${yesterday.getFullYear()}/${yesterday.getMonth()+1}/${yesterday.getDate()}`;
+    if (day === 3 && holidayTuesdays.includes(yesterdayStr)) return true;
 
+    // 3. 一般週二 -> 休園
+    if (day === 2) return true;
+
+    return false;
 }
 
 function renderCalendar(){
+    const now = new Date();
+    const statusBox = document.getElementById("statusBox");
+    const todayStatus = document.getElementById("todayStatus");
+    const tableBody = document.querySelector("#weekTable tbody");
 
-const now = new Date();
+    // 渲染今日
+    const todayClosed = isHolidayClose(now);
+    statusBox.className = `card status-card ${todayClosed ? 'is-closed' : 'is-open'}`;
+    
+    if(todayClosed){
+        const isWed = now.getDay() === 3;
+        todayStatus.innerHTML = `<span class="red">今日休園<br><small style="font-size:16px;">${isWed ? '遇連假順延補休' : '每週二固定休園'}</small></span>`;
+    } else {
+        todayStatus.innerHTML = '<span class="green">今日正常開園</span>';
+    }
 
-const today =
-document.getElementById(
-"todayStatus"
-);
+    // 渲染一週
+    let html = "";
+    for(let i=0; i<7; i++){
+        const d = new Date();
+        d.setDate(now.getDate() + i);
+        const dayIdx = d.getDay();
+        const dateStr = `${d.getMonth()+1}/${d.getDate()}`;
+        const closed = isHolidayClose(d);
+        const isWeekend = (dayIdx === 0 || dayIdx === 6);
 
-// 今日狀態
-if(isHolidayClose(now)){
-
-today.innerHTML =
-'<span class="red">今日休園</span>';
-
-}else{
-
-today.innerHTML =
-'<span class="green">今日正常開園</span>';
-
-}
-
-// 本週表格
-const table =
-document.getElementById(
-"weekTable"
-);
-
-for(let i=0;i<7;i++){
-
-const d = new Date();
-
-d.setDate(
-now.getDate()+i
-);
-
-const week =
-d.getDay();
-
-let text="";
-let cls="green";
-
-if(isHolidayClose(d)){
-
-text="休園";
-cls="red";
-
-}else{
-
-text="正常開園";
-
-}
-
-table.innerHTML += `
-<tr>
-<td>${formatDate(d)}</td>
-<td>週${dayNames[week]}</td>
-<td class="${cls}">
-${text}
-</td>
-</tr>
-`;
-
-}
-
+        html += `
+            <tr class="${isWeekend ? 'weekend' : ''}">
+                <td>${dateStr}</td>
+                <td>週${dayNames[dayIdx]}</td>
+                <td class="${closed ? 'red' : 'green'}"><b>${closed ? '休園' : '正常開園'}</b></td>
+            </tr>
+        `;
+    }
+    tableBody.innerHTML = html;
 }
 
 renderCalendar();
