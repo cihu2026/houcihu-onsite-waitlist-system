@@ -9,144 +9,140 @@ Designed & Developed by Abby Luo
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="author" content="Abby Luo">
-<meta name="generator" content="Houcihu Mobile Admin v8">
 <title>後慈湖｜手機管理版</title>
-<link rel="stylesheet" href="style.css">
 
 <style>
+/* 繼承 v10.1 Premium 樣式核心 */
+:root{
+--green:#1f7a3f;
+--green2:#3e8b55;
+--blue:#2c69c9;
+--gray:#666;
+--orange:#d98b00;
+--red:#d33;
+--bg1:#eef6ef;
+--bg2:#dfeee2;
+--card:#ffffff;
+--text:#1f2d1f;
+--muted:#666;
+--line:#e9ece9;
+--shadow:0 12px 28px rgba(0,0,0,.08);
+--radius:22px;
+}
+
+*{ box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+
 body{
 margin:0;
 font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft JhengHei",sans-serif;
-background:linear-gradient(135deg,#eef6ef,#dfeee2);
-color:#1f2d1f;
+background:linear-gradient(135deg,var(--bg1),var(--bg2));
+background-attachment: fixed;
+color:var(--text);
 }
 
 header{
-background:linear-gradient(135deg,#1f5f35,#3e8b55);
+background:linear-gradient(135deg,var(--green),var(--green2));
 color:#fff;
 text-align:center;
-padding:24px 16px;
+padding:28px 16px;
+box-shadow:0 4px 12px rgba(0,0,0,0.1);
 }
 
-header h1{
-margin:0;
-font-size:30px;
-font-weight:900;
-}
+header h1{ margin:0; font-size:26px; font-weight:900; }
+header p{ margin:8px 0 0; font-size:14px; opacity:.95; }
 
-header p{
-margin:8px 0 0;
-font-size:16px;
-opacity:.95;
-}
-
-.wrap{
-max-width:700px;
-margin:auto;
-padding:16px;
-}
+.wrap{ max-width:600px; margin:auto; padding:16px; }
 
 .card{
-background:#fff;
-border-radius:22px;
+background:var(--card);
+border-radius:var(--radius);
 padding:20px;
 margin-bottom:16px;
-box-shadow:0 12px 28px rgba(0,0,0,.08);
+box-shadow:var(--shadow);
 }
 
 .big{
-font-size:56px;
+font-size:64px;
 font-weight:900;
 text-align:center;
-color:#1f7a3f;
-line-height:1;
+color:var(--green);
+line-height:1.1;
 }
 
-.sub{
-text-align:center;
-color:#666;
-margin-top:8px;
-}
+.sub{ text-align:center; color:var(--muted); font-size:14px; margin-top:5px; }
 
 .notice{
 background:#fff3cd;
-border-left:6px solid #d6a400;
+border-left:5px solid #d6a400;
 font-weight:800;
 color:#8a6d3b;
-line-height:1.8;
+padding:12px;
+font-size:14px;
 }
 
 .grid{
 display:grid;
-grid-template-columns:1fr 1fr;
-gap:12px;
+grid-template-columns: 1fr 1fr;
+gap:10px;
+margin-top: 5px;
 }
 
-button,a.btn{
-display:block;
+/* 讓第一個叫號按鈕橫跨兩欄，更顯眼 */
+.btn-main { grid-column: 1 / span 2; margin-bottom: 5px; }
+
+button, a.btn{
+display:flex;
+align-items:center;
+justify-content:center;
 width:100%;
 text-decoration:none;
-text-align:center;
-padding:16px;
+padding:18px 10px;
 border:none;
-border-radius:16px;
-background:#1f7a3f;
+border-radius:18px;
+background:var(--green);
 color:#fff;
 font-size:18px;
 font-weight:900;
 cursor:pointer;
-box-sizing:border-box;
+transition: transform 0.1s;
 }
 
-.red{background:#d33;}
-.gray{background:#666;}
-.blue{background:#2c69c9;}
+button:active, a.btn:active{ transform:scale(0.95); opacity: 0.9; }
 
-table{
-width:100%;
-border-collapse:collapse;
+.red{background:var(--red);}
+.gray{background:var(--gray);}
+.blue{background:var(--blue);}
+
+/* 表格優化 */
+.scroll-box {
+overflow:auto;
+max-height:400px;
+border-radius: 12px;
+border: 1px solid var(--line);
 }
 
-th,td{
-padding:10px;
-border-bottom:1px solid #eee;
-text-align:center;
-font-size:14px;
-}
-
-th{
-background:#f7faf7;
-}
+table{ width:100%; border-collapse:collapse; }
+th,td{ padding:12px 8px; border-bottom:1px solid var(--line); text-align:center; font-size:14px; }
+th{ background:#f8faf8; font-weight:900; position: sticky; top: 0; }
 
 .smallbtn{
-padding:8px 10px;
-font-size:13px;
+padding:8px 12px;
+font-size:12px;
 border-radius:10px;
 width:auto;
 display:inline-block;
 margin:2px;
 }
 
-.wait{color:#1f7a3f;font-weight:700;}
-.called{color:#d98b00;font-weight:700;}
-.done{color:#2c69c9;font-weight:700;}
-.cancel{color:#d33;font-weight:700;}
+/* 狀態標籤 */
+.wait{color:var(--orange);font-weight:700;}
+.called{color:var(--blue);font-weight:700;}
+.done{color:var(--green);font-weight:700;}
+.cancel{color:var(--red);font-weight:700;}
 
-@media(max-width:768px){
-
-.grid{
-grid-template-columns:1fr;
-}
-
-.big{
-font-size:46px;
-}
-
-header h1{
-font-size:26px;
-}
-
+@media(max-width:400px){
+    .grid { grid-template-columns: 1fr; }
+    .btn-main { grid-column: 1; }
 }
 </style>
 </head>
@@ -154,92 +150,95 @@ font-size:26px;
 <body>
 
 <header>
-<h1>後慈湖 手機管理版</h1>
-<p>快速叫號｜名單查看｜即時同步</p>
+<h1>後慈湖 手機管理</h1>
+<p>快速叫號與名單即時同步</p>
 </header>
 
 <div class="wrap">
 
 <div class="card notice">
-現場遞補不代表一定有名額
+⚠️ 手機版僅供快速操作，完整設定請至 PC 端。
 </div>
 
 <div class="card">
-
-<div class="big" id="currentNo">
-A000
-</div>
-
-<div class="sub">
-目前叫號
-</div>
-
+<div class="big" id="currentNo">A000</div>
+<div class="sub">目前叫號狀態</div>
 </div>
 
 <div class="card">
-
 <div class="grid">
-
-<button onclick="callNextAndReload()">
-下一號叫號
-</button>
-
-<button class="blue"
-onclick="loadAdmin()">
-立即刷新
-</button>
-
-<button class="red"
-onclick="clearToday()">
-清空名單
-</button>
-
-<a class="btn gray"
-href="admin.html">
-完整後台
-</a>
-
+<button class="btn-main" onclick="callNextAndReload()">下一號叫號</button>
+<button class="blue" onclick="loadAdmin()">重新整理</button>
+<a class="btn gray" href="admin.html">完整後台</a>
+<button class="red" onclick="clearToday()">清空名單</button>
 </div>
-
 </div>
 
 <div class="card">
-
-<h2>候補名單</h2>
-
-<div style="overflow:auto;max-height:420px;">
-
+<h2 style="margin-top:0; font-size:18px;">候補名單 (等待中)</h2>
+<div class="scroll-box">
 <table>
-
 <thead>
 <tr>
 <th>號碼</th>
-<th>姓名</th>
-<th>狀態</th>
+<th>姓名/人</th>
 <th>操作</th>
 </tr>
 </thead>
-
 <tbody id="tbody">
-<tr>
-<td colspan="4">載入中...</td>
-</tr>
+<tr><td colspan="3">載入中...</td></tr>
 </tbody>
-
 </table>
-
+</div>
 </div>
 
 </div>
 
-</div>
-
-<script src="sheets.js?v=8"></script>
-<script src="script.js?v=8"></script>
+<script src="sheets.js?v=10.1"></script>
+<script src="script.js?v=10.1"></script>
 
 <script>
-loadAdmin();
-autoSync(loadAdmin,3000);
+// 手機版專屬的名單渲染優化 (只顯示號碼、姓名人數、與快速按鈕)
+async function loadMobileList() {
+    const rows = await cloudGet();
+    const tbody = document.getElementById("tbody");
+    if(!tbody || !rows) return;
+
+    let html = "";
+    let now = "A000";
+
+    for (let i = 1; i < rows.length; i++) {
+        const [no, name, phone, people, slot, status] = rows[i];
+        if (status === "called") now = no;
+        
+        // 手機版僅顯示等待中與已叫號的名單，節省空間
+        if (status === "waiting" || status === "called") {
+            const statusCls = status === "waiting" ? "wait" : "called";
+            const statusTxt = status === "waiting" ? "等待" : "已叫";
+            
+            html += `
+            <tr>
+                <td><b style="font-size:16px;">${no}</b></td>
+                <td>${name}<br><small>${people}人</small></td>
+                <td>
+                    <button class="smallbtn" onclick="doneGuest(${i+1})">到場</button>
+                    <button class="smallbtn red" onclick="cancelGuest(${i+1})">取消</button>
+                </td>
+            </tr>`;
+        }
+    }
+    tbody.innerHTML = html || "<tr><td colspan='3'>目前無等待中名單</td></tr>";
+    document.getElementById("currentNo").innerText = now;
+}
+
+// 覆蓋腳本中的 loadAdmin 為手機優化版
+window.loadAdmin = loadMobileList;
+
+// 初始化
+loadMobileList();
+if (typeof autoSync === "function") {
+    autoSync(loadMobileList, 5000);
+}
 </script>
 
 </body>
