@@ -1,8 +1,16 @@
+<!--
+Houcihu Onsite Waitlist System
+Designed & Developed by Abby Luo
+2026 Official Build
+-->
+
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Abby Luo">
+<meta name="generator" content="Houcihu Live Status Board v9">
 <title>後慈湖｜即時梯次資訊</title>
 <link rel="stylesheet" href="style.css">
 
@@ -149,14 +157,12 @@ font-size:22px;
 
 <div class="wrap">
 
-<!-- 今日狀態 -->
 <div class="card">
 <div class="big" id="todayText">
 讀取中...
 </div>
 </div>
 
-<!-- 梯次資訊 -->
 <div class="card">
 
 <h2>今日梯次狀況</h2>
@@ -167,7 +173,6 @@ font-size:22px;
 
 </div>
 
-<!-- 叫號 -->
 <div class="card">
 
 <h2>目前叫號</h2>
@@ -178,13 +183,11 @@ A000
 
 </div>
 
-<!-- 公告 -->
 <div class="card notice">
 現場遞補不代表一定有名額。<br>
 實際入場資格依現場名額與工作人員安排為準。
 </div>
 
-<!-- 快速入口 -->
 <div class="card">
 
 <h2>快速服務</h2>
@@ -211,7 +214,7 @@ href="visitor.html">
 Houcihu Visitor Service Center
 </footer>
 
-<script src="sheets.js?v=3"></script>
+<script src="sheets.js?v=9"></script>
 
 <script>
 function setTodayText(){
@@ -246,9 +249,9 @@ box.innerHTML = "";
 
 for(let i=1;i<rows.length;i++){
 
-const no = rows[i][0];
+const no   = rows[i][0];
 const open = rows[i][1];
-const cap = Number(rows[i][2]);
+const cap  = Number(rows[i][2]);
 
 let text="";
 let cls="gray";
@@ -317,7 +320,7 @@ setTodayText();
 await renderSessions();
 await loadCurrent();
 
-setInterval(async()=>{
+autoSync(async function(){
 
 await renderSessions();
 await loadCurrent();
