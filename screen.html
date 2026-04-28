@@ -1,8 +1,16 @@
+<!--
+Houcihu Onsite Waitlist System
+Designed & Developed by Abby Luo
+2026 Official Build
+-->
+
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="author" content="Abby Luo">
+<meta name="generator" content="Houcihu Live Screen Board v8">
 <title>後慈湖｜即時叫號看板</title>
 <link rel="stylesheet" href="style.css">
 
@@ -156,7 +164,6 @@ font-size:18px;
 
 <div class="wrap">
 
-<!-- 目前叫號 -->
 <div class="card">
 
 <div class="big" id="currentNo">
@@ -169,7 +176,6 @@ A000
 
 </div>
 
-<!-- 梯次資訊 -->
 <div class="card">
 
 <div class="grid" id="slotGrid">
@@ -184,13 +190,12 @@ A000
 現場遞補不代表一定有名額，請依工作人員引導辦理
 </div>
 
-<script src="sheets.js?v=3"></script>
+<script src="sheets.js?v=8"></script>
 
 <script>
 async function loadCurrent(){
 
-const rows =
-await cloudGet();
+const rows = await cloudGet();
 
 let current="A000";
 
@@ -206,15 +211,13 @@ current = rows[i][0];
 
 }
 
-document.getElementById("currentNo")
-.innerText=current;
+document.getElementById("currentNo").innerText=current;
 
 }
 
 async function renderSessions(){
 
-const rows =
-await getSessions();
+const rows = await getSessions();
 
 const box =
 document.getElementById("slotGrid");
@@ -272,7 +275,7 @@ async function init(){
 await loadCurrent();
 await renderSessions();
 
-setInterval(async()=>{
+autoSync(async function(){
 
 await loadCurrent();
 await renderSessions();
