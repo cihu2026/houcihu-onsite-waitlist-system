@@ -2,25 +2,33 @@
 Houcihu Onsite Waitlist System
 Designed & Developed by Abby Luo
 2026 Official Build
+admin-login.html v11 ENTERPRISE
 -->
 
-<!-- admin-login.html -->
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="author" content="Abby Luo">
-<meta name="generator" content="Houcihu Admin Login v9">
+<meta name="generator" content="Houcihu Admin Login v11">
 <title>後慈湖｜後台登入</title>
 <link rel="stylesheet" href="style.css">
 
 <style>
+:root{
+--green:#1f7a3f;
+--green2:#3e8b55;
+--red:#d33;
+--line:#e7ece7;
+}
+
 .msg{
 margin-top:16px;
 text-align:center;
 font-weight:900;
-color:#d33;
+font-size:16px;
+min-height:24px;
 }
 
 label{
@@ -29,11 +37,63 @@ margin:14px 0 8px;
 font-weight:900;
 }
 
+input{
+width:100%;
+padding:15px;
+border:1px solid var(--line);
+border-radius:16px;
+font-size:16px;
+outline:none;
+box-sizing:border-box;
+}
+
+input:focus{
+border-color:var(--green);
+box-shadow:0 0 0 3px rgba(31,122,63,.12);
+}
+
+button{
+width:100%;
+margin-top:18px;
+padding:16px;
+border:none;
+border-radius:16px;
+background:linear-gradient(135deg,var(--green),var(--green2));
+color:#fff;
+font-size:18px;
+font-weight:900;
+cursor:pointer;
+}
+
+button:active{
+transform:scale(.98);
+}
+
 .small{
-margin-top:16px;
+margin-top:18px;
 text-align:center;
 color:#666;
 line-height:1.8;
+font-size:14px;
+}
+
+.credit{
+margin-top:10px;
+text-align:center;
+font-size:13px;
+color:#888;
+}
+
+.secure{
+margin-top:14px;
+text-align:center;
+font-size:14px;
+color:#1f7a3f;
+font-weight:800;
+}
+
+.wrap{
+max-width:520px;
 }
 </style>
 </head>
@@ -42,7 +102,7 @@ line-height:1.8;
 
 <header class="hero">
 <h1>後台登入</h1>
-<p>後慈湖 現場管理系統</p>
+<p>後慈湖 現場管理系統 v11</p>
 </header>
 
 <div class="wrap">
@@ -52,12 +112,22 @@ line-height:1.8;
 <form id="loginForm">
 
 <label>帳號</label>
-<input type="text" id="user" placeholder="請輸入帳號" required>
+<input
+type="text"
+id="user"
+placeholder="請輸入帳號"
+autocomplete="username"
+required>
 
 <label>密碼</label>
-<input type="password" id="pass" placeholder="請輸入密碼" required>
+<input
+type="password"
+id="pass"
+placeholder="請輸入密碼"
+autocomplete="current-password"
+required>
 
-<button type="submit">
+<button type="submit" id="loginBtn">
 登入後台
 </button>
 
@@ -65,8 +135,16 @@ line-height:1.8;
 
 <div id="msg" class="msg"></div>
 
+<div class="secure">
+🔒 僅限授權工作人員使用
+</div>
+
 <div class="small">
-僅限工作人員使用
+登入後可使用候補叫號、梯次管理、報表匯出等功能
+</div>
+
+<div class="credit">
+Designed & Developed by Abby Luo
 </div>
 
 </div>
@@ -77,32 +155,79 @@ line-height:1.8;
 const ADMIN_USER="admin";
 const ADMIN_PASS="1234";
 
-document.getElementById("loginForm")
-.addEventListener("submit",function(e){
-
-e.preventDefault();
-
-const user =
-document.getElementById("user").value.trim();
-
-const pass =
-document.getElementById("pass").value.trim();
+const form =
+document.getElementById("loginForm");
 
 const msg =
 document.getElementById("msg");
 
-if(
-user===ADMIN_USER &&
-pass===ADMIN_PASS
-){
+const btn =
+document.getElementById("loginBtn");
+
+function showMsg(text,color){
+
+msg.innerText=text;
+msg.style.color=color;
+
+}
+
+function createToken(){
+
+const now=Date.now();
+
+const expire =
+now + (12*60*60*1000); //12hr
+
+const token = {
+auth:true,
+time:now,
+expire:expire
+};
+
+localStorage.setItem(
+"houcihu_admin_token",
+JSON.stringify(token)
+);
 
 localStorage.setItem(
 "houcihu_admin_login",
 "yes"
 );
 
-msg.style.color="#1f7a3f";
-msg.innerText="登入成功，跳轉中...";
+}
+
+form.addEventListener(
+"submit",
+function(e){
+
+e.preventDefault();
+
+const user =
+document.getElementById("user")
+.value.trim();
+
+const pass =
+document.getElementById("pass")
+.value.trim();
+
+btn.disabled=true;
+btn.innerText="驗證中...";
+
+setTimeout(function(){
+
+if(
+user===ADMIN_USER &&
+pass===ADMIN_PASS
+){
+
+createToken();
+
+showMsg(
+"登入成功，跳轉中...",
+"#1f7a3f"
+);
+
+btn.innerText="登入成功";
 
 setTimeout(function(){
 
@@ -112,9 +237,27 @@ location.href="admin.html";
 
 }else{
 
-msg.style.color="#d33";
-msg.innerText="帳號或密碼錯誤";
+showMsg(
+"帳號或密碼錯誤",
+"#d33"
+);
 
+btn.disabled=false;
+btn.innerText="登入後台";
+
+}
+
+},500);
+
+});
+
+// Enter 鍵優化
+document.addEventListener(
+"keydown",
+function(e){
+
+if(e.key==="Enter"){
+form.requestSubmit();
 }
 
 });
