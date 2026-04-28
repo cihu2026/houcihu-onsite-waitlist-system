@@ -59,19 +59,26 @@ margin-bottom:18px;
 box-shadow:var(--shadow);
 }
 
-/* 即時號碼顯示區 */
+/* 即時資訊顯示區 */
 .status-bar {
 background: var(--green);
 color: #fff;
 text-align: center;
-padding: 15px;
+padding: 18px;
 border-radius: 18px;
-margin-top: -45px; /* 向上移動壓在 Hero 下方 */
+margin-top: -45px;
 position: relative;
 z-index: 10;
+display: flex;
+justify-content: space-around;
+align-items: center;
 }
 
-.status-bar b { font-size: 28px; display: block; color: #9cffb4; }
+.status-item { flex: 1; }
+.status-item:first-child { border-right: 1px solid rgba(255,255,255,0.2); }
+
+.status-bar span { font-size: 13px; opacity: 0.8; display: block; margin-bottom: 4px; }
+.status-bar b { font-size: 26px; display: block; color: #9cffb4; font-family: monospace; }
 
 .notice{
 background:#fff3cd;
@@ -119,7 +126,7 @@ footer{ text-align:center; color:var(--muted); padding:20px; font-size:13px; }
 
 @media(max-width:480px){
 header h1{ font-size: 26px; }
-.grid { grid-template-columns: 1fr; } /* 手機版按鈕大一點好點擊 */
+.grid { grid-template-columns: 1fr; }
 }
 </style>
 </head>
@@ -134,8 +141,14 @@ header h1{ font-size: 26px; }
 <div class="wrap">
 
 <div class="status-bar card">
-<span>目前叫號至</span>
+<div class="status-item">
+<span>目前叫號</span>
 <b id="quickNo">A000</b>
+</div>
+<div class="status-item">
+<span>預約人數</span>
+<b id="waitCount">0 / 10</b>
+</div>
 </div>
 
 <div class="card notice">
@@ -155,9 +168,9 @@ header h1{ font-size: 26px; }
 <div class="card">
 <h2>服務說明</h2>
 <p class="text">
-1. 現場額滿時可登記候補。<br>
+1. 現場額滿時可登記候補（上限 10 名）。<br>
 2. 候補依釋出名額遞補，過號需重新排隊。<br>
-3. 請隨時留意本頁面之叫號進度。<br>
+3. 系統每 3 秒自動更新，請留意進度。<br>
 4. 入場前請準備好身份證明文件供查驗。
 </p>
 </div>
@@ -170,28 +183,55 @@ Houcihu Visitor Service Center &copy; 2026
 
 <script src="sheets.js?v=10.1"></script>
 <script>
+// 設定變數鎖，避免網路慢時重複請求
+let isUpdating = false;
+
 async function updateQuickStatus() {
+    if (isUpdating) return;
+    isUpdating = true;
+
     try {
         const rows = await cloudGet();
         let now = "A000";
+        let waitingCount = 0;
+
         if (rows && rows.length > 1) {
-            // 從後往前找最後一個被叫號的
+            // 找最後一個叫號
             for (let i = rows.length - 1; i >= 1; i--) {
                 if (rows[i][5] === "called") {
                     now = rows[i][0];
                     break;
                 }
             }
+            // 計算目前排隊中(waiting)的人數
+            const waitingList = rows.filter((row, idx) => idx > 0 && row[5] === "waiting");
+            waitingCount = waitingList.length;
         }
+        
         document.getElementById("quickNo").innerText = now;
+        document.getElementById("waitCount").innerText = `${waitingCount} / 10`;
+        
+        // 人滿變色提醒
+        if (waitingCount >= 10) {
+            document.getElementById("waitCount").style.color = "#ffcc00"; 
+        } else {
+            document.getElementById("waitCount").style.color = "#9cffb4";
+        }
+
     } catch(e) {
+        console.error("Update Error:", e);
         document.getElementById("quickNo").innerText = "---";
+        document.getElementById("waitCount").innerText = "Error";
+    } finally {
+        isUpdating = false;
     }
 }
 
-// 初始化時抓取一次，並設定 10 秒更新一次
+// 初始化
 updateQuickStatus();
-setInterval(updateQuickStatus, 10000);
+
+// 核心修改：3000ms = 3秒 刷新一次
+setInterval(updateQuickStatus, 3000);
 </script>
 
 </body>
