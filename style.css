@@ -3,24 +3,49 @@ Houcihu Onsite Waitlist System
 Designed & Developed by Abby Luo
 2026 Official Build
 
-style.css v9 Final
+style.css v10 Premium
 */
 
-body{
-margin:0;
-font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft JhengHei",sans-serif;
-background:linear-gradient(135deg,#eef6ef,#dfeee2);
-color:#1f2d1f;
--webkit-font-smoothing:antialiased;
--moz-osx-font-smoothing:grayscale;
+:root{
+--green:#1f7a3f;
+--green2:#3e8b55;
+--blue:#2c69c9;
+--gray:#666;
+--orange:#d98b00;
+--red:#d33;
+--bg1:#eef6ef;
+--bg2:#dfeee2;
+--card:#ffffff;
+--text:#1f2d1f;
+--muted:#666;
+--line:#e9ece9;
+--shadow:0 12px 28px rgba(0,0,0,.08);
+--shadow-hover:0 18px 34px rgba(0,0,0,.12);
+--radius:24px;
+--radius-sm:16px;
 }
 
 *{
 box-sizing:border-box;
 }
 
+html{
+scroll-behavior:smooth;
+}
+
+body{
+margin:0;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft JhengHei",sans-serif;
+background:linear-gradient(135deg,var(--bg1),var(--bg2));
+color:var(--text);
+-webkit-font-smoothing:antialiased;
+-moz-osx-font-smoothing:grayscale;
+line-height:1.5;
+}
+
 a{
 color:inherit;
+text-decoration:none;
 }
 
 img{
@@ -31,10 +56,11 @@ display:block;
 
 .hero,
 header{
-background:linear-gradient(135deg,#1f5f35,#3e8b55);
+background:linear-gradient(135deg,var(--green),var(--green2));
 color:#fff;
 text-align:center;
 padding:42px 20px;
+box-shadow:0 8px 22px rgba(0,0,0,.08);
 }
 
 .hero h1,
@@ -43,6 +69,7 @@ margin:0;
 font-size:38px;
 font-weight:900;
 line-height:1.2;
+letter-spacing:.3px;
 }
 
 .hero p,
@@ -59,11 +86,17 @@ padding:20px;
 }
 
 .card{
-background:#fff;
-border-radius:24px;
+background:var(--card);
+border-radius:var(--radius);
 padding:24px;
 margin-bottom:18px;
-box-shadow:0 12px 28px rgba(0,0,0,.08);
+box-shadow:var(--shadow);
+transition:.2s ease;
+}
+
+.card:hover{
+transform:translateY(-2px);
+box-shadow:var(--shadow-hover);
 }
 
 .notice{
@@ -84,23 +117,23 @@ gap:14px;
 button{
 display:block;
 width:100%;
-text-decoration:none;
-text-align:center;
 padding:18px 20px;
 border:none;
 border-radius:18px;
 font-size:20px;
 font-weight:900;
-background:#1f7a3f;
-color:#fff;
+text-align:center;
 cursor:pointer;
+background:var(--green);
+color:#fff;
 transition:.18s ease;
+box-shadow:0 8px 18px rgba(0,0,0,.08);
 }
 
 .btn:hover,
 button:hover{
 transform:translateY(-1px);
-opacity:.96;
+opacity:.97;
 }
 
 .btn:active,
@@ -108,11 +141,17 @@ button:active{
 transform:translateY(0);
 }
 
-.blue{background:#2c69c9;}
-.gray{background:#666;}
-.orange{background:#d98b00;}
-.red{background:#d33;}
-.green{background:#1f7a3f;}
+.blue{background:var(--blue);}
+.gray{background:var(--gray);}
+.orange{background:var(--orange);}
+.red{background:var(--red);}
+.green{background:var(--green);}
+
+.text-green{color:var(--green);}
+.text-blue{color:var(--blue);}
+.text-orange{color:var(--orange);}
+.text-red{color:var(--red);}
+.text-gray{color:#888;}
 
 .text{
 line-height:1.9;
@@ -124,23 +163,33 @@ font-size:56px;
 font-weight:900;
 line-height:1;
 text-align:center;
-color:#1f7a3f;
+color:var(--green);
+letter-spacing:.5px;
 }
 
 .sub{
 text-align:center;
-color:#666;
+color:var(--muted);
 margin-top:8px;
+}
+
+h2{
+margin:0 0 16px;
+font-size:28px;
+font-weight:900;
+color:var(--text);
 }
 
 table{
 width:100%;
 border-collapse:collapse;
+overflow:hidden;
+border-radius:18px;
 }
 
 th,td{
 padding:12px;
-border-bottom:1px solid #eee;
+border-bottom:1px solid var(--line);
 text-align:center;
 font-size:15px;
 }
@@ -148,6 +197,10 @@ font-size:15px;
 th{
 background:#f7faf7;
 font-weight:900;
+}
+
+tr:hover td{
+background:#fafdf9;
 }
 
 input,
@@ -160,20 +213,29 @@ border-radius:14px;
 font-size:16px;
 outline:none;
 background:#fff;
+transition:.15s ease;
 }
 
 input:focus,
 select:focus,
 textarea:focus{
-border-color:#1f7a3f;
+border-color:var(--green);
 box-shadow:0 0 0 3px rgba(31,122,63,.12);
 }
 
 footer{
 text-align:center;
-color:#666;
+color:var(--muted);
 padding:10px 0 30px;
 font-size:15px;
+}
+
+.smallbtn{
+padding:8px 10px;
+font-size:13px;
+border-radius:10px;
+width:auto;
+display:inline-block;
 }
 
 @media(max-width:768px){
@@ -202,6 +264,10 @@ padding:20px;
 border-radius:22px;
 }
 
+.grid{
+grid-template-columns:1fr;
+}
+
 .btn,
 button{
 font-size:18px;
@@ -210,6 +276,10 @@ padding:16px;
 
 .big{
 font-size:42px;
+}
+
+h2{
+font-size:24px;
 }
 
 th,td{
