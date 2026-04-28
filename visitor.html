@@ -2,6 +2,9 @@
 Houcihu Onsite Waitlist System
 Designed & Developed by Abby Luo
 2026 Official Build
+
+visitor.html v11 ENTERPRISE
+五星景區正式版
 -->
 
 <!DOCTYPE html>
@@ -18,220 +21,387 @@ Designed & Developed by Abby Luo
 --blue:#2c69c9;
 --gray:#666;
 --orange:#d98b00;
+--red:#d33;
 --bg1:#eef6ef;
 --bg2:#dfeee2;
---card:#ffffff;
+--card:#fff;
 --text:#1f2d1f;
 --muted:#666;
 --shadow:0 12px 28px rgba(0,0,0,.08);
 --radius:24px;
 }
 
-*{ box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+*{
+box-sizing:border-box;
+-webkit-tap-highlight-color:transparent;
+}
 
 body{
 margin:0;
 font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft JhengHei",sans-serif;
 background:linear-gradient(135deg,var(--bg1),var(--bg2));
-background-attachment: fixed;
+background-attachment:fixed;
 color:var(--text);
 line-height:1.5;
 }
 
-header.hero{
+header{
 background:linear-gradient(135deg,var(--green),var(--green2));
 color:#fff;
 text-align:center;
-padding:48px 20px;
-box-shadow:0 8px 22px rgba(0,0,0,.08);
+padding:52px 20px 64px;
+box-shadow:0 10px 24px rgba(0,0,0,.08);
 }
 
-header h1{ margin:0; font-size:32px; font-weight:900; }
-header p{ margin:12px 0 0; font-size:16px; opacity:.9; }
+header h1{
+margin:0;
+font-size:34px;
+font-weight:900;
+letter-spacing:1px;
+}
 
-.wrap{ max-width:600px; margin:auto; padding:20px; }
+header p{
+margin:12px 0 0;
+font-size:16px;
+opacity:.92;
+}
+
+.wrap{
+max-width:760px;
+margin:auto;
+padding:0 18px 24px;
+margin-top:-34px;
+}
 
 .card{
-background:var(--card);
+background:#fff;
 border-radius:var(--radius);
 padding:24px;
 margin-bottom:18px;
 box-shadow:var(--shadow);
 }
 
-/* 即時資訊顯示區 */
-.status-bar {
-background: var(--green);
-color: #fff;
-text-align: center;
-padding: 18px;
-border-radius: 18px;
-margin-top: -45px;
-position: relative;
-z-index: 10;
-display: flex;
-justify-content: space-around;
-align-items: center;
+.livebar{
+display:grid;
+grid-template-columns:1fr 1fr 1fr;
+gap:12px;
+text-align:center;
 }
 
-.status-item { flex: 1; }
-.status-item:first-child { border-right: 1px solid rgba(255,255,255,0.2); }
+.livebox{
+background:#f7faf7;
+border-radius:18px;
+padding:18px 12px;
+}
 
-.status-bar span { font-size: 13px; opacity: 0.8; display: block; margin-bottom: 4px; }
-.status-bar b { font-size: 26px; display: block; color: #9cffb4; font-family: monospace; }
+.livebox span{
+display:block;
+font-size:13px;
+color:#666;
+margin-bottom:6px;
+}
+
+.livebox b{
+font-size:28px;
+font-weight:900;
+color:var(--green);
+}
+
+.flash{
+animation:flash .7s ease;
+}
+
+@keyframes flash{
+0%{transform:scale(1);}
+50%{transform:scale(1.08);}
+100%{transform:scale(1);}
+}
 
 .notice{
 background:#fff3cd;
 border-left:6px solid #d6a400;
-font-weight:800;
 color:#8a6d3b;
-padding: 15px;
-font-size: 14px;
+font-weight:800;
+font-size:14px;
+padding:16px;
+line-height:1.8;
+}
+
+h2{
+margin:0 0 14px;
+font-size:20px;
+color:var(--green);
 }
 
 .grid{
 display:grid;
-grid-template-columns: 1fr 1fr;
-gap:12px;
-margin-top: 10px;
+grid-template-columns:1fr 1fr;
+gap:14px;
 }
 
 .btn{
 display:flex;
-flex-direction: column;
-align-items:center;
+flex-direction:column;
 justify-content:center;
+align-items:center;
 text-decoration:none;
-background:var(--green);
-color:#fff;
-padding:20px 10px;
-border-radius:18px;
-font-weight:bold;
-font-size:16px;
-transition:.15s ease;
 text-align:center;
-min-height: 100px;
+min-height:110px;
+border-radius:20px;
+padding:18px;
+font-size:17px;
+font-weight:900;
+color:#fff;
+background:var(--green);
+transition:.15s ease;
 }
 
-.btn:active{ transform:scale(0.95); opacity:0.9; }
+.btn:active{
+transform:scale(.96);
+opacity:.9;
+}
 
 .blue{background:var(--blue);}
 .gray{background:var(--gray);}
 .orange{background:var(--orange);}
 
-.text{ font-size:15px; color:#444; line-height:1.8; }
-h2 { font-size: 20px; margin-top: 0; color: var(--green); }
+.small{
+font-size:12px;
+font-weight:500;
+opacity:.9;
+margin-top:6px;
+}
 
-footer{ text-align:center; color:var(--muted); padding:20px; font-size:13px; }
+.text{
+font-size:15px;
+line-height:1.9;
+color:#444;
+}
 
-@media(max-width:480px){
-header h1{ font-size: 26px; }
-.grid { grid-template-columns: 1fr; }
+footer{
+text-align:center;
+padding:20px;
+font-size:13px;
+color:#666;
+}
+
+@media(max-width:560px){
+
+header h1{font-size:28px;}
+
+.livebar{
+grid-template-columns:1fr;
+}
+
+.grid{
+grid-template-columns:1fr;
+}
+
+.wrap{
+padding:0 14px 20px;
+}
+
 }
 </style>
 </head>
 
 <body>
 
-<header class="hero">
+<header>
 <h1>後慈湖 現場服務系統</h1>
-<p>候補登記｜即時資訊｜現場叫號</p>
+<p>候補登記｜即時資訊｜現場叫號｜智慧服務</p>
 </header>
 
 <div class="wrap">
 
-<div class="status-bar card">
-<div class="status-item">
+<!-- 即時資訊 -->
+<div class="card">
+
+<div class="livebar">
+
+<div class="livebox">
 <span>目前叫號</span>
-<b id="quickNo">A000</b>
-</div>
-<div class="status-item">
-<span>預約人數</span>
-<b id="waitCount">0 / 10</b>
-</div>
+<b id="nowNo">A000</b>
 </div>
 
+<div class="livebox">
+<span>候補狀況</span>
+<b id="queueStatus">順暢</b>
+</div>
+
+<div class="livebox">
+<span>今日營運</span>
+<b id="todayOpen">開園</b>
+</div>
+
+</div>
+
+</div>
+
+<!-- 公告 -->
 <div class="card notice">
-⚠️ 現場遞補不代表一定有名額，實際入場資格依現場安排為準。
+⚠️ 現場遞補不代表一定有名額，實際入場資格依現場名額與工作人員安排為準。
 </div>
 
+<!-- 快速入口 -->
 <div class="card">
-<h2>快速服務 Quick Services</h2>
+
+<h2>快速服務</h2>
+
 <div class="grid">
-<a class="btn" href="checkin.html">📝 現場候補登記</a>
-<a class="btn blue" href="status.html">📊 即時梯次資訊</a>
-<a class="btn gray" href="screen.html">📢 查看叫號看板</a>
-<a class="btn orange" href="calendar.html">📅 營運資訊</a>
-</div>
+
+<a class="btn" href="checkin.html">
+📝 現場候補登記
+<div class="small">立即填寫資料</div>
+</a>
+
+<a class="btn blue" href="status.html">
+📊 即時梯次資訊
+<div class="small">查看剩餘狀況</div>
+</a>
+
+<a class="btn gray" href="screen.html">
+📢 查看叫號看板
+<div class="small">即時叫號進度</div>
+</a>
+
+<a class="btn orange" href="calendar.html">
+📅 營運資訊
+<div class="small">開園休園公告</div>
+</a>
+
 </div>
 
+</div>
+
+<!-- 說明 -->
 <div class="card">
+
 <h2>服務說明</h2>
-<p class="text">
-1. 現場額滿時可登記候補但不一定候補成功。<br>
-2. 候補依釋出名額遞補，過號需重新排隊。<br>
-3. 系統每 3 秒自動更新，請留意進度。<br>
-4. 入場前請準備好身份證明文件供查驗。
-</p>
+
+<div class="text">
+1. 現場額滿時可登記候補，依釋出名額遞補。<br>
+2. 請留意現場叫號，過號需重新排隊。<br>
+3. 系統即時更新，請以現場資訊為準。<br>
+4. 入場前請備妥證件供查驗。
+</div>
+
 </div>
 
 </div>
 
 <footer>
-Houcihu Visitor Service Center &copy; 2026
+Houcihu Visitor Service Center © 2026
 </footer>
 
-<script src="sheets.js?v=10.1"></script>
+<script src="sheets.js?v=11"></script>
+
 <script>
-// 設定變數鎖，避免網路慢時重複請求
-let isUpdating = false;
+let loading = false;
+let lastNo = "A000";
 
-async function updateQuickStatus() {
-    if (isUpdating) return;
-    isUpdating = true;
+// 判斷今日開園（週二休園）
+function setTodayStatus(){
 
-    try {
-        const rows = await cloudGet();
-        let now = "A000";
-        let waitingCount = 0;
+const d = new Date();
+const day = d.getDay();
 
-        if (rows && rows.length > 1) {
-            // 找最後一個叫號
-            for (let i = rows.length - 1; i >= 1; i--) {
-                if (rows[i][5] === "called") {
-                    now = rows[i][0];
-                    break;
-                }
-            }
-            // 計算目前排隊中(waiting)的人數
-            const waitingList = rows.filter((row, idx) => idx > 0 && row[5] === "waiting");
-            waitingCount = waitingList.length;
-        }
-        
-        document.getElementById("quickNo").innerText = now;
-        document.getElementById("waitCount").innerText = `${waitingCount} / 10`;
-        
-        // 人滿變色提醒
-        if (waitingCount >= 10) {
-            document.getElementById("waitCount").style.color = "#ffcc00"; 
-        } else {
-            document.getElementById("waitCount").style.color = "#9cffb4";
-        }
+document.getElementById("todayOpen").innerText =
+(day===2) ? "休園" : "開園";
 
-    } catch(e) {
-        console.error("Update Error:", e);
-        document.getElementById("quickNo").innerText = "---";
-        document.getElementById("waitCount").innerText = "Error";
-    } finally {
-        isUpdating = false;
-    }
+document.getElementById("todayOpen").style.color =
+(day===2) ? "#d33" : "#1f7a3f";
+
 }
 
-// 初始化
-updateQuickStatus();
+// 候補狀況文字
+function queueText(n){
 
-// 核心修改：3000ms = 3秒 刷新一次
-setInterval(updateQuickStatus, 3000);
+if(n<=3) return "順暢";
+if(n<=7) return "普通";
+return "較滿";
+
+}
+
+// 更新首頁資訊
+async function refreshHome(){
+
+if(loading) return;
+
+loading = true;
+
+try{
+
+const rows = await cloudGet();
+
+let now = "A000";
+let waiting = 0;
+
+// 找最後一筆叫號
+if(rows && rows.length>1){
+
+for(let i=rows.length-1;i>=1;i--){
+
+if(rows[i][5]==="called"){
+now = rows[i][0];
+break;
+}
+
+}
+
+for(let i=1;i<rows.length;i++){
+if(rows[i][5]==="waiting"){
+waiting++;
+}
+}
+
+}
+
+const nowBox =
+document.getElementById("nowNo");
+
+if(now!==lastNo){
+
+nowBox.classList.remove("flash");
+void nowBox.offsetWidth;
+nowBox.classList.add("flash");
+
+lastNo = now;
+
+}
+
+nowBox.innerText = now;
+
+const q =
+document.getElementById("queueStatus");
+
+q.innerText = queueText(waiting);
+
+if(waiting<=3){
+q.style.color="#1f7a3f";
+}else if(waiting<=7){
+q.style.color="#d98b00";
+}else{
+q.style.color="#d33";
+}
+
+}catch(e){
+
+console.log(e);
+
+document.getElementById("queueStatus").innerText="連線中";
+
+}finally{
+
+loading = false;
+
+}
+
+}
+
+setTodayStatus();
+refreshHome();
+setInterval(refreshHome,3000);
 </script>
 
 </body>
