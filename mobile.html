@@ -1,6 +1,6 @@
 <!--
 Houcihu Onsite Waitlist System
-mobile.html v14 Field Pro
+mobile.html v14.3 Privacy Guard
 Designed & Developed by Abby Luo
 -->
 <!DOCTYPE html>
@@ -18,52 +18,23 @@ Designed & Developed by Abby Luo
   try{
     const raw = localStorage.getItem("houcihu_admin_token");
     const token = raw ? JSON.parse(raw) : null;
-    if(!token || !token.auth || Date.now() >= token.expire){
+    if(!token || !token.auth || !token.apiKey || Date.now() >= token.expire){
+      localStorage.removeItem("houcihu_admin_token");
+      localStorage.removeItem("houcihu_admin_api_key");
       location.href = "admin-login.html";
     }
   }catch(error){ location.href = "admin-login.html"; }
 })();
 </script>
-
-<header class="hero">
-  <div class="hero__kicker">MOBILE STAFF</div>
-  <h1>手機現場管理</h1>
-  <p>一手操作：叫號、到場、取消、刷新、開啟完整後台。</p>
-</header>
-
+<header class="hero"><div class="hero__kicker">MOBILE STAFF</div><h1>手機現場管理</h1><p>一手操作：叫號、到場、取消、刷新、開啟完整後台。</p></header>
 <main class="wrap narrow">
-  <section class="card notice">
-    ⚡ 手機版專為櫃台與現場移動作業設計，按鈕已放大，雨天也比較好點。
-  </section>
-
-  <section class="card">
-    <div class="sub">目前叫號</div>
-    <div class="big-number" id="mobileCurrentNo">A000</div>
-    <div class="sub" id="syncTime">資料同步中</div>
-  </section>
-
-  <section class="card">
-    <div class="grid two">
-      <button class="btn big" data-lock="true" onclick="callNextAndReload()">📢 下一號叫號<small>同步看板</small></button>
-      <button class="btn big blue" onclick="loadAdmin()">🔄 刷新<small>重新讀取</small></button>
-      <a class="btn big gray" href="admin.html">🖥 完整後台<small>表格與報表</small></a>
-      <a class="btn big orange" href="screen.html">📺 看板<small>給旅客看</small></a>
-      <button class="btn big orange" onclick="navigator.vibrate?.(160)">📳 震動提醒<small>測試手機震動</small></button>
-      <button class="btn big red" data-lock="true" onclick="clearToday()">🗑 清空名單<small>謹慎使用</small></button>
-    </div>
-  </section>
-
-  <section class="card">
-    <div class="section-title">
-      <h2>候補名單</h2>
-      <span class="muted">只顯示等待／已叫號</span>
-    </div>
-    <div class="mobile-list" id="listBox">載入中...</div>
-  </section>
+  <section class="card notice">⚡ 手機版專為櫃台與現場移動作業設計。姓名與電話僅限授權後台顯示。</section>
+  <section class="card"><div class="sub">目前叫號</div><div class="big-number" id="mobileCurrentNo">A000</div><div class="sub" id="syncTime">資料同步中</div></section>
+  <section class="card"><div class="grid two"><button class="btn big" data-lock="true" onclick="callNextAndReload()">📢 下一號叫號<small>同步看板</small></button><button class="btn big blue" onclick="loadAdmin()">🔄 刷新<small>重新讀取</small></button><a class="btn big gray" href="admin.html">🖥 完整後台<small>表格與報表</small></a><a class="btn big orange" href="screen.html">📺 看板<small>給旅客看</small></a><button class="btn big orange" onclick="navigator.vibrate?.(160)">📳 震動提醒<small>測試手機震動</small></button><button class="btn big red" data-lock="true" onclick="clearToday()">🗑 清空名單<small>謹慎使用</small></button></div></section>
+  <section class="card"><div class="section-title"><h2>候補名單</h2><span class="muted">只顯示等待／已叫號</span></div><div class="mobile-list" id="listBox">載入中...</div></section>
 </main>
-
-<footer class="footer">Houcihu Mobile Console v14</footer>
-<script src="sheets.js?v=14"></script>
-<script src="script.js?v=14"></script>
+<footer class="footer">Houcihu Mobile Console v14.3</footer>
+<script src="sheets.js?v=14.3"></script>
+<script src="script.js?v=14.3"></script>
 </body>
 </html>
