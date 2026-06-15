@@ -1,298 +1,69 @@
 <!--
 Houcihu Onsite Waitlist System
-mobile.html v13 PRO
+mobile.html v14 Field Pro
 Designed & Developed by Abby Luo
 -->
-
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>後慈湖｜手機管理 PRO</title>
-
-<style>
-:root{
---green:#1f7a3f;
---green2:#3e8b55;
---blue:#2c69c9;
---red:#d33;
---orange:#d98b00;
---gray:#666;
---bg1:#eef6ef;
---bg2:#dfeee2;
---card:#fff;
---text:#1f2d1f;
---line:#e9ece9;
-}
-
-*{
-box-sizing:border-box;
--webkit-tap-highlight-color:transparent;
-}
-
-body{
-margin:0;
-font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft JhengHei",sans-serif;
-background:linear-gradient(135deg,var(--bg1),var(--bg2));
-color:var(--text);
-}
-
-header{
-padding:26px 16px;
-text-align:center;
-background:linear-gradient(135deg,var(--green),var(--green2));
-color:#fff;
-}
-
-header h1{
-margin:0;
-font-size:26px;
-font-weight:900;
-}
-
-header p{
-margin:8px 0 0;
-font-size:14px;
-opacity:.95;
-}
-
-.wrap{
-padding:16px;
-max-width:700px;
-margin:auto;
-}
-
-.card{
-background:#fff;
-border-radius:22px;
-padding:18px;
-margin-bottom:14px;
-box-shadow:0 10px 25px rgba(0,0,0,.08);
-}
-
-.big{
-font-size:64px;
-font-weight:900;
-text-align:center;
-color:var(--green);
-line-height:1;
-}
-
-.sub{
-text-align:center;
-font-size:14px;
-color:#666;
-margin-top:6px;
-}
-
-.grid{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:10px;
-}
-
-button,a.btn{
-display:flex;
-justify-content:center;
-align-items:center;
-width:100%;
-padding:18px 10px;
-border:none;
-border-radius:18px;
-font-size:18px;
-font-weight:900;
-text-decoration:none;
-color:#fff !important;
-background:var(--green);
-}
-
-.blue{background:var(--blue);}
-.red{background:var(--red);}
-.gray{background:var(--gray);}
-.orange{background:var(--orange);}
-
-.mainBtn{
-grid-column:1 / span 2;
-font-size:22px;
-padding:22px;
-}
-
-.listItem{
-background:#fff;
-border-radius:18px;
-padding:14px;
-margin-bottom:10px;
-box-shadow:0 6px 16px rgba(0,0,0,.06);
-display:flex;
-justify-content:space-between;
-align-items:center;
-gap:10px;
-}
-
-.no{
-font-size:24px;
-font-weight:900;
-}
-
-.meta{
-font-size:14px;
-color:#555;
-margin-top:4px;
-}
-
-.tag{
-font-size:12px;
-font-weight:900;
-margin-top:4px;
-}
-
-.wait{color:var(--orange);}
-.called{color:var(--blue);}
-
-.smallRow{
-display:flex;
-gap:6px;
-flex-direction:column;
-min-width:84px;
-}
-
-.smallbtn{
-padding:10px;
-font-size:14px;
-border-radius:12px;
-}
-
-.notice{
-background:#fff3cd;
-border-left:5px solid #d6a400;
-font-weight:800;
-color:#8a6d3b;
-font-size:14px;
-}
-
-@media(max-width:480px){
-.grid{grid-template-columns:1fr;}
-.mainBtn{grid-column:1;}
-.big{font-size:52px;}
-}
-</style>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#155f34">
+<title>後慈湖｜手機管理</title>
+<link rel="stylesheet" href="theme.css?v=14">
 </head>
-
 <body>
-
-<header>
-<h1>後慈湖 手機管理 v13 PRO</h1>
-<p>快速叫號｜滑順操作｜即時同步</p>
-</header>
-
-<div class="wrap">
-
-<div class="card notice">
-⚡ 手機版專為現場工作人員設計，按一下立即同步
-</div>
-
-<div class="card">
-<div class="big" id="currentNo">A000</div>
-<div class="sub">目前叫號</div>
-</div>
-
-<div class="card">
-<div class="grid">
-
-<button class="mainBtn" onclick="callNextAndReload()">
-📢 下一號叫號
-</button>
-
-<button class="blue" onclick="loadMobile()">
-🔄 刷新
-</button>
-
-<a class="btn gray" href="admin.html">
-🖥 完整後台
-</a>
-
-<button class="orange" onclick="navigator.vibrate?.(150)">
-📳 提醒震動
-</button>
-
-<button class="red" onclick="clearToday()">
-🗑 清空名單
-</button>
-
-</div>
-</div>
-
-<div class="card">
-<h2 style="margin-top:0;">候補名單</h2>
-<div id="listBox">載入中...</div>
-</div>
-
-</div>
-
-<script src="sheets.js?v=11"></script>
-<script src="script.js?v=11"></script>
-
 <script>
-
-async function loadMobile(){
-
-const rows = await cloudGet();
-const box = document.getElementById("listBox");
-
-let html = "";
-let now = "A000";
-
-if(!rows || rows.length<=1){
-box.innerHTML="目前無資料";
-return;
-}
-
-for(let i=1;i<rows.length;i++){
-
-const [no,name,phone,people,slot,status] = rows[i];
-
-if(status==="called") now=no;
-
-if(status==="waiting" || status==="called"){
-
-const cls = status==="waiting" ? "wait":"called";
-const txt = status==="waiting" ? "等待中":"已叫號";
-
-html += `
-<div class="listItem">
-
-<div>
-<div class="no">${no}</div>
-<div class="meta">${name}・${people}人</div>
-<div class="tag ${cls}">${txt}</div>
-</div>
-
-<div class="smallRow">
-<button class="smallbtn" onclick="doneGuest(${i+1})">到場</button>
-<button class="smallbtn red" onclick="cancelGuest(${i+1})">取消</button>
-</div>
-
-</div>
-`;
-}
-
-}
-
-document.getElementById("currentNo").innerText = now;
-box.innerHTML = html || "目前無等待名單";
-
-}
-
-window.loadAdmin = loadMobile;
-
-loadMobile();
-
-if(typeof autoSync==="function"){
-autoSync(loadMobile,4000);
-}
-
+(function guard(){
+  try{
+    const raw = localStorage.getItem("houcihu_admin_token");
+    const token = raw ? JSON.parse(raw) : null;
+    if(!token || !token.auth || Date.now() >= token.expire){
+      location.href = "admin-login.html";
+    }
+  }catch(error){ location.href = "admin-login.html"; }
+})();
 </script>
 
+<header class="hero">
+  <div class="hero__kicker">MOBILE STAFF</div>
+  <h1>手機現場管理</h1>
+  <p>一手操作：叫號、到場、取消、刷新、開啟完整後台。</p>
+</header>
+
+<main class="wrap narrow">
+  <section class="card notice">
+    ⚡ 手機版專為櫃台與現場移動作業設計，按鈕已放大，雨天也比較好點。
+  </section>
+
+  <section class="card">
+    <div class="sub">目前叫號</div>
+    <div class="big-number" id="mobileCurrentNo">A000</div>
+    <div class="sub" id="syncTime">資料同步中</div>
+  </section>
+
+  <section class="card">
+    <div class="grid two">
+      <button class="btn big" data-lock="true" onclick="callNextAndReload()">📢 下一號叫號<small>同步看板</small></button>
+      <button class="btn big blue" onclick="loadAdmin()">🔄 刷新<small>重新讀取</small></button>
+      <a class="btn big gray" href="admin.html">🖥 完整後台<small>表格與報表</small></a>
+      <a class="btn big orange" href="screen.html">📺 看板<small>給旅客看</small></a>
+      <button class="btn big orange" onclick="navigator.vibrate?.(160)">📳 震動提醒<small>測試手機震動</small></button>
+      <button class="btn big red" data-lock="true" onclick="clearToday()">🗑 清空名單<small>謹慎使用</small></button>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="section-title">
+      <h2>候補名單</h2>
+      <span class="muted">只顯示等待／已叫號</span>
+    </div>
+    <div class="mobile-list" id="listBox">載入中...</div>
+  </section>
+</main>
+
+<footer class="footer">Houcihu Mobile Console v14</footer>
+<script src="sheets.js?v=14"></script>
+<script src="script.js?v=14"></script>
 </body>
 </html>
