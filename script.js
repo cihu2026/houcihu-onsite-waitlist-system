@@ -1,6 +1,6 @@
 /*
 Houcihu Onsite Waitlist System
-Admin operation helpers v14.2 Field Pro
+Admin operation helpers v14.3 Privacy Guard
 Designed & Developed by Abby Luo
 */
 let systemBusy=false, latestRows=[], latestSessions=[], lastCalledNo="A000";
@@ -12,8 +12,8 @@ function parseSlot(raw){const text=String(raw||"");const [slotText="",flexText="
 function statusText(s){s=normalizeStatus(s);return s==="called"?"已叫號":s==="done"?"已到場":s==="cancel"?"取消":"等待中";}
 function statusBadge(s){s=normalizeStatus(s);return `<span class="badge ${s}">${statusText(s)}</span>`;}
 function toast(message,type="dark"){let box=$("toastBox");if(!box){box=document.createElement("div");box.id="toastBox";box.className="toast";document.body.appendChild(box);}box.textContent=message;box.style.background=type==="danger"?"#cf2f2f":type==="ok"?"#155f34":"#172617";box.classList.add("show");setTimeout(()=>box.classList.remove("show"),2200);}
-function setBusy(value,text="處理中..."){systemBusy=value;document.querySelectorAll("button[data-lock='true']").forEach(btn=>{btn.disabled=value;if(value){btn.dataset.originalText=btn.innerText;btn.innerText=text;}else if(btn.dataset.originalText){btn.innerText=btn.dataset.originalText;delete btn.dataset.originalText;}});}
-async function runSafe(fn,message="處理中..."){if(systemBusy)return;setBusy(true,message);try{await fn();}catch(e){console.error("執行失敗：",e);toast("系統忙碌或連線不穩，請稍後再試","danger");}finally{setBusy(false);}}
+function setBusy(value,text="處理中..."){systemBusy=value;document.querySelectorAll("button[data-lock='true']").forEach(btn=>{btn.disabled=value;if(value){btn.dataset.originalHtml=btn.innerHTML;btn.textContent=text;}else if(btn.dataset.originalHtml){btn.innerHTML=btn.dataset.originalHtml;delete btn.dataset.originalHtml;}});}
+async function runSafe(fn,message="處理中..."){if(systemBusy)return;setBusy(true,message);try{await fn();}catch(e){console.error("執行失敗：",e);toast("系統忙碌、權限不足或連線不穩，請稍後再試","danger");}finally{setBusy(false);}}
 
 function findLastCalled(rows){let current="A000";for(let i=rows.length-1;i>=1;i--){if(normalizeStatus(rows[i][5])==="called"){current=rows[i][0]||"A000";break;}}return current;}
 function getQueueStats(rows){const stats={total:0,waiting:0,called:0,done:0,cancel:0};for(let i=1;i<rows.length;i++){const s=normalizeStatus(rows[i][5]);stats.total++;if(s==="waiting")stats.waiting++;if(s==="called")stats.called++;if(s==="done")stats.done++;if(s==="cancel")stats.cancel++;}return stats;}
@@ -27,7 +27,7 @@ function renderSessionTable(sessions){const body=$("sessionBody");if(!body)retur
 
 async function reduceCap(slotNo,people=1){if(!slotNo)return;const sessions=latestSessions.length?latestSessions:await getSessions();const count=parsePeople(people);for(let i=1;i<sessions.length;i++){const no=Number(sessions[i][0]);if(no!==Number(slotNo))continue;const cap=Math.max(0,Number(sessions[i][2]||0)-count);await saveSession(no,sessions[i][1],cap);break;}}
 function voiceCall(no=lastCalledNo){try{if(!window.speechSynthesis)return;speechSynthesis.cancel();const msg=new SpeechSynthesisUtterance(`${no}號旅客，請至服務櫃台`);msg.lang="zh-TW";msg.rate=.92;speechSynthesis.speak(msg);}catch(e){console.warn("語音叫號失敗：",e);}}
-async function loadAdmin(){const [rows,sessions]=await Promise.all([cloudGet(),getSessions()]);latestRows=rows;latestSessions=sessions;renderCurrentNo(findLastCalled(rows));renderKpis(getQueueStats(rows));renderTable(rows);renderMobileList(rows);renderSessionCards(sessions);renderSessionTable(sessions);if($("syncTime"))$("syncTime").innerText=`最後同步 ${formatLocalTime()}`;}
+async function loadAdmin(){try{const [rows,sessions]=await Promise.all([cloudGet(),getSessions()]);latestRows=rows;latestSessions=sessions;renderCurrentNo(findLastCalled(rows));renderKpis(getQueueStats(rows));renderTable(rows);renderMobileList(rows);renderSessionCards(sessions);renderSessionTable(sessions);if($("syncTime"))$("syncTime").innerText=`最後同步 ${formatLocalTime()}`;}catch(e){console.error(e);toast("後台金鑰錯誤或連線失敗，請重新登入","danger");if($("syncTime"))$("syncTime").innerText="後台權限驗證失敗";}}
 
 async function markCalled(rowNo){await runSafe(async()=>{const row=latestRows[rowNo-1];const no=row?.[0]||"A000";await updateStatus(rowNo,"called");await reduceCap(parseSlot(row?.[4]).slotNo,parsePeople(row?.[3]));toast(`${no} 已叫號`,"ok");await loadAdmin();voiceCall(no);},"叫號中...");}
 async function callNextAndReload(){await runSafe(async()=>{const rows=await cloudGet();latestRows=rows;for(let i=1;i<rows.length;i++){if(normalizeStatus(rows[i][5])!=="waiting")continue;const rowNo=i+1,row=rows[i],no=row?.[0]||"A000";await updateStatus(rowNo,"called");await reduceCap(parseSlot(row?.[4]).slotNo,parsePeople(row?.[3]));toast(`${no} 已叫號`,"ok");await loadAdmin();voiceCall(no);return;}toast("已無等待中的候補","danger");},"叫號中...");}
@@ -36,7 +36,7 @@ async function cancelGuest(rowNo){if(!confirm("確定取消此候補？"))return
 async function clearToday(){if(!confirm("確定清空今日候補名單？此動作會同步到雲端。"))return;await runSafe(async()=>{await clearQueue();toast("今日名單已清空","ok");await loadAdmin();},"清空中...");}
 async function autoFill(targetSlot){await runSafe(async()=>{const rows=await cloudGet();let chosen=0;for(let i=1;i<rows.length;i++){if(normalizeStatus(rows[i][5])==="waiting"&&parseSlot(rows[i][4]).slotNo===Number(targetSlot)){chosen=i+1;break;}}if(!chosen){for(let i=1;i<rows.length;i++){if(normalizeStatus(rows[i][5])==="waiting"&&parseSlot(rows[i][4]).flexible){chosen=i+1;break;}}}if(!chosen){toast("目前沒有可補位名單","danger");return;}const row=rows[chosen-1],no=row?.[0]||"A000";await updateStatus(chosen,"called");await reduceCap(targetSlot,parsePeople(row?.[3]));toast(`第 ${targetSlot} 梯已補位 ${no}`,"ok");await loadAdmin();voiceCall(no);},"補位中...");}
 function exportCSV(){if(!latestRows||latestRows.length<=1){toast("目前無資料可匯出","danger");return;}const csvRows=[["號碼","姓名","電話","人數","梯次","狀態"]];for(let i=1;i<latestRows.length;i++){csvRows.push([latestRows[i][0]||"",latestRows[i][1]||"",latestRows[i][2]||"",latestRows[i][3]||"",latestRows[i][4]||"",statusText(latestRows[i][5])]);}const csv="\ufeff"+csvRows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(",")).join("\n");const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`後慈湖候補名單_${new Date().toISOString().slice(0,10)}.csv`;a.click();URL.revokeObjectURL(a.href);}
-function logout(){localStorage.removeItem("houcihu_admin_token");localStorage.removeItem("houcihu_admin_login");location.href="admin-login.html";}
+function logout(){localStorage.removeItem("houcihu_admin_token");localStorage.removeItem("houcihu_admin_api_key");localStorage.removeItem("houcihu_admin_login");location.href="admin-login.html";}
 
 Object.assign(window,{loadAdmin,loadMobile:loadAdmin,callNextAndReload,voiceCall,doneGuest,cancelGuest,clearToday,autoFill,exportCSV,logout,markCalled});
 document.addEventListener("DOMContentLoaded",()=>{if($("searchBox"))$("searchBox").addEventListener("input",()=>renderTable(latestRows));if($("tbody")||$("listBox")||$("sessionGrid")){loadAdmin();if(typeof autoSync==="function")autoSync(loadAdmin,5000);}});
