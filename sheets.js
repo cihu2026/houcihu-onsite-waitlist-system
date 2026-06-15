@@ -1,6 +1,6 @@
 /*
 Houcihu Onsite Waitlist System
-Cloud sync helpers v14.4 Official Sessions
+Cloud sync helpers v14.5 Onsite Capacity Normalize
 Designed & Developed by Abby Luo
 */
 
@@ -94,6 +94,22 @@ function normalizeTable(payload) {
   return [];
 }
 
+function getSessionCap(row) {
+  const onsite = String(row?.[3] ?? "").trim();
+  if (onsite !== "") return Number(onsite || 0);
+  return Number(row?.[2] || 0);
+}
+
+function normalizeSessions(rows) {
+  if (!Array.isArray(rows) || rows.length <= 1) return rows || [];
+  const normalized = [["梯次", "開放", "名額"]];
+  for (let i = 1; i < rows.length; i++) {
+    const row = rows[i];
+    normalized.push([row[0], row[1], getSessionCap(row)]);
+  }
+  return normalized;
+}
+
 function isSuccess(payload) {
   if (payload === true) return true;
   if (typeof payload === "string") return /^(ok|success|true|done)$/i.test(payload.trim());
@@ -142,7 +158,7 @@ async function getPublicStatus() {
     ok: payload.ok === true || payload.success === true,
     currentNo: String(payload.currentNo || "A000"),
     waitingCount: Number(payload.waitingCount || 0),
-    sessions: Array.isArray(payload.sessions) ? payload.sessions : EMPTY_PUBLIC_STATUS.sessions,
+    sessions: Array.isArray(payload.sessions) ? normalizeSessions(payload.sessions) : EMPTY_PUBLIC_STATUS.sessions,
     updatedAt: payload.updatedAt || "",
     message: payload.message || ""
   };
@@ -154,9 +170,9 @@ async function cloudGet() {
 
 async function getSessions() {
   const official = await apiGet({ mode: "officialSessions" });
-  const officialRows = official && Array.isArray(official.sessions) ? official.sessions : [];
+  const officialRows = official && Array.isArray(official.sessions) ? normalizeSessions(official.sessions) : [];
   if (officialRows.length > 1) return officialRows;
-  return normalizeTable(await apiGet({ mode: "sessions" }));
+  return normalizeSessions(normalizeTable(await apiGet({ mode: "sessions" })));
 }
 
 async function saveSession(no, open, cap) {
