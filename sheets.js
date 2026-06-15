@@ -1,11 +1,11 @@
 /*
 Houcihu Onsite Waitlist System
-Cloud sync helpers v14.3 Privacy Guard
+Cloud sync helpers v14.4 Official Sessions
 Designed & Developed by Abby Luo
 */
 
 const WEB_APP_URL =
-  "https://script.google.com/macros/s/AKfycbwMCPz4MM9IIbyLbdYeA8PlvosY6pbmOjGa3xmeUvnQv2Vmg1S4ozIOZ9O8Hq58crtv/exec";
+  "https://script.google.com/macros/s/AKfycbw63eJnsg0a70IbZXBYWktt8CCDfx0mm_MAwzMRDoxKNNvcT2FTTMpJuU8f3qfqHjo/exec";
 
 const API_TIMEOUT = 9000;
 const API_RETRY = 2;
@@ -136,7 +136,6 @@ async function apiPost(data = {}, retry = API_RETRY) {
 }
 
 async function getPublicStatus() {
-  // 用 POST action=public，舊版後端只會回 unknown action，不會把候補名單個資吐給公開頁。
   const payload = await apiPost({ action: "public" });
   if (!payload || Array.isArray(payload) || payload.success === false) return { ...EMPTY_PUBLIC_STATUS };
   return {
@@ -154,6 +153,9 @@ async function cloudGet() {
 }
 
 async function getSessions() {
+  const official = await apiGet({ mode: "officialSessions" });
+  const officialRows = official && Array.isArray(official.sessions) ? official.sessions : [];
+  if (officialRows.length > 1) return officialRows;
   return normalizeTable(await apiGet({ mode: "sessions" }));
 }
 
