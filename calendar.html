@@ -1,474 +1,154 @@
 <!--
 Houcihu Onsite Waitlist System
+calendar.html v14 Field Pro
 Designed & Developed by Abby Luo
-2026 Official Build
-calendar.html v12 OFFICIAL PRO
 -->
-
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#155f34">
 <title>後慈湖｜營運資訊</title>
-
-<style>
-:root{
---green:#1f7a3f;
---green2:#3e8b55;
---red:#d33;
---gray:#666;
---bg1:#eef6ef;
---bg2:#dfeee2;
---card:#fff;
---line:#e9ece9;
---shadow:0 12px 28px rgba(0,0,0,.08);
---radius:24px;
-}
-
-*{box-sizing:border-box;}
-
-body{
-margin:0;
-font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft JhengHei",sans-serif;
-background:linear-gradient(135deg,var(--bg1),var(--bg2));
-color:#1f2d1f;
-}
-
-header{
-background:linear-gradient(135deg,var(--green),var(--green2));
-color:#fff;
-text-align:center;
-padding:42px 20px;
-}
-
-header h1{
-margin:0;
-font-size:34px;
-font-weight:900;
-}
-
-header p{
-margin:10px 0 0;
-font-size:16px;
-opacity:.95;
-}
-
-.wrap{
-max-width:980px;
-margin:auto;
-padding:20px;
-}
-
-.card{
-background:#fff;
-border-radius:var(--radius);
-padding:24px;
-margin-bottom:18px;
-box-shadow:var(--shadow);
-}
-
-.big{
-font-size:42px;
-font-weight:900;
-line-height:1.3;
-text-align:center;
-}
-
-.green{color:var(--green);}
-.red{color:var(--red);}
-.gray{color:var(--gray);}
-
-h2{
-margin:0 0 16px;
-font-size:20px;
-color:var(--green);
-border-left:5px solid var(--green);
-padding-left:12px;
-}
-
-.grid{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:18px;
-}
-
-.calendar{
-display:grid;
-grid-template-columns:repeat(7,1fr);
-gap:8px;
-}
-
-.dayname,
-.day{
-text-align:center;
-padding:10px 6px;
-border-radius:14px;
-font-size:14px;
-}
-
-.dayname{
-font-weight:900;
-color:#666;
-background:#f7faf7;
-}
-
-.day{
-background:#fff;
-border:1px solid var(--line);
-min-height:64px;
-display:flex;
-flex-direction:column;
-justify-content:center;
-align-items:center;
-font-weight:800;
-}
-
-.today{
-border:2px solid var(--green);
-background:#f2fff5;
-}
-
-.close{
-background:#fff3f3;
-color:var(--red);
-border-color:#ffd4d4;
-}
-
-.note{
-font-size:12px;
-margin-top:4px;
-font-weight:900;
-}
-
-.btns{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:12px;
-}
-
-.btn{
-display:flex;
-justify-content:center;
-align-items:center;
-text-decoration:none;
-padding:16px;
-border-radius:18px;
-font-size:18px;
-font-weight:900;
-background:var(--green);
-color:#fff;
-}
-
-.btn.gray{
-background:#666;
-}
-
-table{
-width:100%;
-border-collapse:collapse;
-}
-
-th,td{
-padding:12px;
-border-bottom:1px solid var(--line);
-text-align:center;
-}
-
-th{
-background:#f7faf7;
-}
-
-footer{
-text-align:center;
-padding:18px;
-color:#666;
-font-size:14px;
-}
-
-@media(max-width:768px){
-
-.grid,
-.btns{
-grid-template-columns:1fr;
-}
-
-.calendar{
-gap:6px;
-}
-
-.day{
-min-height:56px;
-font-size:13px;
-}
-
-header h1{
-font-size:28px;
-}
-
-.big{
-font-size:32px;
-}
-
-}
-</style>
+<link rel="stylesheet" href="theme.css?v=14">
 </head>
-
 <body>
-
-<header>
-<h1>後慈湖 營運資訊</h1>
-<p>官方開園日曆｜休園公告｜即時查詢</p>
+<header class="hero">
+  <div class="hero__kicker">OPERATION CALENDAR</div>
+  <h1>營運資訊</h1>
+  <p>開園狀態、休園日、本週概況與本月營運月曆。</p>
 </header>
 
-<div class="wrap">
+<main class="wrap">
+  <section class="card">
+    <div class="big-number" id="todayStatus" style="font-size:clamp(42px,9vw,86px)">讀取中</div>
+    <div class="sub" id="todayDate">今日狀態</div>
+  </section>
 
-<div class="card">
-<div class="big" id="todayStatus">讀取中...</div>
-</div>
+  <section class="grid two">
+    <div class="card kpi">
+      <span>下次休園日</span>
+      <b id="nextClose" class="grayText">讀取中</b>
+      <small>依公告與連假調整</small>
+    </div>
+    <div class="card kpi">
+      <span>固定規則</span>
+      <b class="greenText" style="font-size:30px">週二休園</b>
+      <small>國定連假遇週二則順延補休</small>
+    </div>
+  </section>
 
-<div class="grid">
+  <section class="card">
+    <div class="section-title">
+      <h2>本月營運月曆</h2>
+      <span class="muted" id="monthName"></span>
+    </div>
+    <div class="calendar" id="calendarBox"></div>
+  </section>
 
-<div class="card">
-<h2>下次休園日</h2>
-<div class="big gray" id="nextClose">讀取中...</div>
-</div>
+  <section class="card">
+    <div class="section-title"><h2>本週營運概況</h2></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>日期</th><th>星期</th><th>狀態</th></tr></thead>
+        <tbody id="weekTable"></tbody>
+      </table>
+    </div>
+  </section>
 
-<div class="card">
-<h2>本月營運月曆</h2>
-<div id="monthName" style="font-weight:900;margin-bottom:12px;"></div>
-<div class="calendar" id="calendarBox"></div>
-</div>
+  <section class="card notice">
+    📍 每週二固定休園。若週二遇國定連假照常開園，補休日依公告順延。現場候補依當日實際名額安排。
+  </section>
 
-</div>
+  <section class="card">
+    <div class="grid two">
+      <a class="btn block" href="visitor.html">返回首頁</a>
+      <a class="btn block gray" href="checkin.html">現場候補登記</a>
+    </div>
+  </section>
+</main>
 
-<div class="card">
-<h2>本週營運概況</h2>
-
-<table>
-<thead>
-<tr>
-<th>日期</th>
-<th>星期</th>
-<th>狀態</th>
-</tr>
-</thead>
-<tbody id="weekTable"></tbody>
-</table>
-
-</div>
-
-<div class="card">
-<h2>最新公告</h2>
-
-<div style="line-height:1.9;color:#444;">
-📍 每週二固定休園。<br>
-📍 若週二遇國定連假則照常開園，順延至次日補休。<br>
-📍 若連假延長，補休日順延。<br>
-📍 現場候補依當日名額安排。<br>
-</div>
-
-</div>
-
-<div class="card">
-<div class="btns">
-<a class="btn" href="visitor.html">返回首頁</a>
-<a class="btn gray" href="checkin.html">現場候補登記</a>
-</div>
-</div>
-
-</div>
-
-<footer>
-Houcihu Visitor Service Center ｜ Official Calendar v12
-</footer>
-
+<footer class="footer">Houcihu Visitor Service Center ｜ Official Calendar v14</footer>
 <script>
-
 const holidayDates = [
-"2026/01/27",
-"2026/01/28",
-"2026/02/24"
+  "2026/01/27",
+  "2026/01/28",
+  "2026/02/24"
 ];
-
-const dayNames=["日","一","二","三","四","五","六"];
-
+const dayNames = ["日","一","二","三","四","五","六"];
 function formatDate(d){
-const y=d.getFullYear();
-const m=("0"+(d.getMonth()+1)).slice(-2);
-const day=("0"+d.getDate()).slice(-2);
-return `${y}/${m}/${day}`;
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,"0");
+  const day = String(d.getDate()).padStart(2,"0");
+  return `${y}/${m}/${day}`;
 }
-
-function shortDate(d){
-return (d.getMonth()+1)+"/"+d.getDate();
-}
-
+function shortDate(d){ return `${d.getMonth()+1}/${d.getDate()}`; }
 function isHolidayClose(d){
-
-const day=d.getDay();
-const dateStr=formatDate(d);
-
-if(day===2 && !holidayDates.includes(dateStr)){
-return true;
+  const day = d.getDay();
+  const dateStr = formatDate(d);
+  if(day === 2 && !holidayDates.includes(dateStr)) return true;
+  if(day === 3){
+    const tue = new Date(d);
+    tue.setDate(d.getDate()-1);
+    if(holidayDates.includes(formatDate(tue)) && !holidayDates.includes(dateStr)) return true;
+  }
+  if(day === 4){
+    const tue = new Date(d);
+    tue.setDate(d.getDate()-2);
+    const wed = new Date(d);
+    wed.setDate(d.getDate()-1);
+    if(holidayDates.includes(formatDate(tue)) && holidayDates.includes(formatDate(wed))) return true;
+  }
+  return false;
 }
-
-if(day===3){
-
-const tue=new Date(d);
-tue.setDate(d.getDate()-1);
-
-if(
-holidayDates.includes(formatDate(tue)) &&
-!holidayDates.includes(dateStr)
-){
-return true;
-}
-
-}
-
-if(day===4){
-
-const tue=new Date(d);
-tue.setDate(d.getDate()-2);
-
-const wed=new Date(d);
-wed.setDate(d.getDate()-1);
-
-if(
-holidayDates.includes(formatDate(tue)) &&
-holidayDates.includes(formatDate(wed))
-){
-return true;
-}
-
-}
-
-return false;
-
-}
-
 function getNextClose(){
-
-for(let i=0;i<60;i++){
-
-const d=new Date();
-d.setDate(d.getDate()+i);
-
-if(isHolidayClose(d)) return d;
-
+  for(let i = 0; i < 90; i++){
+    const d = new Date();
+    d.setDate(d.getDate()+i);
+    if(isHolidayClose(d)) return d;
+  }
+  return null;
 }
-
-return null;
-
-}
-
 function renderMonth(){
-
-const now=new Date();
-const y=now.getFullYear();
-const m=now.getMonth();
-
-document.getElementById("monthName")
-.innerText=(m+1)+" 月";
-
-const box=document.getElementById("calendarBox");
-
-let html="";
-
-for(let i=0;i<7;i++){
-html+=`<div class="dayname">${dayNames[i]}</div>`;
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = now.getMonth();
+  document.getElementById("monthName").innerText = `${y} 年 ${m+1} 月`;
+  const box = document.getElementById("calendarBox");
+  let html = dayNames.map(name => `<div class="dayname">${name}</div>`).join("");
+  const first = new Date(y,m,1).getDay();
+  const last = new Date(y,m+1,0).getDate();
+  for(let i = 0; i < first; i++) html += `<div></div>`;
+  for(let d = 1; d <= last; d++){
+    const date = new Date(y,m,d);
+    const closed = isHolidayClose(date);
+    const today = d === now.getDate() && m === now.getMonth() && y === now.getFullYear();
+    html += `<div class="day ${today ? "today" : ""} ${closed ? "close" : ""}"><div>${d}</div><div class="note">${closed ? "休園" : "開園"}</div></div>`;
+  }
+  box.innerHTML = html;
 }
-
-const first=new Date(y,m,1).getDay();
-const last=new Date(y,m+1,0).getDate();
-
-for(let i=0;i<first;i++){
-html+=`<div></div>`;
+function renderWeek(){
+  const now = new Date();
+  let html = "";
+  for(let i = 0; i < 7; i++){
+    const d = new Date();
+    d.setDate(now.getDate()+i);
+    const closed = isHolidayClose(d);
+    html += `<tr><td>${shortDate(d)}</td><td>週${dayNames[d.getDay()]}</td><td class="${closed ? "redText" : "greenText"}"><b>${closed ? "休園" : "正常開園"}</b></td></tr>`;
+  }
+  document.getElementById("weekTable").innerHTML = html;
 }
-
-for(let d=1;d<=last;d++){
-
-const date=new Date(y,m,d);
-
-let cls="day";
-
-if(
-d===now.getDate() &&
-m===now.getMonth()
-){
-cls+=" today";
-}
-
-if(isHolidayClose(date)){
-cls+=" close";
-}
-
-html+=`
-<div class="${cls}">
-<div>${d}</div>
-<div class="note">
-${isHolidayClose(date)?"休園":"開園"}
-</div>
-</div>
-`;
-
-}
-
-box.innerHTML=html;
-
-}
-
 function render(){
-
-const now=new Date();
-const closed=isHolidayClose(now);
-
-document.getElementById("todayStatus")
-.innerHTML=closed
-? `<span class="red">今日休園</span>`
-: `<span class="green">今日正常開園</span>`;
-
-const next=getNextClose();
-
-document.getElementById("nextClose")
-.innerText=
-next ?
-`${shortDate(next)}（週${dayNames[next.getDay()]}）`
-:
-"暫無資料";
-
-let html="";
-
-for(let i=0;i<7;i++){
-
-const d=new Date();
-d.setDate(now.getDate()+i);
-
-const off=isHolidayClose(d);
-
-html+=`
-<tr>
-<td>${shortDate(d)}</td>
-<td>週${dayNames[d.getDay()]}</td>
-<td class="${off?'red':'green'}">
-<b>${off?'休園':'正常開園'}</b>
-</td>
-</tr>
-`;
-
+  const now = new Date();
+  const closed = isHolidayClose(now);
+  document.getElementById("todayStatus").innerHTML = closed ? `<span class="redText">今日休園</span>` : `<span class="greenText">今日開園</span>`;
+  document.getElementById("todayDate").innerText = `${formatDate(now)}（週${dayNames[now.getDay()]}）`;
+  const next = getNextClose();
+  document.getElementById("nextClose").innerText = next ? `${shortDate(next)}（週${dayNames[next.getDay()]}）` : "暫無資料";
+  renderMonth();
+  renderWeek();
 }
-
-document.getElementById("weekTable")
-.innerHTML=html;
-
-renderMonth();
-
-}
-
 render();
-
 </script>
-
 </body>
 </html>
