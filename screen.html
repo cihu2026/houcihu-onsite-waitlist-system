@@ -1,6 +1,6 @@
 <!--
 Houcihu Onsite Waitlist System
-screen.html v14.6 GPS + Onsite Code Display
+screen.html v14.7 Onsite Capacity Display
 Designed & Developed by Abby Luo
 -->
 <!DOCTYPE html>
@@ -51,7 +51,7 @@ body{overflow-x:hidden}
   <section class="card notice">現場遞補不代表一定有名額，實際入場資格依現場名額與工作人員安排為準。自助登記須通過現場定位，並輸入看板顯示之今日驗證碼。</section>
 </main>
 <footer class="footer">Houcihu Visitor Service Center © 2026</footer>
-<script src="sheets.js?v=14.3"></script>
+<script src="sheets.js?v=14.4"></script>
 <script>
 function getTodayCode(){
   const now = new Date();
@@ -60,6 +60,11 @@ function getTodayCode(){
   const d = now.getDate();
   const seed = y * 10000 + m * 100 + d;
   return String(((seed * 37 + 520) % 9000) + 1000);
+}
+function getSessionCap(row){
+  const onsite = String(row?.[3] ?? "").trim();
+  if(onsite !== "") return Number(onsite || 0);
+  return Number(row?.[2] || 0);
 }
 function renderOnsiteCode(){
   const el = document.getElementById("onsiteCode");
@@ -76,7 +81,7 @@ function renderSlots(sessions){
   if(!sessions || sessions.length <= 1){ box.innerHTML = `<div class="muted">尚無梯次資料</div>`; return; }
   let html = "";
   for(let i = 1; i < sessions.length; i++){
-    const no = sessions[i][0]; const open = isOpenFlag(sessions[i][1]); const cap = Number(sessions[i][2] || 0);
+    const no = sessions[i][0]; const open = isOpenFlag(sessions[i][1]); const cap = getSessionCap(sessions[i]);
     let text = "未開放"; let cls = "grayText";
     if(open && cap <= 0){ text = "額滿候補"; cls = "redText"; }
     else if(open && cap <= 3){ text = `剩 ${cap} 位`; cls = "orangeText"; }
