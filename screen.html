@@ -1,6 +1,6 @@
 <!--
 Houcihu Onsite Waitlist System
-screen.html v14 Field Pro
+screen.html v14.3 Privacy Guard
 Designed & Developed by Abby Luo
 -->
 <!DOCTYPE html>
@@ -11,73 +11,31 @@ Designed & Developed by Abby Luo
 <meta name="theme-color" content="#155f34">
 <title>後慈湖｜即時叫號看板</title>
 <link rel="stylesheet" href="theme.css?v=14">
-<style>
-body{overflow-x:hidden}.screen-wrap{width:min(1280px,100%);margin:-36px auto 0;padding:0 18px 30px}.screen-number{font-size:clamp(86px,19vw,230px)}.screen-title{font-size:clamp(32px,5vw,58px)}@media(min-width:1100px){.slot-grid-large{grid-template-columns:repeat(4,minmax(0,1fr))}}
-</style>
+<style>body{overflow-x:hidden}.screen-wrap{width:min(1280px,100%);margin:-36px auto 0;padding:0 18px 30px}.screen-number{font-size:clamp(86px,19vw,230px)}.screen-title{font-size:clamp(32px,5vw,58px)}@media(min-width:1100px){.slot-grid-large{grid-template-columns:repeat(4,minmax(0,1fr))}}</style>
 </head>
 <body>
-<header class="hero">
-  <div class="hero__kicker">NOW CALLING</div>
-  <h1 class="screen-title">後慈湖即時叫號看板</h1>
-  <p>請留意目前叫號與梯次資訊，叫號後請至服務櫃台。</p>
-</header>
-
+<header class="hero"><div class="hero__kicker">NOW CALLING</div><h1 class="screen-title">後慈湖即時叫號看板</h1><p>請留意目前叫號與梯次資訊，叫號後請至服務櫃台。</p></header>
 <main class="screen-wrap">
-  <section class="card">
-    <div class="sub">目前叫號</div>
-    <div class="big-number screen-number" id="currentNo">A000</div>
-    <div class="sub" id="syncTime">資料同步中</div>
-  </section>
-
-  <section class="card">
-    <div class="section-title">
-      <h2>今日梯次狀況</h2>
-      <span class="muted">即時更新</span>
-    </div>
-    <div class="grid auto slot-grid-large" id="slotGrid">
-      <div class="muted">系統連線中...</div>
-    </div>
-  </section>
-
-  <section class="card notice">
-    現場遞補不代表一定有名額，實際入場資格依現場名額與工作人員安排為準。
-  </section>
+  <section class="card"><div class="sub">目前叫號</div><div class="big-number screen-number" id="currentNo">A000</div><div class="sub" id="syncTime">資料同步中</div></section>
+  <section class="card"><div class="section-title"><h2>今日梯次狀況</h2><span class="muted">即時更新</span></div><div class="grid auto slot-grid-large" id="slotGrid"><div class="muted">系統連線中...</div></div></section>
+  <section class="card notice">現場遞補不代表一定有名額，實際入場資格依現場名額與工作人員安排為準。</section>
 </main>
-
 <footer class="footer">Houcihu Visitor Service Center © 2026</footer>
-<script src="sheets.js?v=14"></script>
+<script src="sheets.js?v=14.3"></script>
 <script>
-function renderCurrent(rows){
-  let current = "A000";
-  if(rows && rows.length > 1){
-    for(let i = rows.length - 1; i >= 1; i--){
-      if(normalizeStatus(rows[i][5]) === "called"){
-        current = rows[i][0] || "A000";
-        break;
-      }
-    }
-  }
+function renderCurrent(current){
   const el = document.getElementById("currentNo");
-  if(el.innerText !== current){
-    el.classList.remove("flash");
-    void el.offsetWidth;
-    el.classList.add("flash");
-  }
-  el.innerText = current;
+  const no = current || "A000";
+  if(el.innerText !== no){ el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash"); }
+  el.innerText = no;
 }
 function renderSlots(sessions){
   const box = document.getElementById("slotGrid");
-  if(!sessions || sessions.length <= 1){
-    box.innerHTML = `<div class="muted">尚無梯次資料</div>`;
-    return;
-  }
+  if(!sessions || sessions.length <= 1){ box.innerHTML = `<div class="muted">尚無梯次資料</div>`; return; }
   let html = "";
   for(let i = 1; i < sessions.length; i++){
-    const no = sessions[i][0];
-    const open = isOpenFlag(sessions[i][1]);
-    const cap = Number(sessions[i][2] || 0);
-    let text = "未開放";
-    let cls = "grayText";
+    const no = sessions[i][0]; const open = isOpenFlag(sessions[i][1]); const cap = Number(sessions[i][2] || 0);
+    let text = "未開放"; let cls = "grayText";
     if(open && cap <= 0){ text = "額滿候補"; cls = "redText"; }
     else if(open && cap <= 3){ text = `剩 ${cap} 位`; cls = "orangeText"; }
     else if(open){ text = `可登記 ${cap} 位`; cls = "greenText"; }
@@ -87,17 +45,13 @@ function renderSlots(sessions){
 }
 async function refreshDisplay(){
   try{
-    const [rows, sessions] = await Promise.all([cloudGet(), getSessions()]);
-    renderCurrent(rows);
-    renderSlots(sessions);
-    document.getElementById("syncTime").innerText = "最後同步 " + formatLocalTime();
-  }catch(error){
-    console.warn("看板更新錯誤：", error);
-    document.getElementById("syncTime").innerText = "連線中斷，稍後重試";
-  }
+    const data = await getPublicStatus();
+    renderCurrent(data.currentNo);
+    renderSlots(data.sessions);
+    document.getElementById("syncTime").innerText = data.ok ? "最後同步 " + formatLocalTime() : "等待後端隱私版部署";
+  }catch(error){ console.warn("看板更新錯誤：", error); document.getElementById("syncTime").innerText = "連線中斷，稍後重試"; }
 }
-refreshDisplay();
-autoSync(refreshDisplay,4000);
+refreshDisplay(); autoSync(refreshDisplay,4000);
 </script>
 </body>
 </html>
