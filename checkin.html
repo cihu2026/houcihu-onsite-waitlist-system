@@ -1,6 +1,6 @@
 <!--
 Houcihu Onsite Waitlist System
-checkin.html v14.3 Privacy Guard
+checkin.html v14.4 Session Cutoff Guard
 Designed & Developed by Abby Luo
 -->
 <!DOCTYPE html>
@@ -15,7 +15,7 @@ Designed & Developed by Abby Luo
 <body>
 <header class="hero"><div class="hero__kicker">WAITLIST CHECK-IN</div><h1>現場候補登記</h1><p>請填寫姓名、手機、人數與希望梯次，送出後請截圖保存候補號碼。</p></header>
 <main class="wrap narrow">
-  <section class="card notice">⚠️ 候補登記不代表保證入園，請依現場叫號與工作人員安排為準。若同行人數較多，請直接洽櫃台協助。</section>
+  <section class="card notice">⚠️ 候補登記不代表保證入園，請依現場叫號與工作人員安排為準。每梯次於開始前 15 分鐘停止登記，已截止或已結束之梯次不再開放候補。</section>
   <section class="card compact"><div class="muted" style="line-height:1.8;font-weight:750">個資告知：姓名、手機與同行人數僅作後慈湖現場候補叫號、聯繫與人流管理使用；公開頁面不顯示姓名與完整電話。</div></section>
   <section class="card" id="formBox">
     <form id="waitForm" novalidate>
@@ -34,22 +34,62 @@ Designed & Developed by Abby Luo
 <script src="sheets.js?v=14.3"></script>
 <script>
 let sessionRows = [];
+
+const SESSION_START_TIMES = {
+  1: "09:00",
+  2: "10:00",
+  3: "11:00",
+  4: "12:00",
+  5: "13:00",
+  6: "14:00",
+  7: "15:00",
+  8: "16:00"
+};
+const REGISTRATION_CUTOFF_MINUTES = 15;
+
 function setSubmitState(disabled, text){ const btn = document.getElementById("submitBtn"); btn.disabled = disabled; btn.innerText = text; }
 function cleanPhone(value){ return String(value || "").replace(/\D/g, ""); }
+function getSlotNo(value){ return String(value || "").replace(/[^0-9]/g, ""); }
+function getSessionStart(no){
+  const time = SESSION_START_TIMES[Number(no)];
+  if(!time) return null;
+  const [hour, minute] = time.split(":").map(Number);
+  const start = new Date();
+  start.setHours(hour, minute, 0, 0);
+  return start;
+}
+function getRegistrationCutoff(no){
+  const start = getSessionStart(no);
+  if(!start) return null;
+  return new Date(start.getTime() - REGISTRATION_CUTOFF_MINUTES * 60 * 1000);
+}
+function isSessionClosed(no){
+  const cutoff = getRegistrationCutoff(no);
+  if(!cutoff) return true;
+  return new Date() >= cutoff;
+}
+function getCutoffText(no){
+  const cutoff = getRegistrationCutoff(no);
+  if(!cutoff) return "";
+  return cutoff.toLocaleTimeString("zh-TW", { hour: "2-digit", minute: "2-digit", hour12: false });
+}
+function isSelectableSession(row){ return isOpenFlag(row[1]) && !isSessionClosed(row[0]); }
 function renderSlotInfo(){
-  const val = document.getElementById("slot").value; const no = val.replace(/[^0-9]/g, ""); const box = document.getElementById("slotInfo"); const row = sessionRows.find(r => String(r[0]) === no);
-  if(!row){ box.innerHTML = `<h3>尚無可選梯次</h3><div class="state redText">請洽現場工作人員</div>`; return; }
+  const val = document.getElementById("slot").value; const no = getSlotNo(val); const box = document.getElementById("slotInfo"); const row = sessionRows.find(r => String(r[0]) === no);
+  if(!row){ box.innerHTML = `<h3>尚無可選梯次</h3><div class="state redText">已截止或已結束之梯次不可登記，請洽現場工作人員。</div>`; return; }
+  if(isSessionClosed(no)){ box.innerHTML = `<h3>第 ${no} 梯</h3><div class="state redText">此梯次已超過 ${getCutoffText(no)} 截止時間，不能再登記。</div>`; setSubmitState(true, "此梯次已截止"); return; }
   const cap = Number(row[2] || 0);
-  if(cap <= 0) box.innerHTML = `<h3>第 ${no} 梯</h3><div class="state redText">目前額滿，登記後等待遞補</div>`;
-  else if(cap <= 3) box.innerHTML = `<h3>第 ${no} 梯</h3><div class="state orangeText">剩餘名額極少：${cap} 位</div>`;
-  else box.innerHTML = `<h3>第 ${no} 梯</h3><div class="state greenText">目前尚有名額：${cap} 位</div>`;
+  setSubmitState(false, "確認送出登記");
+  if(cap <= 0) box.innerHTML = `<h3>第 ${no} 梯</h3><div class="state redText">目前額滿，登記後等待遞補｜${getCutoffText(no)} 截止</div>`;
+  else if(cap <= 3) box.innerHTML = `<h3>第 ${no} 梯</h3><div class="state orangeText">剩餘名額極少：${cap} 位｜${getCutoffText(no)} 截止</div>`;
+  else box.innerHTML = `<h3>第 ${no} 梯</h3><div class="state greenText">目前尚有名額：${cap} 位｜${getCutoffText(no)} 截止</div>`;
 }
 async function loadSlots(){
   const select = document.getElementById("slot");
   try{
-    const rows = await getSessions(); sessionRows = rows.slice(1).filter(row => isOpenFlag(row[1]));
-    if(!sessionRows.length){ select.innerHTML = `<option value="">今日尚無開放梯次</option>`; setSubmitState(true, "今日尚無開放梯次"); renderSlotInfo(); return; }
-    select.innerHTML = sessionRows.map(row => { const no = row[0]; const cap = Number(row[2] || 0); const text = cap <= 0 ? `第 ${no} 梯（額滿候補）` : `第 ${no} 梯（餘 ${cap} 位）`; return `<option value="第${no}梯">${text}</option>`; }).join("");
+    const rows = await getSessions(); sessionRows = rows.slice(1).filter(isSelectableSession);
+    if(!sessionRows.length){ select.innerHTML = `<option value="">今日可登記梯次已截止</option>`; setSubmitState(true, "今日可登記梯次已截止"); renderSlotInfo(); return; }
+    select.innerHTML = sessionRows.map(row => { const no = row[0]; const cap = Number(row[2] || 0); const cutoff = getCutoffText(no); const text = cap <= 0 ? `第 ${no} 梯（額滿候補｜${cutoff} 截止）` : `第 ${no} 梯（餘 ${cap} 位｜${cutoff} 截止）`; return `<option value="第${no}梯">${text}</option>`; }).join("");
     setSubmitState(false, "確認送出登記"); renderSlotInfo();
   }catch(error){ console.warn(error); select.innerHTML = `<option value="">梯次讀取失敗</option>`; setSubmitState(true, "梯次讀取失敗"); }
 }
@@ -57,11 +97,12 @@ document.getElementById("slot").addEventListener("change", renderSlotInfo);
 document.getElementById("phone").addEventListener("input", function(){ this.value = cleanPhone(this.value).slice(0, 10); });
 document.getElementById("waitForm").addEventListener("submit", async function(event){
   event.preventDefault(); setSubmitState(true, "送出中...");
-  const name = document.getElementById("name").value.trim(); const phone = cleanPhone(document.getElementById("phone").value); const people = document.getElementById("people").value; const slot = document.getElementById("slot").value; const flex = document.querySelector('input[name="flex"]:checked').value;
+  const name = document.getElementById("name").value.trim(); const phone = cleanPhone(document.getElementById("phone").value); const people = document.getElementById("people").value; const slot = document.getElementById("slot").value; const slotNo = getSlotNo(slot); const flex = document.querySelector('input[name="flex"]:checked').value;
   if(!name){ alert("請輸入姓名"); setSubmitState(false, "確認送出登記"); return; }
   if(!/^09\d{8}$/.test(phone)){ alert("請輸入正確手機號碼，例如：0912345678"); setSubmitState(false, "確認送出登記"); return; }
   if(people.includes("+")){ alert("10 人以上同行，請由現場服務人員協助安排。"); setSubmitState(false, "確認送出登記"); return; }
   if(!slot){ alert("目前沒有可登記梯次，請洽現場工作人員。"); setSubmitState(false, "確認送出登記"); return; }
+  if(isSessionClosed(slotNo)){ alert(`此梯次已超過 ${getCutoffText(slotNo)} 截止時間，不能再候補登記，請選擇下一梯次或洽現場工作人員。`); await loadSlots(); return; }
   try{
     const result = await addQueue("", name, phone, people, `${slot}｜${flex}`);
     if(!isSuccess(result)){ alert(result?.message === "today duplicate" ? "此手機今日已登記候補名單，請勿重複登記。" : "系統忙碌中，請稍後再試。"); setSubmitState(false, "確認送出登記"); return; }
