@@ -1,6 +1,6 @@
 <!--
 Houcihu Onsite Waitlist System
-status.html v14.3 Privacy Guard
+status.html v14.4 Onsite Capacity
 Designed & Developed by Abby Luo
 -->
 <!DOCTYPE html>
@@ -22,9 +22,10 @@ Designed & Developed by Abby Luo
   <section class="card"><div class="grid two"><a class="btn block" href="checkin.html">現場候補登記</a><a class="btn block gray" href="visitor.html">返回首頁</a></div></section>
 </main>
 <footer class="footer">Houcihu Visitor Service Center © 2026</footer>
-<script src="sheets.js?v=14.3"></script>
+<script src="sheets.js?v=14.4"></script>
 <script>
 function setTodayText(){ const now = new Date(); const limit = new Date("2026-06-21T00:00:00+08:00"); document.getElementById("todayText").innerText = now < limit ? "第 1、3、5、7 梯" : "第 1 至 8 梯"; }
+function getSessionCap(row){ const v = String(row?.[3] ?? "").trim(); return v !== "" ? Number(v || 0) : Number(row?.[2] || 0); }
 function renderCurrent(current){
   const el = document.getElementById("currentNo");
   const no = current || "A000";
@@ -36,7 +37,7 @@ function renderSlots(sessions){
   if(!sessions || sessions.length <= 1){ box.innerHTML = `<div class="muted">尚無梯次資料</div>`; return; }
   let html = "";
   for(let i = 1; i < sessions.length; i++){
-    const no = sessions[i][0]; const open = isOpenFlag(sessions[i][1]); const cap = Number(sessions[i][2] || 0);
+    const no = sessions[i][0]; const open = isOpenFlag(sessions[i][1]); const cap = getSessionCap(sessions[i]);
     let text = "未開放"; let cls = "grayText";
     if(open && cap <= 0){ text = "額滿"; cls = "redText"; }
     else if(open && cap <= 3){ text = `剩 ${cap} 位`; cls = "orangeText"; }
