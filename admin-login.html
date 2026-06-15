@@ -1,6 +1,6 @@
 <!--
 Houcihu Onsite Waitlist System
-admin-login.html v14 Field Pro
+admin-login.html v14.3 Privacy Guard
 Designed & Developed by Abby Luo
 -->
 <!DOCTYPE html>
@@ -14,119 +14,35 @@ Designed & Developed by Abby Luo
 <link rel="stylesheet" href="theme.css?v=14">
 </head>
 <body>
-<header class="hero">
-  <div class="hero__kicker">STAFF ONLY</div>
-  <h1>後台登入</h1>
-  <p>後慈湖現場候補管理系統｜僅限授權工作人員使用</p>
-</header>
-
+<header class="hero"><div class="hero__kicker">STAFF ONLY</div><h1>後台登入</h1><p>後慈湖現場候補管理系統｜僅限授權工作人員使用</p></header>
 <main class="wrap narrow">
   <section class="card">
-    <div class="notice" style="margin-bottom:16px">
-      🔒 登入後可使用叫號、到場、取消、報表與梯次補位功能。
-    </div>
-
+    <div class="notice" style="margin-bottom:16px">🔒 登入後可使用叫號、到場、取消、報表與梯次補位功能。密碼不再寫在公開原始碼內。</div>
     <form id="loginForm" novalidate>
-      <div class="field">
-        <label for="user">帳號</label>
-        <input type="text" id="user" placeholder="請輸入帳號" autocomplete="username" required>
-      </div>
-
-      <div class="field">
-        <label for="pass">密碼</label>
-        <div style="position:relative">
-          <input type="password" id="pass" placeholder="請輸入密碼" autocomplete="current-password" required style="padding-right:68px">
-          <button type="button" class="smallbtn gray" onclick="togglePass()" style="position:absolute;right:8px;top:8px;min-height:38px;box-shadow:none">顯示</button>
-        </div>
-      </div>
-
+      <div class="field"><label for="user">帳號</label><input type="text" id="user" placeholder="請輸入帳號" autocomplete="username" required></div>
+      <div class="field"><label for="pass">後台金鑰／密碼</label><div style="position:relative"><input type="password" id="pass" placeholder="請輸入後台金鑰" autocomplete="current-password" required style="padding-right:68px"><button type="button" class="smallbtn gray" onclick="togglePass(event)" style="position:absolute;right:8px;top:8px;min-height:38px;box-shadow:none">顯示</button></div></div>
       <button class="block" type="submit" id="loginBtn">登入後台</button>
     </form>
-
     <div id="msg" class="sub" style="min-height:24px;font-weight:950"></div>
-
-    <div class="grid two" style="margin-top:14px">
-      <a class="btn block gray" href="visitor.html">返回旅客首頁</a>
-      <button type="button" class="block orange" onclick="clearBox()">清除內容</button>
-    </div>
+    <div class="grid two" style="margin-top:14px"><a class="btn block gray" href="visitor.html">返回旅客首頁</a><button type="button" class="block orange" onclick="clearBox()">清除內容</button></div>
   </section>
-
-  <section class="card compact">
-    <div class="muted" style="text-align:center;font-weight:800;line-height:1.8">
-      系統採用本機登入憑證保存，12 小時後自動失效。<br>
-      Designed & Developed by Abby Luo
-    </div>
-  </section>
+  <section class="card compact"><div class="muted" style="text-align:center;font-weight:800;line-height:1.8">系統採用本機登入憑證保存，12 小時後自動失效。<br>正式權限由 Apps Script 後端金鑰判斷。</div></section>
 </main>
-
 <script>
-const ADMIN_USER = "admin";
-const ADMIN_PASS = "1234";
-const form = document.getElementById("loginForm");
-const msg = document.getElementById("msg");
-const loginBtn = document.getElementById("loginBtn");
-
-(function autoCheck(){
-  try{
-    const raw = localStorage.getItem("houcihu_admin_token");
-    if(!raw) return;
-    const token = JSON.parse(raw);
-    if(token.auth && Date.now() < token.expire){
-      location.href = "admin.html";
-    }
-  }catch(error){
-    localStorage.removeItem("houcihu_admin_token");
-  }
-})();
-
-function showMsg(text, color){
-  msg.innerText = text;
-  msg.style.color = color;
-}
-
-function createToken(){
-  const now = Date.now();
-  localStorage.setItem("houcihu_admin_token", JSON.stringify({
-    auth:true,
-    time:now,
-    expire:now + 12 * 60 * 60 * 1000
-  }));
-  localStorage.setItem("houcihu_admin_login", "yes");
-}
-
-function togglePass(){
-  const p = document.getElementById("pass");
-  const btn = event.currentTarget;
-  p.type = p.type === "password" ? "text" : "password";
-  btn.innerText = p.type === "password" ? "顯示" : "隱藏";
-}
-
-function clearBox(){
-  document.getElementById("user").value = "";
-  document.getElementById("pass").value = "";
-  showMsg("", "#647164");
-}
-
+const form = document.getElementById("loginForm"); const msg = document.getElementById("msg"); const loginBtn = document.getElementById("loginBtn");
+(function autoCheck(){ try{ const raw = localStorage.getItem("houcihu_admin_token"); if(!raw) return; const token = JSON.parse(raw); if(token.auth && Date.now() < token.expire && token.apiKey){ location.href = "admin.html"; } }catch(error){ localStorage.removeItem("houcihu_admin_token"); localStorage.removeItem("houcihu_admin_api_key"); } })();
+function showMsg(text, color){ msg.innerText = text; msg.style.color = color; }
+function createToken(apiKey){ const now = Date.now(); localStorage.setItem("houcihu_admin_token", JSON.stringify({ auth:true, time:now, expire:now + 12 * 60 * 60 * 1000, apiKey })); localStorage.setItem("houcihu_admin_api_key", apiKey); localStorage.setItem("houcihu_admin_login", "yes"); }
+function togglePass(event){ const p = document.getElementById("pass"); const btn = event.currentTarget; p.type = p.type === "password" ? "text" : "password"; btn.innerText = p.type === "password" ? "顯示" : "隱藏"; }
+function clearBox(){ document.getElementById("user").value = ""; document.getElementById("pass").value = ""; showMsg("", "#647164"); }
 form.addEventListener("submit", function(event){
   event.preventDefault();
-  const user = document.getElementById("user").value.trim();
-  const pass = document.getElementById("pass").value.trim();
-
-  loginBtn.disabled = true;
-  loginBtn.innerText = "驗證中...";
-
-  setTimeout(() => {
-    if(user === ADMIN_USER && pass === ADMIN_PASS){
-      createToken();
-      showMsg("登入成功，跳轉中...", "#155f34");
-      loginBtn.innerText = "登入成功";
-      setTimeout(() => location.href = "admin.html", 450);
-      return;
-    }
-    showMsg("帳號或密碼錯誤", "#cf2f2f");
-    loginBtn.disabled = false;
-    loginBtn.innerText = "登入後台";
-  }, 350);
+  const user = document.getElementById("user").value.trim(); const pass = document.getElementById("pass").value.trim();
+  if(!user || !pass){ showMsg("請輸入帳號與後台金鑰", "#cf2f2f"); return; }
+  loginBtn.disabled = true; loginBtn.innerText = "登入中...";
+  createToken(pass);
+  showMsg("登入資料已保存，進入後台後由後端驗證權限。", "#155f34");
+  setTimeout(() => location.href = "admin.html", 450);
 });
 </script>
 </body>
