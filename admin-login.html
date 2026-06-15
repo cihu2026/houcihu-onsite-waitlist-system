@@ -1,6 +1,6 @@
 <!--
 Houcihu Onsite Waitlist System
-admin-login.html v14.5 Login Button Fix
+admin-login.html v14.6 Mobile Show Button Fix
 Designed & Developed by Abby Luo
 -->
 <!DOCTYPE html>
@@ -16,8 +16,22 @@ Designed & Developed by Abby Luo
   #loginBtn{position:relative;z-index:5;pointer-events:auto;touch-action:manipulation;-webkit-user-select:none;user-select:none}
   #loginForm{position:relative;z-index:3}
   .password-wrap{position:relative}
-  .password-wrap input{padding-right:76px!important}
-  .password-wrap .showpass{position:absolute;right:8px;top:8px;min-height:38px;box-shadow:none;z-index:6;pointer-events:auto}
+  .password-wrap input{padding-right:82px!important}
+  .password-wrap .showpass{
+    position:absolute!important;
+    right:8px!important;
+    top:8px!important;
+    width:auto!important;
+    min-width:58px!important;
+    max-width:66px!important;
+    min-height:38px!important;
+    padding:8px 10px!important;
+    border-radius:12px!important;
+    box-shadow:none!important;
+    z-index:6!important;
+    pointer-events:auto!important;
+    display:inline-flex!important;
+  }
 </style>
 </head>
 <body>
