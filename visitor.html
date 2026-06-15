@@ -1,6 +1,6 @@
 <!--
 Houcihu Onsite Waitlist System
-visitor.html v14 Field Pro
+visitor.html v14.3 Privacy Guard
 Designed & Developed by Abby Luo
 -->
 <!DOCTYPE html>
@@ -13,109 +13,33 @@ Designed & Developed by Abby Luo
 <link rel="stylesheet" href="theme.css?v=14">
 </head>
 <body>
-<header class="hero">
-  <div class="hero__kicker">VISITOR SERVICE</div>
-  <h1>後慈湖旅客服務</h1>
-  <p>現場候補、叫號進度、梯次剩餘名額與營運資訊。</p>
-</header>
-
+<header class="hero"><div class="hero__kicker">VISITOR SERVICE</div><h1>後慈湖旅客服務</h1><p>現場候補、叫號進度、梯次剩餘名額與營運資訊。</p></header>
 <main class="wrap narrow">
-  <section class="card">
-    <div class="grid three">
-      <div class="kpi">
-        <span>目前叫號</span>
-        <b id="nowNo" class="greenText">A000</b>
-        <small>NOW CALLING</small>
-      </div>
-      <div class="kpi">
-        <span>候補狀況</span>
-        <b id="queueStatus" class="greenText">順暢</b>
-        <small id="queueCount">等待 0 組</small>
-      </div>
-      <div class="kpi">
-        <span>今日營運</span>
-        <b id="todayOpen" class="greenText">開園</b>
-        <small id="syncTime">連線中</small>
-      </div>
-    </div>
-  </section>
-
-  <section class="card notice">
-    ⚠️ 現場遞補不代表一定有名額，請依現場叫號與工作人員安排為準。
-  </section>
-
-  <section class="card">
-    <div class="section-title"><h2>快速服務</h2></div>
-    <div class="grid two">
-      <a class="btn big" href="checkin.html">📝 現場候補登記<small>填寫姓名／電話／人數</small></a>
-      <a class="btn big blue" href="status.html">📊 即時梯次資訊<small>查看名額狀態</small></a>
-      <a class="btn big gray" href="screen.html">📢 查看叫號看板<small>目前叫號進度</small></a>
-      <a class="btn big orange" href="calendar.html">📅 營運資訊<small>開園休園公告</small></a>
-    </div>
-  </section>
-
-  <section class="card">
-    <h2 class="section-title">候補提醒</h2>
-    <div class="muted" style="line-height:1.9;font-weight:750">
-      1. 登記完成後請截圖保存候補號碼。<br>
-      2. 叫號後請盡速至服務櫃台，過號需重新登記。<br>
-      3. 若人數較多或需特殊協助，請直接洽現場工作人員。<br>
-      4. 免費或優惠資格仍需依規定出示證件。
-    </div>
-  </section>
+  <section class="card"><div class="grid three"><div class="kpi"><span>目前叫號</span><b id="nowNo" class="greenText">A000</b><small>NOW CALLING</small></div><div class="kpi"><span>候補狀況</span><b id="queueStatus" class="greenText">順暢</b><small id="queueCount">等待 0 組</small></div><div class="kpi"><span>今日營運</span><b id="todayOpen" class="greenText">開園</b><small id="syncTime">連線中</small></div></div></section>
+  <section class="card notice">⚠️ 現場遞補不代表一定有名額，請依現場叫號與工作人員安排為準。</section>
+  <section class="card"><div class="section-title"><h2>快速服務</h2></div><div class="grid two"><a class="btn big" href="checkin.html">📝 現場候補登記<small>填寫姓名／電話／人數</small></a><a class="btn big blue" href="status.html">📊 即時梯次資訊<small>查看名額狀態</small></a><a class="btn big gray" href="screen.html">📢 查看叫號看板<small>目前叫號進度</small></a><a class="btn big orange" href="calendar.html">📅 營運資訊<small>開園休園公告</small></a></div></section>
+  <section class="card"><h2 class="section-title">候補提醒</h2><div class="muted" style="line-height:1.9;font-weight:750">1. 登記完成後請截圖保存候補號碼。<br>2. 叫號後請盡速至服務櫃台，過號需重新登記。<br>3. 若人數較多或需特殊協助，請直接洽現場工作人員。<br>4. 免費或優惠資格仍需依規定出示證件。</div></section>
 </main>
-
 <footer class="footer">Houcihu Visitor Service Center © 2026</footer>
-<script src="sheets.js?v=14"></script>
+<script src="sheets.js?v=14.3"></script>
 <script>
-function setTodayStatus(){
-  const isTuesday = new Date().getDay() === 2;
-  const el = document.getElementById("todayOpen");
-  el.innerText = isTuesday ? "休園" : "開園";
-  el.className = isTuesday ? "redText" : "greenText";
-}
-function queueText(n){
-  if(n <= 3) return ["順暢","greenText"];
-  if(n <= 7) return ["普通","orangeText"];
-  return ["較滿","redText"];
-}
+function setTodayStatus(){ const isTuesday = new Date().getDay() === 2; const el = document.getElementById("todayOpen"); el.innerText = isTuesday ? "休園" : "開園"; el.className = isTuesday ? "redText" : "greenText"; }
+function queueText(n){ if(n <= 3) return ["順暢","greenText"]; if(n <= 7) return ["普通","orangeText"]; return ["較滿","redText"]; }
 async function refreshHome(){
   try{
-    const rows = await cloudGet();
-    let now = "A000";
-    let waiting = 0;
-    if(rows && rows.length > 1){
-      for(let i = rows.length - 1; i >= 1; i--){
-        if(normalizeStatus(rows[i][5]) === "called"){
-          now = rows[i][0] || "A000";
-          break;
-        }
-      }
-      for(let i = 1; i < rows.length; i++){
-        if(normalizeStatus(rows[i][5]) === "waiting") waiting++;
-      }
-    }
+    const data = await getPublicStatus();
+    const now = data.currentNo || "A000";
+    const waiting = Number(data.waitingCount || 0);
     const nowBox = document.getElementById("nowNo");
-    if(nowBox.innerText !== now){
-      nowBox.classList.remove("flash");
-      void nowBox.offsetWidth;
-      nowBox.classList.add("flash");
-    }
+    if(nowBox.innerText !== now){ nowBox.classList.remove("flash"); void nowBox.offsetWidth; nowBox.classList.add("flash"); }
     nowBox.innerText = now;
     const [text, cls] = queueText(waiting);
-    const q = document.getElementById("queueStatus");
-    q.innerText = text;
-    q.className = cls;
+    const q = document.getElementById("queueStatus"); q.innerText = text; q.className = cls;
     document.getElementById("queueCount").innerText = `等待 ${waiting} 組`;
-    document.getElementById("syncTime").innerText = "最後同步 " + formatLocalTime();
-  }catch(error){
-    console.warn(error);
-    document.getElementById("syncTime").innerText = "連線中斷";
-  }
+    document.getElementById("syncTime").innerText = data.ok ? "最後同步 " + formatLocalTime() : "等待後端隱私版部署";
+  }catch(error){ console.warn(error); document.getElementById("syncTime").innerText = "連線中斷"; }
 }
-setTodayStatus();
-refreshHome();
-autoSync(refreshHome,3000);
+setTodayStatus(); refreshHome(); autoSync(refreshHome,3000);
 </script>
 </body>
 </html>
