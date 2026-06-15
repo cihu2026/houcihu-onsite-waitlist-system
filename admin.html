@@ -1,6 +1,6 @@
 <!--
 Houcihu Onsite Waitlist System
-admin.html v14.3 Privacy Guard
+admin.html v14.4 Analytics Dashboard
 Designed & Developed by Abby Luo
 -->
 <!DOCTYPE html>
@@ -11,6 +11,9 @@ Designed & Developed by Abby Luo
 <meta name="theme-color" content="#155f34">
 <title>後慈湖｜管理後台</title>
 <link rel="stylesheet" href="theme.css?v=14">
+<style>
+.analytics-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}.analytics-box{background:#f7fbf8;border-radius:18px;padding:16px}.analytics-box h3{margin:0 0 10px;color:#155f34}.rank-list{display:grid;gap:10px}.rank-item{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;font-weight:850}.rank-bar{height:12px;border-radius:99px;background:#dfeee4;overflow:hidden}.rank-fill{height:100%;background:#155f34;border-radius:99px}.rate-big{font-size:clamp(42px,7vw,76px);font-weight:950;color:#155f34;line-height:1}.rate-sub{font-weight:850;color:#666;margin-top:8px;line-height:1.6}@media(max-width:900px){.analytics-grid{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
 <script>
@@ -27,20 +30,21 @@ Designed & Developed by Abby Luo
 })();
 </script>
 <div class="side-layout">
-  <aside class="sidebar"><div class="brand">後慈湖後台<small>v14.3 Privacy Guard｜現場營運中心</small></div><nav class="menu"><a href="#overview">總覽</a><a href="#queue">候補名單</a><a href="#sessions">梯次補位</a><a href="mobile.html">手機版</a><a href="screen.html">叫號看板</a><a href="#" onclick="logout();return false;">登出</a></nav></aside>
+  <aside class="sidebar"><div class="brand">後慈湖後台<small>v14.4 Analytics｜現場營運中心</small></div><nav class="menu"><a href="#overview">總覽</a><a href="#analytics">營運分析</a><a href="#queue">候補名單</a><a href="#sessions">梯次補位</a><a href="mobile.html">手機版</a><a href="screen.html">叫號看板</a><a href="#" onclick="logout();return false;">登出</a></nav></aside>
   <main class="main" id="overview">
     <section class="card"><div class="topbar"><div><h1>管理後台</h1><p class="muted" id="syncTime">資料同步中</p></div><div class="searchbox"><input id="searchBox" placeholder="搜尋姓名／電話／號碼／梯次"></div></div></section>
-    <section class="grid four"><div class="card kpi"><span>今日總候補</span><b id="kpiTotal" class="greenText">0</b><small>含所有狀態</small></div><div class="card kpi"><span>等待中</span><b id="kpiWaiting" class="orangeText">0</b><small>可叫號</small></div><div class="card kpi"><span>已叫號</span><b id="kpiCalled" class="blueText">0</b><small>等待到場</small></div><div class="card kpi"><span>已完成</span><b id="kpiDone" class="greenText">0</b><small>已到場</small></div></section>
+    <section class="grid four"><div class="card kpi"><span>今日總候補</span><b id="kpiTotal" class="greenText">0</b><small>含所有狀態</small></div><div class="card kpi"><span>目前候補</span><b id="kpiActive" class="orangeText">0</b><small>等待中＋已叫號</small></div><div class="card kpi"><span>等待中</span><b id="kpiWaiting" class="orangeText">0</b><small>可叫號</small></div><div class="card kpi"><span>已到場</span><b id="kpiDone" class="greenText">0</b><small>完成報到</small></div></section>
+    <section class="card" id="analytics"><div class="section-title"><h2>營運分析</h2><span class="muted">候補統計／梯次排行榜／報到率</span></div><div class="analytics-grid"><div class="analytics-box"><h3>梯次候補排行榜</h3><div id="slotRanking" class="rank-list"><div class="muted">讀取中...</div></div></div><div class="analytics-box"><h3>現場報到率</h3><div class="rate-big" id="checkinRate">0%</div><div class="rate-sub" id="checkinRateText">已到場 0 人／已處理 0 人</div><div class="rate-sub" id="queueSummary">目前候補 0 人</div></div></div></section>
     <section class="card notice">⚠️ 按「下一號叫號」會將第一筆等待中旅客改為已叫號，並同步扣除該梯次名額。姓名與電話僅限後台授權人員查看。</section>
     <section class="card"><div class="sub">目前叫號</div><div class="big-number" id="currentNo">A000</div><div class="grid auto" style="margin-top:18px"><button class="big" data-lock="true" onclick="callNextAndReload()">📢 下一號叫號<small>同步雲端與看板</small></button><button class="big orange" onclick="voiceCall()">🔊 語音重播<small>重播目前號碼</small></button><button class="big blue" onclick="loadAdmin()">🔄 立即刷新<small>重新抓取資料</small></button><a class="btn big gray" href="screen.html">🖥 開啟看板<small>給旅客觀看</small></a><button class="big blue" onclick="exportCSV()">⬇️ 下載報表<small>CSV 名單</small></button><button class="big red" data-lock="true" onclick="clearToday()">🗑 清空名單<small>請謹慎使用</small></button></div></section>
     <section class="card" id="sessions"><div class="section-title"><h2>梯次快速補位</h2><span class="muted">優先補同梯次，其次補可接受其他梯次者</span></div><div class="grid auto" id="sessionGrid"><div class="muted">讀取梯次中...</div></div></section>
     <section class="card" id="queue"><div class="section-title"><h2>候補名單</h2><span class="muted">叫號／到場／取消皆會同步雲端</span></div><div class="table-wrap"><table><thead><tr><th>列</th><th>號碼</th><th>姓名</th><th>電話</th><th>人數</th><th>梯次／意願</th><th>狀態</th><th>操作</th></tr></thead><tbody id="tbody"><tr><td colspan="8">載入中...</td></tr></tbody></table></div></section>
     <section class="card" id="sessionTableCard"><div class="section-title"><h2>梯次資料</h2></div><div class="table-wrap"><table><thead><tr><th>梯次</th><th>狀態</th><th>剩餘名額</th><th>操作</th></tr></thead><tbody id="sessionBody"><tr><td colspan="4">載入中...</td></tr></tbody></table></div></section>
-    <div class="footer">Designed & Developed by Abby Luo ｜ Houcihu Official Build v14.3</div>
+    <div class="footer">Designed & Developed by Abby Luo ｜ Houcihu Official Build v14.4</div>
   </main>
 </div>
 <script src="sheets.js?v=14.3"></script>
-<script src="script.js?v=14.3"></script>
+<script src="script.js?v=14.4"></script>
 <script src="script-hotfix.js?v=14.2"></script>
 </body>
 </html>
