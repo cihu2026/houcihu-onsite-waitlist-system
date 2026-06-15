@@ -1,6 +1,6 @@
 <!--
 Houcihu Onsite Waitlist System
-screen.html v14.4 Self Check-in QR
+screen.html v14.5 Onsite Code Display
 Designed & Developed by Abby Luo
 -->
 <!DOCTYPE html>
@@ -18,10 +18,14 @@ body{overflow-x:hidden}
 .screen-title{font-size:clamp(32px,5vw,58px)}
 .screen-top{display:grid;grid-template-columns:1.4fr .8fr;gap:18px;align-items:stretch}
 .qr-card{text-align:center;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;background:linear-gradient(180deg,#ffffff,#f5fbf7)}
-.qr-card img{width:min(240px,48vw);height:auto;border:10px solid #fff;border-radius:22px;box-shadow:0 12px 28px rgba(0,0,0,.16)}
+.qr-card img{width:min(220px,46vw);height:auto;border:10px solid #fff;border-radius:22px;box-shadow:0 12px 28px rgba(0,0,0,.16)}
 .qr-card .qr-title{font-size:clamp(24px,3vw,38px);font-weight:950;color:#155f34;line-height:1.2}
 .qr-card .qr-note{font-size:clamp(16px,2vw,24px);font-weight:850;color:#555;line-height:1.45}
 .qr-card .qr-url{font-size:14px;color:#777;word-break:break-all}
+.onsite-code-box{width:100%;border:3px dashed #155f34;border-radius:24px;background:#fff;padding:12px 10px;margin-top:4px}
+.onsite-code-label{font-size:clamp(16px,2vw,24px);font-weight:950;color:#155f34}
+.onsite-code{font-size:clamp(42px,7vw,76px);font-weight:1000;letter-spacing:.14em;color:#111;line-height:1.1}
+.onsite-code-tip{font-size:clamp(14px,1.5vw,18px);font-weight:850;color:#777}
 @media(max-width:900px){.screen-top{grid-template-columns:1fr}.qr-card img{width:210px}}
 @media(min-width:1100px){.slot-grid-large{grid-template-columns:repeat(4,minmax(0,1fr))}}
 </style>
@@ -34,16 +38,33 @@ body{overflow-x:hidden}
     <div class="card qr-card">
       <div class="qr-title">掃描自助候補登記</div>
       <img alt="後慈湖現場候補登記 QR Code" src="https://quickchart.io/qr?size=360&margin=2&text=https%3A%2F%2Fcihu2026.github.io%2Fhoucihu-onsite-waitlist-system%2Fcheckin.html">
-      <div class="qr-note">請用手機相機掃描<br>填寫姓名、手機、人數與希望梯次</div>
+      <div class="onsite-code-box">
+        <div class="onsite-code-label">今日現場驗證碼</div>
+        <div class="onsite-code" id="onsiteCode">----</div>
+        <div class="onsite-code-tip">填寫候補時請輸入此4位數</div>
+      </div>
+      <div class="qr-note">請用手機相機掃描<br>填寫資料並輸入現場驗證碼</div>
       <div class="qr-url">cihu2026.github.io/houcihu-onsite-waitlist-system/checkin.html</div>
     </div>
   </section>
   <section class="card"><div class="section-title"><h2>今日梯次狀況</h2><span class="muted">即時更新</span></div><div class="grid auto slot-grid-large" id="slotGrid"><div class="muted">系統連線中...</div></div></section>
-  <section class="card notice">現場遞補不代表一定有名額，實際入場資格依現場名額與工作人員安排為準。</section>
+  <section class="card notice">現場遞補不代表一定有名額，實際入場資格依現場名額與工作人員安排為準。自助登記須輸入看板顯示之今日現場驗證碼。</section>
 </main>
 <footer class="footer">Houcihu Visitor Service Center © 2026</footer>
 <script src="sheets.js?v=14.3"></script>
 <script>
+function getTodayCode(){
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = now.getMonth() + 1;
+  const d = now.getDate();
+  const seed = y * 10000 + m * 100 + d;
+  return String(((seed * 37 + 520) % 9000) + 1000);
+}
+function renderOnsiteCode(){
+  const el = document.getElementById("onsiteCode");
+  if(el) el.innerText = getTodayCode();
+}
 function renderCurrent(current){
   const el = document.getElementById("currentNo");
   const no = current || "A000";
@@ -66,13 +87,14 @@ function renderSlots(sessions){
 }
 async function refreshDisplay(){
   try{
+    renderOnsiteCode();
     const data = await getPublicStatus();
     renderCurrent(data.currentNo);
     renderSlots(data.sessions);
     document.getElementById("syncTime").innerText = data.ok ? "最後同步 " + formatLocalTime() : "等待後端隱私版部署";
   }catch(error){ console.warn("看板更新錯誤：", error); document.getElementById("syncTime").innerText = "連線中斷，稍後重試"; }
 }
-refreshDisplay(); autoSync(refreshDisplay,4000);
+renderOnsiteCode(); refreshDisplay(); autoSync(refreshDisplay,4000);
 </script>
 </body>
 </html>
