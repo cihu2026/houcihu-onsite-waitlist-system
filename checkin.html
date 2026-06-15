@@ -1,6 +1,6 @@
 <!--
 Houcihu Onsite Waitlist System
-checkin.html v14.4 Session Cutoff Guard
+checkin.html v14.5 Fixed Session Cutoff Guard
 Designed & Developed by Abby Luo
 -->
 <!DOCTYPE html>
@@ -15,7 +15,7 @@ Designed & Developed by Abby Luo
 <body>
 <header class="hero"><div class="hero__kicker">WAITLIST CHECK-IN</div><h1>現場候補登記</h1><p>請填寫姓名、手機、人數與希望梯次，送出後請截圖保存候補號碼。</p></header>
 <main class="wrap narrow">
-  <section class="card notice">⚠️ 候補登記不代表保證入園，請依現場叫號與工作人員安排為準。每梯次於開始前 15 分鐘停止登記，已截止或已結束之梯次不再開放候補。</section>
+  <section class="card notice">⚠️ 候補登記不代表保證入園，請依現場叫號與工作人員安排為準。第一梯 09:00 截止、第二梯 09:30 截止，後續梯次依現場時段截止，最晚 13:30 後不再開放候補登記。</section>
   <section class="card compact"><div class="muted" style="line-height:1.8;font-weight:750">個資告知：姓名、手機與同行人數僅作後慈湖現場候補叫號、聯繫與人流管理使用；公開頁面不顯示姓名與完整電話。</div></section>
   <section class="card" id="formBox">
     <form id="waitForm" novalidate>
@@ -35,41 +35,35 @@ Designed & Developed by Abby Luo
 <script>
 let sessionRows = [];
 
-const SESSION_START_TIMES = {
+const SESSION_CUTOFF_TIMES = {
   1: "09:00",
-  2: "10:00",
-  3: "11:00",
-  4: "12:00",
-  5: "13:00",
-  6: "14:00",
-  7: "15:00",
-  8: "16:00"
+  2: "09:30",
+  3: "10:30",
+  4: "11:30",
+  5: "12:30",
+  6: "13:30",
+  7: "13:30",
+  8: "13:30"
 };
-const REGISTRATION_CUTOFF_MINUTES = 15;
 
 function setSubmitState(disabled, text){ const btn = document.getElementById("submitBtn"); btn.disabled = disabled; btn.innerText = text; }
 function cleanPhone(value){ return String(value || "").replace(/\D/g, ""); }
 function getSlotNo(value){ return String(value || "").replace(/[^0-9]/g, ""); }
-function getSessionStart(no){
-  const time = SESSION_START_TIMES[Number(no)];
+function getSessionCutoff(no){
+  const time = SESSION_CUTOFF_TIMES[Number(no)];
   if(!time) return null;
   const [hour, minute] = time.split(":").map(Number);
-  const start = new Date();
-  start.setHours(hour, minute, 0, 0);
-  return start;
-}
-function getRegistrationCutoff(no){
-  const start = getSessionStart(no);
-  if(!start) return null;
-  return new Date(start.getTime() - REGISTRATION_CUTOFF_MINUTES * 60 * 1000);
+  const cutoff = new Date();
+  cutoff.setHours(hour, minute, 0, 0);
+  return cutoff;
 }
 function isSessionClosed(no){
-  const cutoff = getRegistrationCutoff(no);
+  const cutoff = getSessionCutoff(no);
   if(!cutoff) return true;
   return new Date() >= cutoff;
 }
 function getCutoffText(no){
-  const cutoff = getRegistrationCutoff(no);
+  const cutoff = getSessionCutoff(no);
   if(!cutoff) return "";
   return cutoff.toLocaleTimeString("zh-TW", { hour: "2-digit", minute: "2-digit", hour12: false });
 }
