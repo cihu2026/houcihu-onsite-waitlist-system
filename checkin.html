@@ -1,6 +1,6 @@
 <!--
 Houcihu Onsite Waitlist System
-checkin.html v14.6 Onsite Verification Code
+checkin.html v14.7 GPS + Onsite Verification Code
 Designed & Developed by Abby Luo
 -->
 <!DOCTYPE html>
@@ -15,9 +15,14 @@ Designed & Developed by Abby Luo
 <body>
 <header class="hero"><div class="hero__kicker">WAITLIST CHECK-IN</div><h1>現場候補登記</h1><p>請填寫姓名、手機、人數與希望梯次，送出後請截圖保存候補號碼。</p></header>
 <main class="wrap narrow">
-  <section class="card notice">⚠️ 本頁限現場候補使用。請掃描現場看板 QR Code，並輸入看板顯示之今日驗證碼。第一梯 09:00 截止、第二梯 09:30 截止，後續梯次依現場時段截止，最晚 13:30 後不再開放候補登記。</section>
-  <section class="card compact"><div class="muted" style="line-height:1.8;font-weight:750">個資告知：姓名、手機與同行人數僅作後慈湖現場候補叫號、聯繫與人流管理使用；公開頁面不顯示姓名與完整電話。</div></section>
-  <section class="card" id="formBox">
+  <section class="card notice">⚠️ 本頁限後慈湖現場候補使用。請掃描現場看板 QR Code、允許手機定位，並輸入看板顯示之今日驗證碼。</section>
+  <section class="card compact"><div class="muted" style="line-height:1.8;font-weight:750">個資告知：姓名、手機、同行人數與定位檢核僅作後慈湖現場候補叫號、聯繫與人流管理使用；公開頁面不顯示姓名與完整電話。</div></section>
+  <section class="card" id="locationBox">
+    <div class="sub">現場定位檢核</div>
+    <div class="slot-card" style="margin-top:14px"><h3 id="locationTitle">確認是否在後慈湖現場</h3><div class="state grayText" id="locationState">請允許定位，系統將確認您是否位於現場可登記範圍內。</div></div>
+    <button class="block" type="button" id="locationBtn" onclick="verifyOnsiteLocation()">開始定位檢核</button>
+  </section>
+  <section class="card" id="formBox" style="display:none">
     <form id="waitForm" novalidate>
       <div class="field"><label for="name">姓名</label><input type="text" id="name" placeholder="請輸入姓名" autocomplete="name" required></div>
       <div class="field"><label for="phone">手機號碼</label><input type="tel" id="phone" placeholder="例如：0912345678" inputmode="numeric" autocomplete="tel" maxlength="10" required></div>
@@ -35,6 +40,11 @@ Designed & Developed by Abby Luo
 <script src="sheets.js?v=14.3"></script>
 <script>
 let sessionRows = [];
+let onsiteVerified = false;
+
+const TARGET_LAT = 24.8406;
+const TARGET_LNG = 121.2993;
+const ALLOW_DISTANCE_METERS = 700;
 
 const SESSION_CUTOFF_TIMES = {
   1: "09:00",
@@ -59,6 +69,60 @@ function setSubmitState(disabled, text){ const btn = document.getElementById("su
 function cleanPhone(value){ return String(value || "").replace(/\D/g, ""); }
 function cleanCode(value){ return String(value || "").replace(/\D/g, "").slice(0, 4); }
 function getSlotNo(value){ return String(value || "").replace(/[^0-9]/g, ""); }
+function toRad(value){ return value * Math.PI / 180; }
+function getDistanceMeters(lat1, lng1, lat2, lng2){
+  const earth = 6371000;
+  const dLat = toRad(lat2 - lat1);
+  const dLng = toRad(lng2 - lng1);
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+  return earth * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+function setLocationMessage(title, html, cls = "grayText"){
+  document.getElementById("locationTitle").innerText = title;
+  document.getElementById("locationState").className = "state " + cls;
+  document.getElementById("locationState").innerHTML = html;
+}
+function allowCheckin(){
+  onsiteVerified = true;
+  document.getElementById("locationBox").style.display = "none";
+  document.getElementById("formBox").style.display = "block";
+  loadSlots();
+}
+function blockCheckin(message){
+  onsiteVerified = false;
+  document.getElementById("formBox").style.display = "none";
+  setLocationMessage("目前無法開放登記", message, "redText");
+  document.getElementById("locationBtn").innerText = "重新定位檢核";
+  document.getElementById("locationBtn").disabled = false;
+}
+function verifyOnsiteLocation(){
+  const btn = document.getElementById("locationBtn");
+  btn.disabled = true;
+  btn.innerText = "定位確認中...";
+  setLocationMessage("定位確認中", "請稍候，正在確認您是否位於後慈湖現場範圍內。", "grayText");
+
+  if(!navigator.geolocation){
+    blockCheckin("此手機或瀏覽器不支援定位，請洽現場服務人員協助候補登記。");
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(function(pos){
+    const lat = pos.coords.latitude;
+    const lng = pos.coords.longitude;
+    const accuracy = Math.round(pos.coords.accuracy || 0);
+    const distance = Math.round(getDistanceMeters(lat, lng, TARGET_LAT, TARGET_LNG));
+
+    if(distance <= ALLOW_DISTANCE_METERS || accuracy > 600){
+      setLocationMessage("定位通過", `已確認位於現場範圍內，可進行候補登記。<br>定位距離：約 ${distance} 公尺｜誤差：約 ${accuracy} 公尺`, "greenText");
+      allowCheckin();
+    }else{
+      blockCheckin(`此候補系統限後慈湖現場使用。<br>目前定位距離約 ${distance} 公尺，超過可登記範圍 ${ALLOW_DISTANCE_METERS} 公尺。<br>若您已在現場，請開啟手機定位高精準度後重新檢核，或洽服務櫃台。`);
+    }
+  }, function(error){
+    const msg = error.code === 1 ? "您尚未允許定位，無法確認是否在現場。請允許瀏覽器定位後重新操作，或洽服務櫃台。" : "定位失敗，請確認手機定位功能已開啟，並在現場重新檢核。";
+    blockCheckin(msg);
+  }, { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 });
+}
 function getSessionCutoff(no){
   const time = SESSION_CUTOFF_TIMES[Number(no)];
   if(!time) return null;
@@ -103,6 +167,7 @@ document.getElementById("siteCode").addEventListener("input", function(){ this.v
 document.getElementById("waitForm").addEventListener("submit", async function(event){
   event.preventDefault(); setSubmitState(true, "送出中...");
   const name = document.getElementById("name").value.trim(); const phone = cleanPhone(document.getElementById("phone").value); const siteCode = cleanCode(document.getElementById("siteCode").value); const people = document.getElementById("people").value; const slot = document.getElementById("slot").value; const slotNo = getSlotNo(slot); const flex = document.querySelector('input[name="flex"]:checked').value;
+  if(!onsiteVerified){ alert("此候補系統限後慈湖現場使用，請先完成定位檢核。"); setSubmitState(false, "確認送出登記"); return; }
   if(!name){ alert("請輸入姓名"); setSubmitState(false, "確認送出登記"); return; }
   if(!/^09\d{8}$/.test(phone)){ alert("請輸入正確手機號碼，例如：0912345678"); setSubmitState(false, "確認送出登記"); return; }
   if(siteCode !== getTodayCode()){ alert("現場驗證碼錯誤，請查看現場看板上的4位數驗證碼。"); setSubmitState(false, "確認送出登記"); return; }
@@ -113,10 +178,10 @@ document.getElementById("waitForm").addEventListener("submit", async function(ev
     const result = await addQueue("", name, phone, people, `${slot}｜${flex}`);
     if(!isSuccess(result)){ alert(result?.message === "today duplicate" ? "此手機今日已登記候補名單，請勿重複登記。" : "系統忙碌中，請稍後再試。"); setSubmitState(false, "確認送出登記"); return; }
     const finalNo = result?.number || "A000";
-    document.getElementById("formBox").style.display = "none"; document.getElementById("successBox").style.display = "block"; document.getElementById("ticketNo").innerText = finalNo; document.getElementById("timeText").innerText = "登記時間：" + new Date().toLocaleString("zh-TW"); window.scrollTo({top:0,behavior:"smooth"});
+    document.getElementById("formBox").style.display = "none"; document.getElementById("locationBox").style.display = "none"; document.getElementById("successBox").style.display = "block"; document.getElementById("ticketNo").innerText = finalNo; document.getElementById("timeText").innerText = "登記時間：" + new Date().toLocaleString("zh-TW"); window.scrollTo({top:0,behavior:"smooth"});
   }catch(error){ console.warn(error); alert("連線不穩，請稍後再試或洽櫃台。"); setSubmitState(false, "確認送出登記"); }
 });
-loadSlots();
+verifyOnsiteLocation();
 </script>
 </body>
 </html>
