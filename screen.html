@@ -1,6 +1,6 @@
 <!--
 Houcihu Onsite Waitlist System
-screen.html v14.3 Privacy Guard
+screen.html v14.4 Self Check-in QR
 Designed & Developed by Abby Luo
 -->
 <!DOCTYPE html>
@@ -11,12 +11,33 @@ Designed & Developed by Abby Luo
 <meta name="theme-color" content="#155f34">
 <title>後慈湖｜即時叫號看板</title>
 <link rel="stylesheet" href="theme.css?v=14">
-<style>body{overflow-x:hidden}.screen-wrap{width:min(1280px,100%);margin:-36px auto 0;padding:0 18px 30px}.screen-number{font-size:clamp(86px,19vw,230px)}.screen-title{font-size:clamp(32px,5vw,58px)}@media(min-width:1100px){.slot-grid-large{grid-template-columns:repeat(4,minmax(0,1fr))}}</style>
+<style>
+body{overflow-x:hidden}
+.screen-wrap{width:min(1280px,100%);margin:-36px auto 0;padding:0 18px 30px}
+.screen-number{font-size:clamp(86px,19vw,230px)}
+.screen-title{font-size:clamp(32px,5vw,58px)}
+.screen-top{display:grid;grid-template-columns:1.4fr .8fr;gap:18px;align-items:stretch}
+.qr-card{text-align:center;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;background:linear-gradient(180deg,#ffffff,#f5fbf7)}
+.qr-card img{width:min(240px,48vw);height:auto;border:10px solid #fff;border-radius:22px;box-shadow:0 12px 28px rgba(0,0,0,.16)}
+.qr-card .qr-title{font-size:clamp(24px,3vw,38px);font-weight:950;color:#155f34;line-height:1.2}
+.qr-card .qr-note{font-size:clamp(16px,2vw,24px);font-weight:850;color:#555;line-height:1.45}
+.qr-card .qr-url{font-size:14px;color:#777;word-break:break-all}
+@media(max-width:900px){.screen-top{grid-template-columns:1fr}.qr-card img{width:210px}}
+@media(min-width:1100px){.slot-grid-large{grid-template-columns:repeat(4,minmax(0,1fr))}}
+</style>
 </head>
 <body>
 <header class="hero"><div class="hero__kicker">NOW CALLING</div><h1 class="screen-title">後慈湖即時叫號看板</h1><p>請留意目前叫號與梯次資訊，叫號後請至服務櫃台。</p></header>
 <main class="screen-wrap">
-  <section class="card"><div class="sub">目前叫號</div><div class="big-number screen-number" id="currentNo">A000</div><div class="sub" id="syncTime">資料同步中</div></section>
+  <section class="screen-top">
+    <div class="card"><div class="sub">目前叫號</div><div class="big-number screen-number" id="currentNo">A000</div><div class="sub" id="syncTime">資料同步中</div></div>
+    <div class="card qr-card">
+      <div class="qr-title">掃描自助候補登記</div>
+      <img alt="後慈湖現場候補登記 QR Code" src="https://quickchart.io/qr?size=360&margin=2&text=https%3A%2F%2Fcihu2026.github.io%2Fhoucihu-onsite-waitlist-system%2Fcheckin.html">
+      <div class="qr-note">請用手機相機掃描<br>填寫姓名、手機、人數與希望梯次</div>
+      <div class="qr-url">cihu2026.github.io/houcihu-onsite-waitlist-system/checkin.html</div>
+    </div>
+  </section>
   <section class="card"><div class="section-title"><h2>今日梯次狀況</h2><span class="muted">即時更新</span></div><div class="grid auto slot-grid-large" id="slotGrid"><div class="muted">系統連線中...</div></div></section>
   <section class="card notice">現場遞補不代表一定有名額，實際入場資格依現場名額與工作人員安排為準。</section>
 </main>
