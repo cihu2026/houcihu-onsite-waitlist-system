@@ -1,6 +1,6 @@
 <!--
 Houcihu Onsite Waitlist System
-checkin.html v14 Field Pro
+checkin.html v14.1 Field Pro
 Designed & Developed by Abby Luo
 -->
 <!DOCTYPE html>
@@ -26,48 +26,21 @@ Designed & Developed by Abby Luo
 
   <section class="card" id="formBox">
     <form id="waitForm" novalidate>
-      <div class="field">
-        <label for="name">姓名</label>
-        <input type="text" id="name" placeholder="請輸入姓名" autocomplete="name" required>
-      </div>
-
-      <div class="field">
-        <label for="phone">手機號碼</label>
-        <input type="tel" id="phone" placeholder="例如：0912345678" inputmode="numeric" autocomplete="tel" maxlength="10" required>
-      </div>
-
+      <div class="field"><label for="name">姓名</label><input type="text" id="name" placeholder="請輸入姓名" autocomplete="name" required></div>
+      <div class="field"><label for="phone">手機號碼</label><input type="tel" id="phone" placeholder="例如：0912345678" inputmode="numeric" autocomplete="tel" maxlength="10" required></div>
       <div class="field">
         <label for="people">同行人數</label>
         <select id="people">
-          <option value="1">1 人</option>
-          <option value="2">2 人</option>
-          <option value="3">3 人</option>
-          <option value="4">4 人</option>
-          <option value="5">5 人</option>
-          <option value="6">6 人</option>
-          <option value="7">7 人</option>
-          <option value="8">8 人</option>
-          <option value="9">9 人</option>
-          <option value="10+">10 人以上，請洽櫃台</option>
+          <option value="1">1 人</option><option value="2">2 人</option><option value="3">3 人</option><option value="4">4 人</option><option value="5">5 人</option><option value="6">6 人</option><option value="7">7 人</option><option value="8">8 人</option><option value="9">9 人</option><option value="10+">10 人以上，請洽櫃台</option>
         </select>
       </div>
-
-      <div class="field">
-        <label for="slot">希望梯次</label>
-        <select id="slot"></select>
-      </div>
-
-      <div class="slot-card" id="slotInfo" style="margin-top:14px">
-        <h3>讀取梯次中</h3>
-        <div class="state grayText">請稍候</div>
-      </div>
-
+      <div class="field"><label for="slot">希望梯次</label><select id="slot"></select></div>
+      <div class="slot-card" id="slotInfo" style="margin-top:14px"><h3>讀取梯次中</h3><div class="state grayText">請稍候</div></div>
       <div class="choice-box">
         <strong class="greenText">候補安排意願</strong>
         <label><input type="radio" name="flex" value="接受其他梯次" checked><span>若原梯次額滿，可接受安排其他相近梯次。</span></label>
         <label><input type="radio" name="flex" value="僅原梯次"><span>僅接受原選梯次候補。</span></label>
       </div>
-
       <button class="block" type="submit" id="submitBtn" data-lock="true">確認送出登記</button>
     </form>
   </section>
@@ -75,15 +48,9 @@ Designed & Developed by Abby Luo
   <section class="card" id="successBox" style="display:none">
     <div class="sub">登記成功｜您的候補號碼</div>
     <div class="big-number" id="ticketNo">A000</div>
-    <div class="card compact" style="box-shadow:none;background:#f7fbf8">
-      <b>請截圖保存畫面</b><br>
-      請留意現場看板叫號；叫號後請盡速至櫃台，過號需重新排隊。
-    </div>
+    <div class="card compact" style="box-shadow:none;background:#f7fbf8"><b>請截圖保存畫面</b><br>請留意現場看板叫號；叫號後請盡速至櫃台，過號需重新排隊。</div>
     <p class="muted" id="timeText" style="text-align:center;font-weight:800"></p>
-    <div class="grid two">
-      <a class="btn block" href="status.html">查看叫號與梯次</a>
-      <a class="btn block gray" href="visitor.html">返回首頁</a>
-    </div>
+    <div class="grid two"><a class="btn block" href="status.html">查看叫號與梯次</a><a class="btn block gray" href="visitor.html">返回首頁</a></div>
   </section>
 </main>
 
@@ -91,143 +58,66 @@ Designed & Developed by Abby Luo
 <script src="sheets.js?v=14"></script>
 <script>
 let sessionRows = [];
-
-function setSubmitState(disabled, text){
-  const btn = document.getElementById("submitBtn");
-  btn.disabled = disabled;
-  btn.innerText = text;
-}
-
-function cleanPhone(value){
-  return String(value || "").replace(/\D/g, "");
-}
-
-function makeNumber(rows){
-  let max = 0;
-  for(let i = 1; i < rows.length; i++){
-    const num = Number(String(rows[i][0] || "").replace(/[^0-9]/g, ""));
-    if(num > max) max = num;
-  }
-  return "A" + String(max + 1).padStart(3, "0");
-}
-
+function setSubmitState(disabled, text){ const btn = document.getElementById("submitBtn"); btn.disabled = disabled; btn.innerText = text; }
+function cleanPhone(value){ return String(value || "").replace(/\D/g, ""); }
+function makeNumber(rows){ let max = 0; for(let i = 1; i < rows.length; i++){ const num = Number(String(rows[i][0] || "").replace(/[^0-9]/g, "")); if(num > max) max = num; } return "A" + String(max + 1).padStart(3, "0"); }
 function renderSlotInfo(){
   const val = document.getElementById("slot").value;
   const no = val.replace(/[^0-9]/g, "");
   const box = document.getElementById("slotInfo");
-
   const row = sessionRows.find(r => String(r[0]) === no);
-  if(!row){
-    box.innerHTML = `<h3>尚無可選梯次</h3><div class="state redText">請洽現場工作人員</div>`;
-    return;
-  }
-
+  if(!row){ box.innerHTML = `<h3>尚無可選梯次</h3><div class="state redText">請洽現場工作人員</div>`; return; }
   const cap = Number(row[2] || 0);
-  if(cap <= 0){
-    box.innerHTML = `<h3>第 ${no} 梯</h3><div class="state redText">目前額滿，登記後等待遞補</div>`;
-  }else if(cap <= 3){
-    box.innerHTML = `<h3>第 ${no} 梯</h3><div class="state orangeText">剩餘名額極少：${cap} 位</div>`;
-  }else{
-    box.innerHTML = `<h3>第 ${no} 梯</h3><div class="state greenText">目前尚有名額：${cap} 位</div>`;
-  }
+  if(cap <= 0) box.innerHTML = `<h3>第 ${no} 梯</h3><div class="state redText">目前額滿，登記後等待遞補</div>`;
+  else if(cap <= 3) box.innerHTML = `<h3>第 ${no} 梯</h3><div class="state orangeText">剩餘名額極少：${cap} 位</div>`;
+  else box.innerHTML = `<h3>第 ${no} 梯</h3><div class="state greenText">目前尚有名額：${cap} 位</div>`;
 }
-
 async function loadSlots(){
   const select = document.getElementById("slot");
   try{
     const rows = await getSessions();
     sessionRows = rows.slice(1).filter(row => isOpenFlag(row[1]));
-
-    if(!sessionRows.length){
-      select.innerHTML = `<option value="">今日尚無開放梯次</option>`;
-      setSubmitState(true, "今日尚無開放梯次");
-      renderSlotInfo();
-      return;
-    }
-
+    if(!sessionRows.length){ select.innerHTML = `<option value="">今日尚無開放梯次</option>`; setSubmitState(true, "今日尚無開放梯次"); renderSlotInfo(); return; }
     select.innerHTML = sessionRows.map(row => {
-      const no = row[0];
-      const cap = Number(row[2] || 0);
+      const no = row[0]; const cap = Number(row[2] || 0);
       const text = cap <= 0 ? `第 ${no} 梯（額滿候補）` : `第 ${no} 梯（餘 ${cap} 位）`;
       return `<option value="第${no}梯">${text}</option>`;
     }).join("");
-    setSubmitState(false, "確認送出登記");
-    renderSlotInfo();
-  }catch(error){
-    console.warn(error);
-    select.innerHTML = `<option value="">梯次讀取失敗</option>`;
-    setSubmitState(true, "梯次讀取失敗");
-  }
+    setSubmitState(false, "確認送出登記"); renderSlotInfo();
+  }catch(error){ console.warn(error); select.innerHTML = `<option value="">梯次讀取失敗</option>`; setSubmitState(true, "梯次讀取失敗"); }
 }
-
 document.getElementById("slot").addEventListener("change", renderSlotInfo);
-document.getElementById("phone").addEventListener("input", function(){
-  this.value = cleanPhone(this.value).slice(0, 10);
-});
-
+document.getElementById("phone").addEventListener("input", function(){ this.value = cleanPhone(this.value).slice(0, 10); });
 document.getElementById("waitForm").addEventListener("submit", async function(event){
-  event.preventDefault();
-  setSubmitState(true, "送出中...");
-
+  event.preventDefault(); setSubmitState(true, "送出中...");
   const name = document.getElementById("name").value.trim();
   const phone = cleanPhone(document.getElementById("phone").value);
   const people = document.getElementById("people").value;
   const slot = document.getElementById("slot").value;
   const flex = document.querySelector('input[name="flex"]:checked').value;
-
-  if(!name){
-    alert("請輸入姓名");
-    setSubmitState(false, "確認送出登記");
-    return;
-  }
-  if(!/^09\d{8}$/.test(phone)){
-    alert("請輸入正確手機號碼，例如：0912345678");
-    setSubmitState(false, "確認送出登記");
-    return;
-  }
-  if(people.includes("+")){
-    alert("10 人以上同行，請由現場服務人員協助安排。");
-    setSubmitState(false, "確認送出登記");
-    return;
-  }
-  if(!slot){
-    alert("目前沒有可登記梯次，請洽現場工作人員。");
-    setSubmitState(false, "確認送出登記");
-    return;
-  }
-
+  if(!name){ alert("請輸入姓名"); setSubmitState(false, "確認送出登記"); return; }
+  if(!/^09\d{8}$/.test(phone)){ alert("請輸入正確手機號碼，例如：0912345678"); setSubmitState(false, "確認送出登記"); return; }
+  if(people.includes("+")){ alert("10 人以上同行，請由現場服務人員協助安排。"); setSubmitState(false, "確認送出登記"); return; }
+  if(!slot){ alert("目前沒有可登記梯次，請洽現場工作人員。"); setSubmitState(false, "確認送出登記"); return; }
   try{
     const rows = await cloudGet();
     for(let i = 1; i < rows.length; i++){
       const samePhone = String(rows[i][2] || "") === phone;
+      const sameDay = rows[i][7] ? String(rows[i][7]) === new Date().toLocaleDateString("zh-TW", { timeZone:"Asia/Taipei", year:"numeric", month:"2-digit", day:"2-digit" }).replace(/\//g, "") : true;
       const active = normalizeStatus(rows[i][5]) !== "cancel";
-      if(samePhone && active){
-        alert("此手機已登記候補名單，請勿重複登記。");
-        setSubmitState(false, "確認送出登記");
-        return;
-      }
+      if(samePhone && sameDay && active){ alert("此手機今日已登記候補名單，請勿重複登記。"); setSubmitState(false, "確認送出登記"); return; }
     }
-
-    const no = makeNumber(rows);
-    const result = await addQueue(no, name, phone, people, `${slot}｜${flex}`);
-    if(!isSuccess(result)){
-      alert("系統忙碌中，請稍後再試。");
-      setSubmitState(false, "確認送出登記");
-      return;
-    }
-
+    const previewNo = makeNumber(rows);
+    const result = await addQueue(previewNo, name, phone, people, `${slot}｜${flex}`);
+    if(!isSuccess(result)){ alert(result?.message === "today duplicate" ? "此手機今日已登記候補名單，請勿重複登記。" : "系統忙碌中，請稍後再試。"); setSubmitState(false, "確認送出登記"); return; }
+    const finalNo = result?.number || previewNo;
     document.getElementById("formBox").style.display = "none";
     document.getElementById("successBox").style.display = "block";
-    document.getElementById("ticketNo").innerText = no;
+    document.getElementById("ticketNo").innerText = finalNo;
     document.getElementById("timeText").innerText = "登記時間：" + new Date().toLocaleString("zh-TW");
     window.scrollTo({top:0,behavior:"smooth"});
-  }catch(error){
-    console.warn(error);
-    alert("連線不穩，請稍後再試或洽櫃台。");
-    setSubmitState(false, "確認送出登記");
-  }
+  }catch(error){ console.warn(error); alert("連線不穩，請稍後再試或洽櫃台。"); setSubmitState(false, "確認送出登記"); }
 });
-
 loadSlots();
 </script>
 </body>
