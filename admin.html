@@ -1,496 +1,137 @@
 <!--
 Houcihu Onsite Waitlist System
+admin.html v14 Field Pro
 Designed & Developed by Abby Luo
-2026 Official Build
-admin.html v13 TITANIUM PRO MAX
 -->
-
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>後慈湖｜管理後台 v13</title>
-
-<style>
-:root{
---green:#1f7a3f;
---green2:#3e8b55;
---blue:#2c69c9;
---orange:#d98b00;
---red:#d33;
---gray:#666;
---bg:#eef6ef;
---card:#fff;
---line:#e8ece8;
---text:#1f2d1f;
---shadow:0 14px 30px rgba(0,0,0,.08);
-}
-
-*{
-box-sizing:border-box;
-margin:0;
-padding:0;
-}
-
-body{
-font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft JhengHei",sans-serif;
-background:linear-gradient(135deg,#eef6ef,#dfeee2);
-color:var(--text);
-}
-
-.app{
-display:grid;
-grid-template-columns:250px 1fr;
-min-height:100vh;
-}
-
-/* sidebar */
-.sidebar{
-background:linear-gradient(180deg,var(--green),var(--green2));
-padding:22px;
-color:#fff;
-}
-
-.brand{
-font-size:28px;
-font-weight:900;
-line-height:1.3;
-margin-bottom:20px;
-}
-
-.brand small{
-display:block;
-font-size:13px;
-margin-top:8px;
-opacity:.9;
-}
-
-.menu a{
-display:block;
-padding:14px;
-border-radius:14px;
-text-decoration:none;
-color:#fff;
-font-weight:800;
-margin-bottom:10px;
-background:rgba(255,255,255,.08);
-}
-
-.main{
-padding:18px;
-}
-
-.topbar{
-display:flex;
-justify-content:space-between;
-gap:14px;
-flex-wrap:wrap;
-margin-bottom:18px;
-}
-
-.title h1{
-font-size:34px;
-font-weight:900;
-}
-
-.title p{
-margin-top:6px;
-color:#666;
-}
-
-.search{
-flex:1;
-min-width:220px;
-}
-
-.search input{
-width:100%;
-padding:14px;
-border-radius:14px;
-border:1px solid #ddd;
-font-size:16px;
-}
-
-/* cards */
-.grid4{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
-gap:14px;
-margin-bottom:18px;
-}
-
-.card{
-background:#fff;
-border-radius:22px;
-padding:22px;
-box-shadow:var(--shadow);
-margin-bottom:18px;
-}
-
-.kpi{
-font-size:42px;
-font-weight:900;
-margin-top:8px;
-}
-
-.green{color:var(--green);}
-.blue{color:var(--blue);}
-.orange{color:var(--orange);}
-.red{color:var(--red);}
-
-.notice{
-background:#fff3cd;
-border-left:6px solid #d6a400;
-font-weight:900;
-color:#8a6d3b;
-}
-
-.bigNo{
-font-size:80px;
-font-weight:900;
-text-align:center;
-color:var(--green);
-}
-
-.sub{
-text-align:center;
-margin-top:8px;
-color:#666;
-}
-
-/* buttons */
-.actions{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-gap:12px;
-margin-bottom:18px;
-}
-
-button{
-border:none;
-padding:16px;
-border-radius:16px;
-font-size:16px;
-font-weight:900;
-cursor:pointer;
-appearance:none;
--webkit-appearance:none;
-color:#fff !important;
--webkit-text-fill-color:#fff;
-background:var(--green);
-}
-
-.blueBtn{background:var(--blue);}
-.orangeBtn{background:var(--orange);}
-.redBtn{background:var(--red);}
-.grayBtn{background:var(--gray);}
-
-/* table */
-.table-wrap{
-overflow:auto;
-}
-
-table{
-width:100%;
-border-collapse:collapse;
-min-width:920px;
-}
-
-th,td{
-padding:12px;
-border-bottom:1px solid var(--line);
-text-align:center;
-font-size:15px;
-}
-
-th{
-background:#f7faf7;
-font-weight:900;
-}
-
-.badge{
-padding:6px 10px;
-border-radius:999px;
-font-size:13px;
-font-weight:900;
-display:inline-block;
-}
-
-.waiting{background:#fff3cd;}
-.done{background:#dff3e3;}
-.cancel{background:#ffe0e0;}
-
-.footer{
-text-align:center;
-font-size:14px;
-color:#666;
-margin-top:10px;
-}
-
-/* mobile */
-@media(max-width:900px){
-
-.app{
-grid-template-columns:1fr;
-}
-
-.sidebar{
-padding:16px;
-}
-
-.title h1{
-font-size:28px;
-}
-
-.bigNo{
-font-size:56px;
-}
-
-table{
-min-width:700px;
-}
-
-button{
-padding:14px;
-font-size:15px;
-}
-
-}
-</style>
+<meta name="theme-color" content="#155f34">
+<title>後慈湖｜管理後台</title>
+<link rel="stylesheet" href="theme.css?v=14">
 </head>
-
 <body>
-
 <script>
-if(!localStorage.getItem("houcihu_admin_token")){
-location.href="admin-login.html";
-}
+(function guard(){
+  try{
+    const raw = localStorage.getItem("houcihu_admin_token");
+    const token = raw ? JSON.parse(raw) : null;
+    if(!token || !token.auth || Date.now() >= token.expire){
+      localStorage.removeItem("houcihu_admin_token");
+      location.href = "admin-login.html";
+    }
+  }catch(error){
+    location.href = "admin-login.html";
+  }
+})();
 </script>
 
-<div class="app">
+<div class="side-layout">
+  <aside class="sidebar">
+    <div class="brand">
+      後慈湖後台
+      <small>v14 Field Pro｜現場營運中心</small>
+    </div>
+    <nav class="menu">
+      <a href="#overview">總覽</a>
+      <a href="#queue">候補名單</a>
+      <a href="#sessions">梯次補位</a>
+      <a href="mobile.html">手機版</a>
+      <a href="screen.html">叫號看板</a>
+      <a href="#" onclick="logout();return false;">登出</a>
+    </nav>
+  </aside>
 
-<!-- sidebar -->
-<div class="sidebar">
+  <main class="main" id="overview">
+    <section class="card">
+      <div class="topbar">
+        <div>
+          <h1>管理後台</h1>
+          <p class="muted" id="syncTime">資料同步中</p>
+        </div>
+        <div class="searchbox">
+          <input id="searchBox" placeholder="搜尋姓名／電話／號碼／梯次">
+        </div>
+      </div>
+    </section>
 
-<div class="brand">
-後慈湖後台
-<small>v13 TITANIUM PRO MAX</small>
+    <section class="grid four">
+      <div class="card kpi"><span>今日總候補</span><b id="kpiTotal" class="greenText">0</b><small>含所有狀態</small></div>
+      <div class="card kpi"><span>等待中</span><b id="kpiWaiting" class="orangeText">0</b><small>可叫號</small></div>
+      <div class="card kpi"><span>已叫號</span><b id="kpiCalled" class="blueText">0</b><small>等待到場</small></div>
+      <div class="card kpi"><span>已完成</span><b id="kpiDone" class="greenText">0</b><small>已到場</small></div>
+    </section>
+
+    <section class="card notice">
+      ⚠️ 按「下一號叫號」會將第一筆等待中旅客改為已叫號，並同步扣除該梯次名額。看板與手機版會自動更新。
+    </section>
+
+    <section class="card">
+      <div class="sub">目前叫號</div>
+      <div class="big-number" id="currentNo">A000</div>
+      <div class="grid auto" style="margin-top:18px">
+        <button class="big" data-lock="true" onclick="callNextAndReload()">📢 下一號叫號<small>同步雲端與看板</small></button>
+        <button class="big orange" onclick="voiceCall()">🔊 語音重播<small>重播目前號碼</small></button>
+        <button class="big blue" onclick="loadAdmin()">🔄 立即刷新<small>重新抓取資料</small></button>
+        <a class="btn big gray" href="screen.html">🖥 開啟看板<small>給旅客觀看</small></a>
+        <button class="big blue" onclick="exportCSV()">⬇️ 下載報表<small>CSV 名單</small></button>
+        <button class="big red" data-lock="true" onclick="clearToday()">🗑 清空名單<small>請謹慎使用</small></button>
+      </div>
+    </section>
+
+    <section class="card" id="sessions">
+      <div class="section-title">
+        <h2>梯次快速補位</h2>
+        <span class="muted">優先補同梯次，其次補可接受其他梯次者</span>
+      </div>
+      <div class="grid auto" id="sessionGrid">
+        <div class="muted">讀取梯次中...</div>
+      </div>
+    </section>
+
+    <section class="card" id="queue">
+      <div class="section-title">
+        <h2>候補名單</h2>
+        <span class="muted">叫號／到場／取消皆會同步雲端</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>列</th>
+              <th>號碼</th>
+              <th>姓名</th>
+              <th>電話</th>
+              <th>人數</th>
+              <th>梯次／意願</th>
+              <th>狀態</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="tbody">
+            <tr><td colspan="8">載入中...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card" id="sessionTableCard">
+      <div class="section-title"><h2>梯次資料</h2></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>梯次</th><th>狀態</th><th>剩餘名額</th><th>操作</th></tr></thead>
+          <tbody id="sessionBody"><tr><td colspan="4">載入中...</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="footer">Designed & Developed by Abby Luo ｜ Houcihu Official Build v14</div>
+  </main>
 </div>
 
-<div class="menu">
-<a href="#">總覽</a>
-<a href="#queue">候補名單</a>
-<a href="screen.html">即時看板</a>
-<a href="mobile.html">手機版</a>
-<a href="#" onclick="logout()">登出</a>
-</div>
-
-</div>
-
-<!-- main -->
-<div class="main">
-
-<div class="topbar">
-
-<div class="title">
-<h1>管理後台</h1>
-<p>企業級營運中心</p>
-</div>
-
-<div class="search">
-<input id="searchBox" placeholder="搜尋姓名 / 電話 / 號碼">
-</div>
-
-</div>
-
-<!-- KPI -->
-<div class="grid4">
-
-<div class="card">
-今日總候補
-<div class="kpi green" id="kpiTotal">0</div>
-</div>
-
-<div class="card">
-等待中
-<div class="kpi orange" id="kpiWaiting">0</div>
-</div>
-
-<div class="card">
-已完成
-<div class="kpi blue" id="kpiDone">0</div>
-</div>
-
-<div class="card">
-取消數
-<div class="kpi red" id="kpiCancel">0</div>
-</div>
-
-</div>
-
-<div class="card notice">
-⚠️ 正式營運模式，所有資料即時同步。
-</div>
-
-<div class="card">
-<div class="bigNo" id="currentNo">A000</div>
-<div class="sub">目前叫號</div>
-</div>
-
-<!-- buttons -->
-<div class="actions">
-
-<button onclick="callNext()">下一號叫號</button>
-<button class="orangeBtn" onclick="voiceCall()">語音叫號</button>
-<button class="blueBtn" onclick="loadData()">立即刷新</button>
-<button class="grayBtn" onclick="location.href='screen.html'">開啟看板</button>
-<button class="blueBtn" onclick="exportCSV()">下載報表</button>
-<button class="redBtn" onclick="clearToday()">清空名單</button>
-
-</div>
-
-<!-- queue -->
-<div class="card" id="queue">
-
-<h2 style="margin-bottom:15px;">候補名單</h2>
-
-<div class="table-wrap">
-<table>
-<thead>
-<tr>
-<th>列</th>
-<th>號碼</th>
-<th>姓名</th>
-<th>電話</th>
-<th>人數</th>
-<th>梯次</th>
-<th>狀態</th>
-</tr>
-</thead>
-
-<tbody id="tbody">
-<tr><td colspan="7">載入中...</td></tr>
-</tbody>
-
-</table>
-</div>
-
-</div>
-
-<div class="footer">
-Designed & Developed by Abby Luo ｜ Houcihu Official Build
-</div>
-
-</div>
-</div>
-
-<script src="sheets.js?v=13"></script>
-
-<script>
-function logout(){
-localStorage.removeItem("houcihu_admin_token");
-location.href="admin-login.html";
-}
-
-function voiceCall(){
-let no=document.getElementById("currentNo").innerText;
-let msg=new SpeechSynthesisUtterance(no+"號旅客請至櫃台");
-msg.lang="zh-TW";
-speechSynthesis.speak(msg);
-}
-
-function exportCSV(){
-let rows=[...document.querySelectorAll("#tbody tr")];
-let csv=rows.map(r=>[...r.children].map(td=>td.innerText).join(",")).join("\n");
-let blob=new Blob([csv],{type:"text/csv"});
-let a=document.createElement("a");
-a.href=URL.createObjectURL(blob);
-a.download="houcihu-report.csv";
-a.click();
-}
-
-function statusBadge(s){
-if(s=="done") return '<span class="badge done">完成</span>';
-if(s=="cancel") return '<span class="badge cancel">取消</span>';
-return '<span class="badge waiting">等待</span>';
-}
-
-async function loadData(){
-
-if(typeof cloudGet!=="function") return;
-
-let rows=await cloudGet();
-
-if(!rows || rows.length<=1){
-document.getElementById("tbody").innerHTML='<tr><td colspan="7">尚無資料</td></tr>';
-return;
-}
-
-let html="";
-let total=0,waiting=0,done=0,cancel=0;
-
-for(let i=1;i<rows.length;i++){
-
-let no=rows[i][0]||"";
-let name=rows[i][1]||"";
-let tel=rows[i][2]||"";
-let people=rows[i][3]||"1";
-let slot=rows[i][4]||"-";
-let status=rows[i][5]||"waiting";
-
-total++;
-
-if(status=="waiting") waiting++;
-if(status=="done") done++;
-if(status=="cancel") cancel++;
-
-html+=`
-<tr>
-<td>${i}</td>
-<td>${no}</td>
-<td>${name}</td>
-<td>${tel}</td>
-<td>${people}</td>
-<td>${slot}</td>
-<td>${statusBadge(status)}</td>
-</tr>
-`;
-}
-
-document.getElementById("tbody").innerHTML=html;
-
-document.getElementById("kpiTotal").innerText=total;
-document.getElementById("kpiWaiting").innerText=waiting;
-document.getElementById("kpiDone").innerText=done;
-document.getElementById("kpiCancel").innerText=cancel;
-
-}
-
-function callNext(){
-let first=document.querySelector("#tbody tr td:nth-child(2)");
-if(first){
-document.getElementById("currentNo").innerText=first.innerText;
-voiceCall();
-}
-}
-
-function clearToday(){
-if(confirm("確定清空今日名單？")){
-document.getElementById("tbody").innerHTML='<tr><td colspan="7">已清空</td></tr>';
-}
-}
-
-document.getElementById("searchBox").addEventListener("input",function(){
-let q=this.value.toLowerCase();
-document.querySelectorAll("#tbody tr").forEach(r=>{
-r.style.display=r.innerText.toLowerCase().includes(q)?"":"none";
-});
-});
-
-loadData();
-setInterval(loadData,5000);
-</script>
-
+<script src="sheets.js?v=14"></script>
+<script src="script.js?v=14"></script>
 </body>
 </html>
