@@ -1,244 +1,103 @@
 <!--
 Houcihu Onsite Waitlist System
+screen.html v14 Field Pro
 Designed & Developed by Abby Luo
-2026 Official Build
-
-screen.html v10 Premium
 -->
-
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#155f34">
 <title>後慈湖｜即時叫號看板</title>
-
+<link rel="stylesheet" href="theme.css?v=14">
 <style>
-:root{
---green:#1f7a3f;
---green2:#3e8b55;
---orange:#d98b00;
---red:#d33;
---bg1:#eef6ef;
---bg2:#dfeee2;
---card:#ffffff;
---text:#1f2d1f;
---muted:#666;
---line:#e9ece9;
---shadow:0 12px 28px rgba(0,0,0,.08);
-}
-
-*{
-box-sizing:border-box;
--webkit-tap-highlight-color:transparent;
-}
-
-body{
-margin:0;
-font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft JhengHei",sans-serif;
-background:linear-gradient(135deg,var(--bg1),var(--bg2));
-color:var(--text);
-overflow-x:hidden;
-}
-
-header{
-background:linear-gradient(135deg,var(--green),var(--green2));
-color:#fff;
-text-align:center;
-padding:20px 12px;
-}
-
-header h1{
-margin:0;
-font-size:24px;
-font-weight:900;
-line-height:1.2;
-}
-
-header p{
-margin:8px 0 0;
-font-size:14px;
-opacity:.95;
-}
-
-.wrap{
-padding:12px;
-max-width:1000px;
-margin:auto;
-}
-
-.card{
-background:#fff;
-border-radius:20px;
-padding:16px;
-margin-bottom:12px;
-box-shadow:var(--shadow);
-}
-
-.big{
-font-size:60px;
-font-weight:900;
-text-align:center;
-color:var(--green);
-line-height:1;
-word-break:break-all;
-}
-
-.sub{
-text-align:center;
-font-size:16px;
-margin-top:8px;
-color:var(--muted);
-}
-
-.grid{
-display:grid;
-grid-template-columns:1fr;
-gap:10px;
-}
-
-.slot{
-background:#f7faf7;
-border:1px solid var(--line);
-border-radius:16px;
-padding:16px;
-text-align:center;
-}
-
-.slot h3{
-margin:0 0 8px;
-font-size:22px;
-font-weight:900;
-}
-
-.state{
-font-size:24px;
-font-weight:900;
-}
-
-.green{color:var(--green);}
-.orange{color:var(--orange);}
-.red{color:var(--red);}
-.gray{color:#888;}
-
-.footer{
-text-align:center;
-font-size:14px;
-padding:10px 14px 22px;
-color:#666;
-line-height:1.7;
-}
-
-@media(min-width:768px){
-.big{font-size:110px;}
-.grid{grid-template-columns:repeat(2,1fr);}
-header h1{font-size:34px;}
-}
-
-@media(min-width:1200px){
-.grid{grid-template-columns:repeat(4,1fr);}
-.big{font-size:150px;}
-}
+body{overflow-x:hidden}.screen-wrap{width:min(1280px,100%);margin:-36px auto 0;padding:0 18px 30px}.screen-number{font-size:clamp(86px,19vw,230px)}.screen-title{font-size:clamp(32px,5vw,58px)}@media(min-width:1100px){.slot-grid-large{grid-template-columns:repeat(4,minmax(0,1fr))}}
 </style>
 </head>
-
 <body>
-
-<header>
-    <h1>後慈湖 即時叫號看板</h1>
-    <p>請留意現場叫號與梯次資訊</p>
+<header class="hero">
+  <div class="hero__kicker">NOW CALLING</div>
+  <h1 class="screen-title">後慈湖即時叫號看板</h1>
+  <p>請留意目前叫號與梯次資訊，叫號後請至服務櫃台。</p>
 </header>
 
-<div class="wrap">
-    <div class="card">
-        <div class="big" id="currentNo">A000</div>
-        <div class="sub">目前叫號 NOW CALLING...</div>
+<main class="screen-wrap">
+  <section class="card">
+    <div class="sub">目前叫號</div>
+    <div class="big-number screen-number" id="currentNo">A000</div>
+    <div class="sub" id="syncTime">資料同步中</div>
+  </section>
+
+  <section class="card">
+    <div class="section-title">
+      <h2>今日梯次狀況</h2>
+      <span class="muted">即時更新</span>
     </div>
-
-    <div class="card">
-        <div class="grid" id="slotGrid">
-            <div style="text-align:center; width:100%; grid-column: 1/-1;">系統連線中...</div>
-        </div>
+    <div class="grid auto slot-grid-large" id="slotGrid">
+      <div class="muted">系統連線中...</div>
     </div>
-</div>
+  </section>
 
-<div class="footer">
-    現場遞補不代表一定有名額，請依工作人員引導辦理
-</div>
+  <section class="card notice">
+    現場遞補不代表一定有名額，實際入場資格依現場名額與工作人員安排為準。
+  </section>
+</main>
 
-<script src="sheets.js?v=10.1"></script>
-
+<footer class="footer">Houcihu Visitor Service Center © 2026</footer>
+<script src="sheets.js?v=14"></script>
 <script>
-// 使用優化後的同步邏輯
-async function refreshDisplay() {
-    try {
-        // 同時抓取名單與梯次，加速反應
-        const [rows, sessions] = await Promise.all([
-            cloudGet(),
-            getSessions()
-        ]);
-
-        // 1. 更新目前叫號
-        let current = "A000";
-        if (rows && rows.length > 1) {
-            // 從後往前找，最後一個被叫號的人
-            for (let i = rows.length - 1; i >= 1; i--) {
-                if (rows[i][5] === "called") {
-                    current = rows[i][0];
-                    break;
-                }
-            }
-        }
-        document.getElementById("currentNo").innerText = current;
-
-        // 2. 更新梯次資訊
-        const box = document.getElementById("slotGrid");
-        if (!sessions || sessions.length <= 1) return;
-
-        let html = "";
-        for (let i = 1; i < sessions.length; i++) {
-            const [no, open, cap] = sessions[i];
-            let text = "", cls = "gray";
-
-            if (!open) {
-                text = "未開放";
-            } else if (Number(cap) <= 0) {
-                text = "額滿候補";
-                cls = "red";
-            } else if (Number(cap) <= 3) {
-                text = `剩 ${cap} 位`;
-                cls = "orange";
-            } else {
-                text = "可登記";
-                cls = "green";
-            }
-
-            html += `
-                <div class="slot">
-                    <h3>第 ${no} 梯</h3>
-                    <div class="state ${cls}">${text}</div>
-                </div>
-            `;
-        }
-        box.innerHTML = html;
-
-    } catch (e) {
-        console.error("看板更新錯誤:", e);
+function renderCurrent(rows){
+  let current = "A000";
+  if(rows && rows.length > 1){
+    for(let i = rows.length - 1; i >= 1; i--){
+      if(normalizeStatus(rows[i][5]) === "called"){
+        current = rows[i][0] || "A000";
+        break;
+      }
     }
+  }
+  const el = document.getElementById("currentNo");
+  if(el.innerText !== current){
+    el.classList.remove("flash");
+    void el.offsetWidth;
+    el.classList.add("flash");
+  }
+  el.innerText = current;
 }
-
-// 初始化
-async function init() {
-    await refreshDisplay();
-    
-    // 使用 sheets.js v10.1 的 autoSync 機制，預設 5 秒更新一次
-    if (typeof autoSync === "function") {
-        autoSync(refreshDisplay, 5000);
-    }
+function renderSlots(sessions){
+  const box = document.getElementById("slotGrid");
+  if(!sessions || sessions.length <= 1){
+    box.innerHTML = `<div class="muted">尚無梯次資料</div>`;
+    return;
+  }
+  let html = "";
+  for(let i = 1; i < sessions.length; i++){
+    const no = sessions[i][0];
+    const open = isOpenFlag(sessions[i][1]);
+    const cap = Number(sessions[i][2] || 0);
+    let text = "未開放";
+    let cls = "grayText";
+    if(open && cap <= 0){ text = "額滿候補"; cls = "redText"; }
+    else if(open && cap <= 3){ text = `剩 ${cap} 位`; cls = "orangeText"; }
+    else if(open){ text = `可登記 ${cap} 位`; cls = "greenText"; }
+    html += `<div class="slot-card"><h3>第 ${no} 梯</h3><div class="state ${cls}">${text}</div></div>`;
+  }
+  box.innerHTML = html;
 }
-
-init();
+async function refreshDisplay(){
+  try{
+    const [rows, sessions] = await Promise.all([cloudGet(), getSessions()]);
+    renderCurrent(rows);
+    renderSlots(sessions);
+    document.getElementById("syncTime").innerText = "最後同步 " + formatLocalTime();
+  }catch(error){
+    console.warn("看板更新錯誤：", error);
+    document.getElementById("syncTime").innerText = "連線中斷，稍後重試";
+  }
+}
+refreshDisplay();
+autoSync(refreshDisplay,4000);
 </script>
-
 </body>
 </html>
