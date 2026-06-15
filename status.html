@@ -1,6 +1,6 @@
 <!--
 Houcihu Onsite Waitlist System
-status.html v14 Field Pro
+status.html v14.3 Privacy Guard
 Designed & Developed by Abby Luo
 -->
 <!DOCTYPE html>
@@ -13,83 +13,31 @@ Designed & Developed by Abby Luo
 <link rel="stylesheet" href="theme.css?v=14">
 </head>
 <body>
-<header class="hero">
-  <div class="hero__kicker">LIVE STATUS</div>
-  <h1>即時梯次資訊</h1>
-  <p>名額現況、目前叫號與候補服務同步顯示。</p>
-</header>
-
+<header class="hero"><div class="hero__kicker">LIVE STATUS</div><h1>即時梯次資訊</h1><p>名額現況、目前叫號與候補服務同步顯示。</p></header>
 <main class="wrap narrow">
-  <section class="card">
-    <div class="sub">目前叫號</div>
-    <div class="big-number" id="currentNo">A000</div>
-    <div class="sub" id="syncTime">資料同步中</div>
-  </section>
-
-  <section class="card">
-    <div class="kpi" style="min-height:auto;text-align:center">
-      <span>今日開放梯次</span>
-      <b id="todayText" class="greenText" style="font-size:30px">載入中</b>
-      <small>依現場公告及實際名額為準</small>
-    </div>
-  </section>
-
-  <section class="card">
-    <div class="section-title"><h2>今日梯次狀況</h2></div>
-    <div class="grid auto" id="slotGrid">載入中...</div>
-  </section>
-
-  <section class="card notice">
-    現場遞補不代表一定有名額。實際入場資格依現場名額與工作人員安排為準。
-  </section>
-
-  <section class="card">
-    <div class="grid two">
-      <a class="btn block" href="checkin.html">現場候補登記</a>
-      <a class="btn block gray" href="visitor.html">返回首頁</a>
-    </div>
-  </section>
+  <section class="card"><div class="sub">目前叫號</div><div class="big-number" id="currentNo">A000</div><div class="sub" id="syncTime">資料同步中</div></section>
+  <section class="card"><div class="kpi" style="min-height:auto;text-align:center"><span>今日開放梯次</span><b id="todayText" class="greenText" style="font-size:30px">載入中</b><small>依現場公告及實際名額為準</small></div></section>
+  <section class="card"><div class="section-title"><h2>今日梯次狀況</h2></div><div class="grid auto" id="slotGrid">載入中...</div></section>
+  <section class="card notice">現場遞補不代表一定有名額。實際入場資格依現場名額與工作人員安排為準。</section>
+  <section class="card"><div class="grid two"><a class="btn block" href="checkin.html">現場候補登記</a><a class="btn block gray" href="visitor.html">返回首頁</a></div></section>
 </main>
-
 <footer class="footer">Houcihu Visitor Service Center © 2026</footer>
-<script src="sheets.js?v=14"></script>
+<script src="sheets.js?v=14.3"></script>
 <script>
-function setTodayText(){
-  const now = new Date();
-  const limit = new Date("2026-06-21T00:00:00+08:00");
-  document.getElementById("todayText").innerText = now < limit ? "第 1、3、5、7 梯" : "第 1 至 8 梯";
-}
-function renderCurrent(rows){
-  let current = "A000";
-  if(rows && rows.length > 1){
-    for(let i = rows.length - 1; i >= 1; i--){
-      if(normalizeStatus(rows[i][5]) === "called"){
-        current = rows[i][0] || "A000";
-        break;
-      }
-    }
-  }
+function setTodayText(){ const now = new Date(); const limit = new Date("2026-06-21T00:00:00+08:00"); document.getElementById("todayText").innerText = now < limit ? "第 1、3、5、7 梯" : "第 1 至 8 梯"; }
+function renderCurrent(current){
   const el = document.getElementById("currentNo");
-  if(el.innerText !== current){
-    el.classList.remove("flash");
-    void el.offsetWidth;
-    el.classList.add("flash");
-  }
-  el.innerText = current;
+  const no = current || "A000";
+  if(el.innerText !== no){ el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash"); }
+  el.innerText = no;
 }
 function renderSlots(sessions){
   const box = document.getElementById("slotGrid");
-  if(!sessions || sessions.length <= 1){
-    box.innerHTML = `<div class="muted">尚無梯次資料</div>`;
-    return;
-  }
+  if(!sessions || sessions.length <= 1){ box.innerHTML = `<div class="muted">尚無梯次資料</div>`; return; }
   let html = "";
   for(let i = 1; i < sessions.length; i++){
-    const no = sessions[i][0];
-    const open = isOpenFlag(sessions[i][1]);
-    const cap = Number(sessions[i][2] || 0);
-    let text = "未開放";
-    let cls = "grayText";
+    const no = sessions[i][0]; const open = isOpenFlag(sessions[i][1]); const cap = Number(sessions[i][2] || 0);
+    let text = "未開放"; let cls = "grayText";
     if(open && cap <= 0){ text = "額滿"; cls = "redText"; }
     else if(open && cap <= 3){ text = `剩 ${cap} 位`; cls = "orangeText"; }
     else if(open){ text = `可遞補 ${cap} 位`; cls = "greenText"; }
@@ -99,18 +47,13 @@ function renderSlots(sessions){
 }
 async function refreshDisplay(){
   try{
-    const [rows, sessions] = await Promise.all([cloudGet(), getSessions()]);
-    renderCurrent(rows);
-    renderSlots(sessions);
-    document.getElementById("syncTime").innerText = "最後同步 " + formatLocalTime();
-  }catch(error){
-    console.warn(error);
-    document.getElementById("syncTime").innerText = "連線中斷";
-  }
+    const data = await getPublicStatus();
+    renderCurrent(data.currentNo);
+    renderSlots(data.sessions);
+    document.getElementById("syncTime").innerText = data.ok ? "最後同步 " + formatLocalTime() : "等待後端隱私版部署";
+  }catch(error){ console.warn(error); document.getElementById("syncTime").innerText = "連線中斷"; }
 }
-setTodayText();
-refreshDisplay();
-autoSync(refreshDisplay,5000);
+setTodayText(); refreshDisplay(); autoSync(refreshDisplay,5000);
 </script>
 </body>
 </html>
