@@ -1,6 +1,6 @@
 /*
 Houcihu Onsite Waitlist System
-Cloud sync helpers v14 Field Pro
+Cloud sync helpers v14.3 Privacy Guard
 Designed & Developed by Abby Luo
 */
 
@@ -9,6 +9,8 @@ const WEB_APP_URL =
 
 const API_TIMEOUT = 9000;
 const API_RETRY = 2;
+const ADMIN_TOKEN_KEY = "houcihu_admin_token";
+const ADMIN_API_KEY = "houcihu_admin_api_key";
 
 const QUEUE_STATUS = Object.freeze({
   WAITING: "waiting",
@@ -17,8 +19,35 @@ const QUEUE_STATUS = Object.freeze({
   CANCEL: "cancel"
 });
 
+const EMPTY_PUBLIC_STATUS = Object.freeze({
+  ok: false,
+  currentNo: "A000",
+  waitingCount: 0,
+  sessions: [["梯次", "開放", "名額"]],
+  message: "public status unavailable"
+});
+
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function getAdminKey() {
+  try {
+    const raw = localStorage.getItem(ADMIN_TOKEN_KEY);
+    const token = raw ? JSON.parse(raw) : null;
+    if (token && token.auth && Date.now() < token.expire && token.apiKey) return token.apiKey;
+  } catch (_) {}
+  return localStorage.getItem(ADMIN_API_KEY) || "";
+}
+
+function requireAdminKey() {
+  const key = getAdminKey();
+  if (!key) throw new Error("missing admin key");
+  return key;
+}
+
+function withAdminKey(data = {}) {
+  return { ...data, key: requireAdminKey() };
 }
 
 function buildUrl(params = {}) {
@@ -67,12 +96,8 @@ function normalizeTable(payload) {
 
 function isSuccess(payload) {
   if (payload === true) return true;
-  if (typeof payload === "string") {
-    return /^(ok|success|true|done)$/i.test(payload.trim());
-  }
-  if (payload && typeof payload === "object") {
-    return payload.ok === true || payload.success === true || payload.status === "ok";
-  }
+  if (typeof payload === "string") return /^(ok|success|true|done)$/i.test(payload.trim());
+  if (payload && typeof payload === "object") return payload.ok === true || payload.success === true || payload.status === "ok";
   return Boolean(payload);
 }
 
@@ -110,8 +135,22 @@ async function apiPost(data = {}, retry = API_RETRY) {
   }
 }
 
+async function getPublicStatus() {
+  // 用 POST action=public，舊版後端只會回 unknown action，不會把候補名單個資吐給公開頁。
+  const payload = await apiPost({ action: "public" });
+  if (!payload || Array.isArray(payload) || payload.success === false) return { ...EMPTY_PUBLIC_STATUS };
+  return {
+    ok: payload.ok === true || payload.success === true,
+    currentNo: String(payload.currentNo || "A000"),
+    waitingCount: Number(payload.waitingCount || 0),
+    sessions: Array.isArray(payload.sessions) ? payload.sessions : EMPTY_PUBLIC_STATUS.sessions,
+    updatedAt: payload.updatedAt || "",
+    message: payload.message || ""
+  };
+}
+
 async function cloudGet() {
-  return normalizeTable(await apiGet({ mode: "queue" }));
+  return normalizeTable(await apiGet(withAdminKey({ mode: "queue" })));
 }
 
 async function getSessions() {
@@ -119,24 +158,15 @@ async function getSessions() {
 }
 
 async function saveSession(no, open, cap) {
-  return apiPost({
-    action: "saveSession",
-    no,
-    open,
-    cap
-  });
+  return apiPost(withAdminKey({ action: "saveSession", no, open, cap }));
 }
 
 async function updateStatus(row, status) {
-  return apiPost({
-    action: "update",
-    row,
-    status
-  });
+  return apiPost(withAdminKey({ action: "update", row, status }));
 }
 
 async function clearQueue() {
-  return apiPost({ action: "clear" });
+  return apiPost(withAdminKey({ action: "clear" }));
 }
 
 async function addQueue(number, name, phone, people, slot) {
@@ -152,8 +182,8 @@ async function addQueue(number, name, phone, people, slot) {
 }
 
 async function pingServer() {
-  const rows = await cloudGet();
-  return Array.isArray(rows);
+  const status = await getPublicStatus();
+  return Boolean(status);
 }
 
 function isOpenFlag(value) {
@@ -186,12 +216,13 @@ function autoSync(fn, ms = 4000) {
 }
 
 function formatLocalTime(date = new Date()) {
-  return date.toLocaleString("zh-TW", {
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit"
-  });
+  return date.toLocaleString("zh-TW", { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" });
+}
+
+function maskPhone(phone) {
+  const text = String(phone || "").replace(/\D/g, "");
+  if (text.length < 7) return "***";
+  return text.slice(0, 4) + "***" + text.slice(-3);
 }
 
 window.addEventListener("offline", () => {
