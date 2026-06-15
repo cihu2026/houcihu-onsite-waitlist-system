@@ -1,239 +1,108 @@
 <!--
 Houcihu Onsite Waitlist System
+index.html v14 Field Pro
 Designed & Developed by Abby Luo
-2026 Official Build
 -->
-
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#155f34">
 <title>後慈湖｜現場服務系統</title>
-
-<style>
-:root{
---green:#1f7a3f;
---green2:#3e8b55;
---blue:#2c69c9;
---gray:#666;
---orange:#d98b00;
---bg1:#eef6ef;
---bg2:#dfeee2;
---card:#ffffff;
---text:#1f2d1f;
---muted:#666;
---shadow:0 12px 28px rgba(0,0,0,.08);
---radius:24px;
-}
-
-*{ box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
-
-body{
-margin:0;
-font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft JhengHei",sans-serif;
-background:linear-gradient(135deg,var(--bg1),var(--bg2));
-background-attachment: fixed;
-color:var(--text);
-line-height:1.5;
-}
-
-header.hero{
-background:linear-gradient(135deg,var(--green),var(--green2));
-color:#fff;
-text-align:center;
-padding:48px 20px;
-box-shadow:0 8px 22px rgba(0,0,0,.08);
-}
-
-header h1{ margin:0; font-size:32px; font-weight:900; }
-header p{ margin:12px 0 0; font-size:16px; opacity:.9; }
-
-.wrap{ max-width:600px; margin:auto; padding:20px; }
-
-.card{
-background:var(--card);
-border-radius:var(--radius);
-padding:24px;
-margin-bottom:18px;
-box-shadow:var(--shadow);
-}
-
-/* 即時號碼與人數顯示 */
-.status-bar {
-background: var(--green);
-color: #fff;
-text-align: center;
-padding: 18px;
-border-radius: 18px;
-margin-top: -45px;
-position: relative;
-z-index: 10;
-display: flex;
-justify-content: space-around;
-align-items: center;
-}
-
-.status-item { flex: 1; }
-.status-item:first-child { border-right: 1px solid rgba(255,255,255,0.2); }
-
-.status-bar span { font-size: 13px; opacity: 0.8; display: block; margin-bottom: 4px; }
-.status-bar b { font-size: 26px; display: block; color: #9cffb4; font-family: 'Courier New', Courier, monospace; }
-
-.notice{
-background:#fff3cd;
-border-left:6px solid #d6a400;
-font-weight:800;
-color:#8a6d3b;
-padding: 15px;
-font-size: 14px;
-}
-
-.grid{
-display:grid;
-grid-template-columns: 1fr 1fr;
-gap:12px;
-margin-top: 10px;
-}
-
-.btn{
-display:flex;
-flex-direction: column;
-align-items:center;
-justify-content:center;
-text-decoration:none;
-background:var(--green);
-color:#fff;
-padding:20px 10px;
-border-radius:18px;
-font-weight:bold;
-font-size:16px;
-transition:.15s ease;
-text-align:center;
-min-height: 100px;
-}
-
-.btn:active{ transform:scale(0.95); opacity:0.9; }
-
-.blue{background:var(--blue);}
-.gray{background:var(--gray);}
-.orange{background:var(--orange);}
-
-.text{ font-size:15px; color:#444; line-height:1.8; }
-h2 { font-size: 20px; margin-top: 0; color: var(--green); }
-
-footer{ text-align:center; color:var(--muted); padding:20px; font-size:13px; }
-
-@media(max-width:480px){
-header h1{ font-size: 26px; }
-.grid { grid-template-columns: 1fr; }
-}
-</style>
+<link rel="stylesheet" href="theme.css?v=14">
 </head>
-
 <body>
-
 <header class="hero">
-<h1>後慈湖 現場服務系統</h1>
-<p>候補登記｜即時資訊｜現場叫號</p>
+  <div class="hero__kicker">HOUCIHU SERVICE</div>
+  <h1>後慈湖現場服務系統</h1>
+  <p>候補登記、即時叫號、梯次資訊與營運公告，一頁快速完成。</p>
 </header>
 
-<div class="wrap">
-
-<div class="status-bar card">
-    <div class="status-item">
+<main class="wrap narrow">
+  <section class="card">
+    <div class="grid two">
+      <div class="kpi">
         <span>目前叫號</span>
-        <b id="quickNo">A000</b>
+        <b id="quickNo" class="greenText">A000</b>
+        <small>看板同步更新</small>
+      </div>
+      <div class="kpi">
+        <span>等待候補</span>
+        <b id="waitCount" class="orangeText">0</b>
+        <small id="syncTime">連線中</small>
+      </div>
     </div>
-    <div class="status-item">
-        <span>預約人數</span>
-        <b id="waitCount">0 / 10</b>
+  </section>
+
+  <section class="card notice">
+    ⚠️ 現場遞補不代表一定有名額，實際入場資格仍依現場名額與工作人員安排為準。
+  </section>
+
+  <section class="card">
+    <div class="section-title">
+      <h2>快速服務</h2>
     </div>
-</div>
+    <div class="grid two">
+      <a class="btn big" href="checkin.html">📝 現場候補登記<small>旅客自行填寫</small></a>
+      <a class="btn big blue" href="status.html">📊 即時梯次資訊<small>查看剩餘與叫號</small></a>
+      <a class="btn big gray" href="screen.html">📢 叫號看板<small>櫃台／電視顯示</small></a>
+      <a class="btn big orange" href="calendar.html">📅 營運資訊<small>開園與休園公告</small></a>
+    </div>
+  </section>
 
-<div class="card notice">
-⚠️ 現場遞補不代表一定有名額，實際入場資格依現場安排為準。
-</div>
+  <section class="card">
+    <h2 class="section-title">服務說明</h2>
+    <div class="muted" style="line-height:1.9;font-weight:750">
+      1. 現場額滿時可登記候補，依釋出名額遞補。<br>
+      2. 請留意現場叫號，過號需重新排隊。<br>
+      3. 系統自動同步，仍以現場工作人員說明為準。<br>
+      4. 入場前請備妥證件供查驗。
+    </div>
+  </section>
+</main>
 
-<div class="card">
-<h2>快速服務 Quick Services</h2>
-<div class="grid">
-<a class="btn" href="checkin.html">📝 現場候補登記</a>
-<a class="btn blue" href="status.html">📊 即時梯次資訊</a>
-<a class="btn gray" href="screen.html">📢 查看叫號看板</a>
-<a class="btn orange" href="calendar.html">📅 營運資訊</a>
-</div>
-</div>
+<footer class="footer">Houcihu Visitor Service Center © 2026 ｜ Designed & Developed by Abby Luo</footer>
 
-<div class="card">
-<h2>服務說明</h2>
-<p class="text">
-1. 現場額滿時可登記候補（預約上限 10 名）。<br>
-2. 候補依釋出名額遞補，過號需重新排隊。<br>
-3. 系統每 3 秒自動更新，請隨時留意進度。<br>
-4. 入場前請準備好身份證明文件供查驗。
-</p>
-</div>
-
-</div>
-
-<footer>
-Houcihu Visitor Service Center &copy; 2026
-</footer>
-
-<script src="sheets.js?v=10.1"></script>
-
+<script src="sheets.js?v=14"></script>
 <script>
-/**
- * 更新主頁面顯示資訊
- */
-async function refreshDisplay() {
-    try {
-        const rows = await cloudGet();
-        let nowCalled = "---";
-        let waitingCount = 0;
+async function refreshHome(){
+  try{
+    const rows = await cloudGet();
+    let current = "A000";
+    let waiting = 0;
 
-        if (rows && rows.length > 1) {
-            // 1. 抓取最後一個狀態為 "called" 的號碼
-            // 假設 columns 為: [0]號碼, [1]姓名, [2]電話, [3]人數, [4]梯次, [5]狀態
-            for (let i = rows.length - 1; i >= 1; i--) {
-                if (rows[i][5] === "called") {
-                    nowCalled = rows[i][0];
-                    break;
-                }
-            }
-
-            // 2. 計算目前狀態為 "waiting" 的預約人數
-            const waitingList = rows.filter((row, idx) => idx > 0 && row[5] === "waiting");
-            waitingCount = waitingList.length;
+    if(rows && rows.length > 1){
+      for(let i = rows.length - 1; i >= 1; i--){
+        if(normalizeStatus(rows[i][5]) === "called"){
+          current = rows[i][0] || "A000";
+          break;
         }
-
-        // 更新到網頁元件
-        document.getElementById("quickNo").innerText = nowCalled;
-        document.getElementById("waitCount").innerText = `${waitingCount} / 10`;
-
-        // 視覺回饋：人數快滿或已滿時變色提醒
-        const countEl = document.getElementById("waitCount");
-        if (waitingCount >= 10) {
-            countEl.style.color = "#ff4d4d"; // 紅色 (滿額)
-        } else if (waitingCount >= 7) {
-            countEl.style.color = "#ffcc00"; // 橘黃色 (快滿)
-        } else {
-            countEl.style.color = "#9cffb4"; // 正常綠色
-        }
-
-    } catch (error) {
-        console.error("刷新數據出錯:", error);
+      }
+      for(let i = 1; i < rows.length; i++){
+        if(normalizeStatus(rows[i][5]) === "waiting") waiting++;
+      }
     }
+
+    const no = document.getElementById("quickNo");
+    if(no.innerText !== current){
+      no.classList.remove("flash");
+      void no.offsetWidth;
+      no.classList.add("flash");
+    }
+    no.innerText = current;
+
+    const count = document.getElementById("waitCount");
+    count.innerText = waiting;
+    count.className = waiting >= 8 ? "redText" : waiting >= 4 ? "orangeText" : "greenText";
+    document.getElementById("syncTime").innerText = "最後同步 " + formatLocalTime();
+  }catch(error){
+    console.warn(error);
+    document.getElementById("syncTime").innerText = "連線中斷，稍後重試";
+  }
 }
-
-// 啟動頁面時先跑一次
-refreshDisplay();
-
-// 使用你在 sheets.js 裡面寫好的 autoSync 工具
-// 設定 refreshDisplay 函式每 3000ms (3秒) 執行一次
-autoSync(refreshDisplay, 3000);
+refreshHome();
+autoSync(refreshHome,3000);
 </script>
-
 </body>
 </html>
