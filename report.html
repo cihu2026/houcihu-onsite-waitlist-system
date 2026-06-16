@@ -38,6 +38,7 @@ Designed & Developed by Abby Luo
 <footer class="footer">Houcihu Public Report ｜ Privacy Guard v14.7</footer>
 <script src="sheets.js?v=14.6"></script>
 <script>
+function esc(v){ return String(v ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;"); }
 function openText(v){ return String(v).toLowerCase()==="true" || v === true ? "開放" : "未開放"; }
 function renderSessions(rows){
   const body = document.getElementById("sessionBody");
@@ -48,7 +49,7 @@ function renderSessions(rows){
     const open = openText(rows[i][1]);
     const cap = Number(rows[i][2] || 0);
     const cls = open === "開放" && cap > 0 ? "badge open" : "badge closed";
-    html += `<tr><td>第 ${escapeHtml ? escapeHtml(no) : no} 梯</td><td><span class="${cls}">${open}</span></td><td>${cap}</td></tr>`;
+    html += `<tr><td>第 ${esc(no)} 梯</td><td><span class="${cls}">${open}</span></td><td>${cap}</td></tr>`;
   }
   body.innerHTML = html;
 }
