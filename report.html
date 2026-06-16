@@ -1,217 +1,78 @@
 <!--
 Houcihu Onsite Waitlist System
+Report v14.7 Public Safe
 Designed & Developed by Abby Luo
-2026 Official Build
 -->
-
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#155f34">
 <meta name="author" content="Abby Luo">
-<meta name="generator" content="Houcihu Smart Report Dashboard">
-<title>報表</title>
-<link rel="stylesheet" href="style.css">
-
+<title>後慈湖｜公開報表</title>
+<link rel="stylesheet" href="theme.css?v=14">
 <style>
-body{
-margin:0;
-font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft JhengHei",sans-serif;
-background:linear-gradient(135deg,#eef6ef,#dfeee2);
-color:#1f2d1f;
-}
-
-header{
-background:linear-gradient(135deg,#1f5f35,#3e8b55);
-color:#fff;
-text-align:center;
-padding:26px 18px;
-}
-
-header h1{
-margin:0;
-font-size:34px;
-font-weight:900;
-}
-
-header p{
-margin:10px 0 0;
-opacity:.95;
-font-size:16px;
-}
-
-.wrap{
-max-width:1100px;
-margin:auto;
-padding:20px;
-}
-
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-gap:16px;
-}
-
-.card{
-background:#fff;
-border-radius:24px;
-padding:24px;
-box-shadow:0 12px 28px rgba(0,0,0,.08);
-}
-
-.card h2{
-margin:0 0 12px;
-font-size:22px;
-}
-
-.big{
-font-size:52px;
-font-weight:900;
-color:#1f7a3f;
-line-height:1;
-}
-
-.label{
-margin-top:8px;
-color:#666;
-font-weight:700;
-}
-
-.list{
-line-height:2;
-font-weight:700;
-}
-
-footer{
-text-align:center;
-color:#666;
-padding:18px;
-}
-
-@media(max-width:768px){
-
-header h1{
-font-size:28px;
-}
-
-.big{
-font-size:42px;
-}
-
-}
+.report-title{text-align:center;padding:34px 16px 22px}.report-title h1{font-size:clamp(32px,7vw,54px);margin:0}.report-title p{color:rgba(255,255,255,.72);font-weight:800;line-height:1.7}.metric-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.metric{border-radius:30px;padding:24px;background:linear-gradient(180deg,rgba(255,255,255,.16),rgba(255,255,255,.08));border:1px solid rgba(255,255,255,.18);box-shadow:0 18px 45px rgba(0,0,0,.18);text-align:center}.metric span{display:block;color:var(--muted);font-weight:900;letter-spacing:.08em}.metric b{display:block;margin-top:10px;font-size:clamp(38px,8vw,72px);line-height:1}.session-table{width:100%;border-collapse:collapse}.session-table th,.session-table td{padding:12px;border-bottom:1px solid rgba(255,255,255,.12);text-align:center;font-weight:850}.session-table th{color:var(--muted);font-size:13px}.note-box{line-height:1.9;font-weight:800;color:var(--muted)}@media(max-width:760px){.metric-grid{grid-template-columns:1fr}.metric{padding:18px}.session-table th,.session-table td{padding:9px 6px;font-size:14px}}
 </style>
 </head>
-
 <body>
+<header class="hero report-title"><div class="hero__kicker">PUBLIC SAFE REPORT</div><h1>後慈湖公開報表</h1><p>此頁僅顯示去識別化營運資訊，不讀取候補名單、姓名或電話。</p></header>
+<main class="wrap">
+  <section class="metric-grid">
+    <div class="metric"><span>目前叫號</span><b id="currentNo" class="greenText">A000</b></div>
+    <div class="metric"><span>等待組數</span><b id="waitingCount" class="orangeText">0</b></div>
+    <div class="metric"><span>候補壓力</span><b id="pressureText" class="blueText">低</b></div>
+  </section>
 
-<header>
-<h1>報表</h1>
-<p>智慧版報表頁</p>
-</header>
+  <section class="card" style="margin-top:16px">
+    <div class="section-title"><h2>梯次公開資訊</h2><span id="syncTime">連線中</span></div>
+    <div class="table-wrap"><table class="session-table"><thead><tr><th>梯次</th><th>狀態</th><th>公開名額</th></tr></thead><tbody id="sessionBody"><tr><td colspan="3">讀取中...</td></tr></tbody></table></div>
+  </section>
 
-<div class="wrap">
-
-<div class="grid">
-
-<div class="card">
-<h2>今日候補總數</h2>
-<div class="big" id="totalCount">0</div>
-<div class="label">已登記筆數</div>
-</div>
-
-<div class="card">
-<h2>目前等待中</h2>
-<div class="big" id="waitingCount">0</div>
-<div class="label">waiting 狀態</div>
-</div>
-
-<div class="card">
-<h2>已完成入場</h2>
-<div class="big" id="doneCount">0</div>
-<div class="label">done 狀態</div>
-</div>
-
-<div class="card">
-<h2>目前叫號</h2>
-<div class="big" id="currentNo">A000</div>
-<div class="label">最新 called 號碼</div>
-</div>
-
-<div class="card">
-<h2>取消筆數</h2>
-<div class="big" id="cancelCount">0</div>
-<div class="label">cancel 狀態</div>
-</div>
-
-<div class="card">
-<h2>營運建議</h2>
-<div class="list" id="suggestBox">
-讀取中...
-</div>
-</div>
-
-</div>
-
-</div>
-
-<footer>
-Houcihu Smart Report Dashboard
-</footer>
-
-<script src="sheets.js?v=8"></script>
-
+  <section class="card" style="margin-top:16px">
+    <div class="section-title"><h2>營運提醒</h2></div>
+    <div class="note-box" id="suggestBox">載入中...</div>
+  </section>
+</main>
+<footer class="footer">Houcihu Public Report ｜ Privacy Guard v14.7</footer>
+<script src="sheets.js?v=14.6"></script>
 <script>
+function openText(v){ return String(v).toLowerCase()==="true" || v === true ? "開放" : "未開放"; }
+function renderSessions(rows){
+  const body = document.getElementById("sessionBody");
+  if(!Array.isArray(rows) || rows.length <= 1){ body.innerHTML = "<tr><td colspan='3'>尚無梯次資料</td></tr>"; return; }
+  let html = "";
+  for(let i=1;i<rows.length;i++){
+    const no = rows[i][0] || "-";
+    const open = openText(rows[i][1]);
+    const cap = Number(rows[i][2] || 0);
+    const cls = open === "開放" && cap > 0 ? "badge open" : "badge closed";
+    html += `<tr><td>第 ${escapeHtml ? escapeHtml(no) : no} 梯</td><td><span class="${cls}">${open}</span></td><td>${cap}</td></tr>`;
+  }
+  body.innerHTML = html;
+}
 async function loadReport(){
-
-const rows = await cloudGet();
-
-let total=0;
-let waiting=0;
-let done=0;
-let cancel=0;
-let current="A000";
-
-if(rows && rows.length>1){
-
-for(let i=1;i<rows.length;i++){
-
-total++;
-
-const status = rows[i][5];
-
-if(status==="waiting") waiting++;
-if(status==="done") done++;
-if(status==="cancel") cancel++;
-if(status==="called") current=rows[i][0];
-
+  try{
+    const data = await getPublicStatus();
+    const waiting = Number(data.waitingCount || 0);
+    document.getElementById("currentNo").innerText = data.currentNo || "A000";
+    document.getElementById("waitingCount").innerText = waiting;
+    let pressure = "低", suggest = "目前等待組數不高，維持一般叫號節奏即可。";
+    if(waiting >= 5){ pressure = "中"; suggest = "候補量增加，請留意現場叫號與梯次餘額。"; }
+    if(waiting >= 10){ pressure = "高"; suggest = "候補壓力偏高，建議工作人員加快補位並回報現場主管。"; }
+    document.getElementById("pressureText").innerText = pressure;
+    document.getElementById("pressureText").className = waiting >= 10 ? "redText" : waiting >= 5 ? "orangeText" : "greenText";
+    document.getElementById("suggestBox").innerText = suggest;
+    renderSessions(data.sessions);
+    document.getElementById("syncTime").innerText = data.ok ? "最後同步 " + formatLocalTime() : "等待後端部署";
+  }catch(e){
+    console.warn(e);
+    document.getElementById("syncTime").innerText = "連線中斷";
+  }
 }
-
-}
-
-document.getElementById("totalCount").innerText=total;
-document.getElementById("waitingCount").innerText=waiting;
-document.getElementById("doneCount").innerText=done;
-document.getElementById("cancelCount").innerText=cancel;
-document.getElementById("currentNo").innerText=current;
-
-let msg="營運穩定";
-
-if(waiting>=20){
-msg="候補量高，建議加快補位";
-}else if(waiting>=10){
-msg="候補增加，請留意叫號";
-}else if(waiting===0){
-msg="目前無等待名單";
-}
-
-document.getElementById("suggestBox").innerText=msg;
-
-}
-
 loadReport();
 autoSync(loadReport,5000);
 </script>
-
 </body>
 </html>
