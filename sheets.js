@@ -1,11 +1,11 @@
 /*
 Houcihu Onsite Waitlist System
-Cloud sync helpers v14.5 Onsite Capacity Normalize
+Cloud sync helpers v14.6 Current Deployment
 Designed & Developed by Abby Luo
 */
 
 const WEB_APP_URL =
-  "https://script.google.com/macros/s/AKfycbw63eJnsg0a70IbZXBYWktt8CCDfx0mm_MAwzMRDoxKNNvcT2FTTMpJuU8f3qfqHjo/exec";
+  "https://script.google.com/macros/s/AKfycbwMCPz4MM9IIbyLbdYeA8PlvosY6pbmOjGa3xmeUvnQv2Vmg1S4ozIOZ9O8Hq58crtv/exec";
 
 const API_TIMEOUT = 9000;
 const API_RETRY = 2;
