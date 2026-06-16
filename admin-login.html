@@ -1,6 +1,6 @@
 <!--
 Houcihu Onsite Waitlist System
-admin-login.html v14.6 Mobile Show Button Fix
+admin-login.html v14.7 Mobile Spacing Fix
 Designed & Developed by Abby Luo
 -->
 <!DOCTYPE html>
@@ -13,24 +13,75 @@ Designed & Developed by Abby Luo
 <title>後慈湖｜後台登入</title>
 <link rel="stylesheet" href="theme.css?v=14">
 <style>
-  #loginBtn{position:relative;z-index:5;pointer-events:auto;touch-action:manipulation;-webkit-user-select:none;user-select:none}
-  #loginForm{position:relative;z-index:3}
+  body{padding-bottom:calc(20px + env(safe-area-inset-bottom))}
+  .wrap.narrow{padding-left:18px!important;padding-right:18px!important}
+  .card{padding:28px!important;border-radius:30px!important}
+  .card + .card{margin-top:24px!important}
+  #loginForm{position:relative;z-index:3;display:flex;flex-direction:column;gap:18px}
+  .field{margin:0!important}
+  .field label{display:block;margin-bottom:10px!important;font-weight:950;letter-spacing:.04em}
+  .field input{min-height:64px!important;border-radius:20px!important;font-size:18px!important;padding:0 22px!important}
   .password-wrap{position:relative}
-  .password-wrap input{padding-right:82px!important}
+  .password-wrap input{padding-right:90px!important}
   .password-wrap .showpass{
     position:absolute!important;
-    right:8px!important;
-    top:8px!important;
+    right:10px!important;
+    top:10px!important;
     width:auto!important;
-    min-width:58px!important;
-    max-width:66px!important;
-    min-height:38px!important;
-    padding:8px 10px!important;
-    border-radius:12px!important;
+    min-width:62px!important;
+    max-width:72px!important;
+    min-height:44px!important;
+    padding:8px 12px!important;
+    border-radius:14px!important;
     box-shadow:none!important;
     z-index:6!important;
     pointer-events:auto!important;
     display:inline-flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+  }
+  #loginBtn{
+    position:relative;
+    z-index:5;
+    pointer-events:auto;
+    touch-action:manipulation;
+    -webkit-user-select:none;
+    user-select:none;
+    min-height:66px!important;
+    margin-top:4px!important;
+    border-radius:22px!important;
+    font-size:20px!important;
+    font-weight:950!important;
+  }
+  #msg{margin:18px 0 20px!important;text-align:center;line-height:1.6!important;min-height:28px!important}
+  .grid.two{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:18px!important;
+    margin-top:20px!important;
+  }
+  .grid.two .btn,
+  .grid.two button{
+    width:100%!important;
+    min-height:66px!important;
+    margin:0!important;
+    border-radius:22px!important;
+    font-size:20px!important;
+    font-weight:950!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    text-decoration:none!important;
+  }
+  .notice{line-height:1.8!important;border-radius:18px!important;padding:14px 16px!important}
+  .compact{margin-top:24px!important}
+  .compact .muted{font-size:16px!important;line-height:2!important}
+  @media(max-width:560px){
+    .hero{padding-bottom:78px!important}
+    .wrap.narrow{margin-top:-52px!important;padding-left:14px!important;padding-right:14px!important}
+    .card{padding:24px!important;border-radius:28px!important}
+    .grid.two{gap:20px!important}
+    #loginBtn,.grid.two .btn,.grid.two button{min-height:68px!important}
   }
 </style>
 </head>
@@ -38,18 +89,18 @@ Designed & Developed by Abby Luo
 <header class="hero"><div class="hero__kicker">STAFF ONLY</div><h1>後台登入</h1><p>後慈湖現場候補管理系統｜僅限授權工作人員使用</p></header>
 <main class="wrap narrow">
   <section class="card">
-    <div class="notice" style="margin-bottom:16px">🔒 登入時會先向 Apps Script 驗證後台金鑰；金鑰錯誤將無法進入後台。</div>
+    <div class="notice" style="margin-bottom:18px">🔒 登入時會先向 Apps Script 驗證後台金鑰；金鑰錯誤將無法進入後台。</div>
     <form id="loginForm" novalidate onsubmit="return handleLogin(event)">
       <div class="field"><label for="user">帳號</label><input type="text" id="user" placeholder="請輸入帳號" autocomplete="username" required></div>
       <div class="field"><label for="pass">後台金鑰／密碼</label><div class="password-wrap"><input type="password" id="pass" placeholder="請輸入後台金鑰" autocomplete="current-password" required><button type="button" class="smallbtn gray showpass" onclick="togglePass(event)">顯示</button></div></div>
       <button class="block" type="button" id="loginBtn" onclick="handleLogin(event)">登入後台</button>
     </form>
-    <div id="msg" class="sub" style="min-height:24px;font-weight:950"></div>
-    <div class="grid two" style="margin-top:14px"><a class="btn block gray" href="visitor.html">返回旅客首頁</a><button type="button" class="block orange" onclick="clearBox()">清除內容</button></div>
+    <div id="msg" class="sub" style="font-weight:950"></div>
+    <div class="grid two"><a class="btn block gray" href="visitor.html">返回旅客首頁</a><button type="button" class="block orange" onclick="clearBox()">清除內容</button></div>
   </section>
   <section class="card compact"><div class="muted" style="text-align:center;font-weight:800;line-height:1.8">系統採用本機登入憑證保存，12 小時後自動失效。<br>正式權限由 Apps Script 後端金鑰判斷。</div></section>
 </main>
-<script src="sheets.js?v=14.3"></script>
+<script src="sheets.js?v=14.6"></script>
 <script>
 const form = document.getElementById("loginForm");
 const msg = document.getElementById("msg");
