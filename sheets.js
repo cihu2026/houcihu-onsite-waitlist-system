@@ -1,6 +1,6 @@
 /*
 Houcihu Onsite Waitlist System
-Cloud sync helpers v14.6 Current Deployment
+Cloud sync helpers v15 Current Deployment + Theme Switcher
 Designed & Developed by Abby Luo
 */
 
@@ -11,6 +11,7 @@ const API_TIMEOUT = 9000;
 const API_RETRY = 2;
 const ADMIN_TOKEN_KEY = "houcihu_admin_token";
 const ADMIN_API_KEY = "houcihu_admin_api_key";
+const THEME_KEY = "houcihu_pos_theme";
 
 const QUEUE_STATUS = Object.freeze({
   WAITING: "waiting",
@@ -243,6 +244,41 @@ function maskPhone(phone) {
   return text.slice(0, 4) + "***" + text.slice(-3);
 }
 
+function setHoucihuTheme(theme) {
+  const allowed = ["stitch", "bunny", "bear", "forest", "ocean"];
+  const next = allowed.includes(theme) ? theme : "stitch";
+  document.body?.setAttribute("data-theme", next);
+  try { localStorage.setItem(THEME_KEY, next); } catch (_) {}
+  document.querySelectorAll(".theme-switcher button").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.theme === next);
+  });
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute("content", getComputedStyle(document.body).getPropertyValue("--bg-1").trim() || "#0b0f3d");
+}
+
+function initHoucihuThemeSwitcher() {
+  let theme = "stitch";
+  try { theme = localStorage.getItem(THEME_KEY) || "stitch"; } catch (_) {}
+  setHoucihuTheme(theme);
+  if (document.querySelector(".theme-switcher") || window.matchMedia("(max-width:620px)").matches) return;
+  const switcher = document.createElement("div");
+  switcher.className = "theme-switcher";
+  switcher.setAttribute("aria-label", "色系切換");
+  const themes = [
+    ["stitch", "💙 藍紫"],
+    ["bunny", "🐰 兔兔"],
+    ["bear", "🧸 小熊"],
+    ["forest", "🌿 森林"],
+    ["ocean", "🐬 海洋"]
+  ];
+  switcher.innerHTML = themes.map(([key, label]) => `<button type="button" data-theme="${key}">${label}</button>`).join("");
+  switcher.querySelectorAll("button").forEach(btn => {
+    btn.addEventListener("click", () => setHoucihuTheme(btn.dataset.theme));
+  });
+  document.body.appendChild(switcher);
+  setHoucihuTheme(theme);
+}
+
 window.addEventListener("offline", () => {
   document.body?.classList.add("is-offline");
   console.warn("目前離線");
@@ -252,3 +288,9 @@ window.addEventListener("online", () => {
   document.body?.classList.remove("is-offline");
   console.info("已恢復連線");
 });
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initHoucihuThemeSwitcher);
+} else {
+  initHoucihuThemeSwitcher();
+}
