@@ -80,3 +80,11 @@ th, td {
     .hero h1, header h1 { font-size: 28px; }
     .card { padding: 18px; }
 }
+
+
+/* IANSUI GLOBAL FONT OVERRIDE */
+    html,body,button,button *,input,select,textarea,option,a,label,[role="button"],.btn,.button,.nav,.chip,.tab,.key,.card{
+      font-family:"Iansui","Noto Sans TC","Microsoft JhengHei",sans-serif !important;
+      font-synthesis:none !important;
+    }
+    

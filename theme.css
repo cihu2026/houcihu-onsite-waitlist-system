@@ -64,3 +64,11 @@ a{color:inherit}button,input,select{font:inherit}button{touch-action:manipulatio
 @keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.055)}100%{transform:scale(1)}}
 @media(max-width:900px){.side-layout{grid-template-columns:1fr}.sidebar{position:relative;height:auto}.menu{grid-template-columns:repeat(2,minmax(0,1fr))}.main{padding:16px}.grid.four,.grid.three{grid-template-columns:repeat(2,minmax(0,1fr))}.wrap{padding-left:14px;padding-right:14px}.theme-switcher{right:10px;left:10px;bottom:calc(10px + var(--safe-bottom));justify-content:flex-start}}
 @media(max-width:620px){.hero{padding:34px 14px 58px}.wrap{margin-top:-30px}.card{padding:18px;border-radius:22px}.grid.two,.grid.three,.grid.four,.grid.auto{grid-template-columns:1fr}.btn.big,button.big{min-height:76px}.table-wrap{border-radius:14px}.list-item{align-items:flex-start;flex-direction:column}.row-actions{width:100%;display:grid;grid-template-columns:1fr 1fr}.smallbtn{width:100%}.calendar{gap:5px}.dayname,.day{font-size:13px;padding:8px 3px}.day{min-height:55px}.hero h1{font-size:28px}.theme-switcher{display:none}}
+
+
+/* IANSUI GLOBAL FONT OVERRIDE */
+    html,body,button,button *,input,select,textarea,option,a,label,[role="button"],.btn,.button,.nav,.chip,.tab,.key,.card{
+      font-family:"Iansui","Noto Sans TC","Microsoft JhengHei",sans-serif !important;
+      font-synthesis:none !important;
+    }
+    
