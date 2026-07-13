@@ -1,0 +1,61 @@
+name: Apply Iansui font once
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/apply-iansui-once.yml']
+permissions:
+  contents: write
+jobs:
+  apply-font:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply Iansui to all pages
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+
+          import_link = '<link rel="preconnect" href="https://fonts.googleapis.com">\n<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n<link href="https://fonts.googleapis.com/css2?family=Iansui&display=swap" rel="stylesheet">'
+          override = '''<style id="iansui-font-override">
+          html,body,button,button *,input,select,textarea,option,a,label,
+          [role="button"],.btn,.button,.nav,.chip,.tab,.key,.card{
+            font-family:"Iansui","Noto Sans TC","Microsoft JhengHei",sans-serif !important;
+            font-synthesis:none !important;
+          }
+          </style>'''
+
+          changed = []
+          for p in Path('.').rglob('*.html'):
+              text = p.read_text(encoding='utf-8')
+              original = text
+              if 'family=Iansui' not in text:
+                  text = re.sub(r'</head>', import_link + '\n</head>', text, count=1, flags=re.I)
+              if 'id="iansui-font-override"' not in text:
+                  text = re.sub(r'</head>', override + '\n</head>', text, count=1, flags=re.I)
+              if text != original:
+                  p.write_text(text, encoding='utf-8')
+                  changed.append(str(p))
+
+          for p in Path('.').rglob('*.css'):
+              text = p.read_text(encoding='utf-8')
+              if 'IANSUI GLOBAL FONT OVERRIDE' in text:
+                  continue
+              text += '''\n\n/* IANSUI GLOBAL FONT OVERRIDE */
+              html,body,button,button *,input,select,textarea,option,a,label,[role="button"],.btn,.button,.nav,.chip,.tab,.key,.card{
+                font-family:"Iansui","Noto Sans TC","Microsoft JhengHei",sans-serif !important;
+                font-synthesis:none !important;
+              }
+              '''
+              p.write_text(text, encoding='utf-8')
+              changed.append(str(p))
+
+          print('Changed:', *changed, sep='\n')
+      - name: Remove one-time workflow and commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/apply-iansui-once.yml
+          git add -A
+          git commit -m "Use Iansui font across all waitlist pages" || exit 0
+          git push
