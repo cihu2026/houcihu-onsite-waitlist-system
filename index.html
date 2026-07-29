@@ -1,7 +1,7 @@
 <!--
 Houcihu Onsite Waitlist System
 index.html v15 Starry Portal
-Designed & Developed by Abby Luo
+Designed & Developed by Abbyluo
 -->
 <!DOCTYPE html>
 <html lang="zh-Hant">
@@ -9,12 +9,16 @@ Designed & Developed by Abby Luo
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#171a4f">
-<meta name="author" content="Abby Luo">
+<meta name="author" content="Abbyluo">
+<meta name="copyright" content="網站企劃、介面設計與程式整合 © 2026 Abbyluo">
 <title>後慈湖｜現場候補服務系統</title>
 <link rel="stylesheet" href="theme.css?v=14">
 <style>
 :root{--starA:#8ed8ff;--starB:#d8a6ff;--glass:rgba(255,255,255,.16);--glassLine:rgba(255,255,255,.28)}
 body{background:radial-gradient(circle at 12% 8%,rgba(142,216,255,.32),transparent 26%),radial-gradient(circle at 88% 10%,rgba(216,166,255,.28),transparent 30%),linear-gradient(180deg,#151847,#2b2466 45%,#070918)!important;color:#fff;overflow-x:hidden}body:before{content:"";position:fixed;inset:0;pointer-events:none;background-image:radial-gradient(1.2px 1.2px at 28px 36px,rgba(255,255,255,.95),transparent),radial-gradient(1.6px 1.6px at 118px 82px,rgba(255,255,255,.75),transparent),radial-gradient(1px 1px at 220px 58px,rgba(255,255,255,.7),transparent),radial-gradient(1.4px 1.4px at 310px 128px,rgba(255,255,255,.82),transparent);background-size:360px 260px;opacity:.75}.wrap,.home-hero,.footer{position:relative;z-index:1}.hero.home-hero{margin:14px auto 0;max-width:980px;border:1px solid var(--glassLine);background:linear-gradient(180deg,rgba(255,255,255,.22),rgba(255,255,255,.08));border-radius:34px;box-shadow:0 22px 62px rgba(5,10,38,.28);-webkit-backdrop-filter:blur(22px);backdrop-filter:blur(22px);text-align:center;padding:36px 16px 24px}.hero__kicker{letter-spacing:.22em;color:#9fffd0!important;font-weight:1000}.home-hero h1{font-size:clamp(34px,7vw,58px);margin:8px 0 4px;text-shadow:0 12px 30px rgba(0,0,0,.25)}.home-hero p{color:rgba(255,255,255,.78)!important;font-weight:850;line-height:1.8}.card{border:1px solid var(--glassLine)!important;background:linear-gradient(180deg,rgba(255,255,255,.20),rgba(255,255,255,.08))!important;border-radius:30px!important;box-shadow:0 18px 48px rgba(5,10,38,.26)!important;-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px)}.home-kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.home-kpi .kpi{border-radius:26px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18)}.quick-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.sub-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.btn{border-radius:24px!important;box-shadow:0 12px 30px rgba(0,0,0,.18)!important}.btn.big{min-height:88px}.section-title h2{color:#fff}.section-title span{color:rgba(255,255,255,.65)}.notice{color:#ffe66d;font-weight:950}.privacy-note{line-height:1.9;font-weight:850;color:rgba(255,255,255,.78)}.footer{color:rgba(255,255,255,.66)!important}@media(max-width:760px){.home-kpi,.quick-grid,.sub-grid{grid-template-columns:1fr}.home-hero{padding-top:28px;margin-top:8px}}
+</style>
+<style>
+.creator-credit{font-size:8px;letter-spacing:.06em;opacity:.48}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -44,7 +48,7 @@ html,body,button,button *,input,select,textarea,option,a,label,
   <section class="card" style="margin-top:16px"><div class="section-title"><h2>工作人員</h2><span>STAFF</span></div><div class="sub-grid"><a class="btn block orange" href="admin-login.html">🔐 後台登入</a><a class="btn block blue" href="dashboard.html">📈 營運儀表板</a><a class="btn block gray" href="report.html">📋 公開報表</a></div></section>
   <section class="card" style="margin-top:16px"><div class="section-title"><h2>服務說明</h2></div><div class="privacy-note">1. 現場額滿時可登記候補，依釋出名額遞補。<br>2. 請留意現場叫號，過號需重新排隊。<br>3. 公開頁不顯示姓名與完整電話，完整名單僅限授權後台查看。<br>4. 入場前請備妥證件供查驗，並以現場工作人員說明為準。</div></section>
 </main>
-<footer class="footer">Houcihu Visitor Service Center © 2026 ｜ Starry Glass v15 ｜ Designed & Developed by Abby Luo</footer>
+<footer class="footer">Houcihu Visitor Service Center ｜ Starry Glass v15<br><small class="creator-credit">網站企劃、介面設計與程式整合 © 2026 Abbyluo</small></footer>
 <script src="sheets.js?v=14.6"></script>
 <script>
 async function refreshHome(){try{const data=await getPublicStatus();const current=data.currentNo||"A000";const waiting=Number(data.waitingCount||0);const no=document.getElementById("quickNo");if(no.innerText!==current){no.classList.remove("flash");void no.offsetWidth;no.classList.add("flash");}no.innerText=current;const count=document.getElementById("waitCount");count.innerText=waiting;count.className=waiting>=10?"redText":waiting>=5?"orangeText":"greenText";document.getElementById("systemState").innerText=data.ok?"ONLINE":"待部署";document.getElementById("syncTime").innerText=data.ok?"最後同步 "+formatLocalTime():"等待後端隱私版部署";}catch(error){console.warn(error);document.getElementById("systemState").innerText="離線";document.getElementById("syncTime").innerText="連線中斷，稍後重試";}}
